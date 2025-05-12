@@ -88,7 +88,6 @@ android {
         getByName("debug") {
             isMinifyEnabled = false
             isShrinkResources = false
-            signingConfig = null
             matchingFallbacks += "debug"
         }
         getByName("release") {
