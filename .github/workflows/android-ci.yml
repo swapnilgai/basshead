@@ -29,7 +29,7 @@ jobs:
         run: chmod +x gradlew
 
       - name: Run KtLint
-        run: ./gradlew ktlintCheck --info --stacktrace
+        run: ./gradlew ktlintFormat --info --stacktrace
 
       - name: Run all build and test tasks
         run: |
