@@ -1,5 +1,5 @@
-import org.jetbrains.compose.desktop.application.dsl.TargetFormat
-import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
+import com.org.basshead.ProjectProperties
+import com.org.basshead.projectProperties
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
@@ -7,29 +7,31 @@ plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
+    alias(libs.plugins.buildKonfig)
+    id("app-config-plugin")
 }
+
+val projectProperties: ProjectProperties = projectProperties().get()
 
 kotlin {
     androidTarget {
-        @OptIn(ExperimentalKotlinGradlePluginApi::class)
         compilerOptions {
             jvmTarget.set(JvmTarget.JVM_11)
         }
     }
-    
+
     listOf(
         iosX64(),
         iosArm64(),
-        iosSimulatorArm64()
+        iosSimulatorArm64(),
     ).forEach { iosTarget ->
         iosTarget.binaries.framework {
             baseName = "ComposeApp"
             isStatic = true
         }
     }
-    
+
     sourceSets {
-        
         androidMain.dependencies {
             implementation(compose.preview)
             implementation(libs.androidx.activity.compose)
@@ -63,18 +65,62 @@ android {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
     }
-    buildTypes {
-        getByName("release") {
-            isMinifyEnabled = false
+
+    flavorDimensions += "releaseType"
+    productFlavors {
+        create("internal") {
+            dimension = "releaseType"
+            applicationIdSuffix = ".internal"
+            versionNameSuffix = "-releaseType"
+            applicationId = "com.internal.basshead"
+            signingConfig = null
+        }
+        create("production") {
+            dimension = "releaseType"
+            applicationIdSuffix = ".release"
+            versionNameSuffix = "-release"
+            applicationId = "com.org.basshead"
+            // signingConfig = signingConfig.getBaseName("ss")
         }
     }
+
+    buildTypes {
+        getByName("debug") {
+            isMinifyEnabled = false
+            isShrinkResources = false
+            signingConfig = null
+            matchingFallbacks += "debug"
+        }
+        getByName("release") {
+            isMinifyEnabled = true
+            isShrinkResources = true
+        }
+    }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
 }
 
+buildkonfig {
+    packageName = "com.org.basshead"
+    defaultConfigs {
+    }
+
+    defaultConfigs("internal") {
+        val apiKey = projectProperties.devKey
+        buildConfigField(com.codingfeline.buildkonfig.compiler.FieldSpec.Type.STRING, "apiKey", apiKey)
+        buildConfigField(com.codingfeline.buildkonfig.compiler.FieldSpec.Type.STRING, "environment", "prod")
+    }
+
+    defaultConfigs("production") {
+        val apiKey = projectProperties.prodKey
+        buildConfigField(com.codingfeline.buildkonfig.compiler.FieldSpec.Type.STRING, "apiKey", apiKey)
+        buildConfigField(com.codingfeline.buildkonfig.compiler.FieldSpec.Type.STRING, "environment", "dev")
+    }
+}
+
 dependencies {
     debugImplementation(compose.uiTooling)
 }
-
