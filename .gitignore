@@ -31,3 +31,15 @@ google-services.json
 
 # Android Profiling
 *.hprof
+
+prebuilds/fullsdk-linux
+prebuilds/fullsdk-darwin
+out
+.gradle
+/local.properties
+.DS_Store
+/captures
+.externalNativeBuild
+.cxx
+.kotlin
+keystore.properties

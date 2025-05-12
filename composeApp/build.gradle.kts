@@ -1,3 +1,6 @@
+import com.android.build.gradle.internal.scope.ProjectInfo.Companion.getBaseName
+import com.org.basshead.ProjectProperties
+import com.org.basshead.projectProperties
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
@@ -7,11 +10,12 @@ plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
+    id("app-config-plugin")
 }
+val projectProperties : ProjectProperties = projectProperties().get()
 
 kotlin {
     androidTarget {
-        @OptIn(ExperimentalKotlinGradlePluginApi::class)
         compilerOptions {
             jvmTarget.set(JvmTarget.JVM_11)
         }
@@ -63,9 +67,39 @@ android {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
     }
+
+    flavorDimensions +="releaseType"
+    
+    productFlavors {
+        create("internal"){
+            dimension = "releaseType"
+            applicationIdSuffix =".internal"
+            versionNameSuffix = "-releaseType"
+            applicationId = "com.internal.basshead"
+            signingConfig = null
+            buildConfigField("String", "PROD_KEY", "\"${projectProperties.devKey}\"")
+        }
+        create("production"){
+            dimension = "releaseType"
+            applicationIdSuffix = ".release"
+            versionNameSuffix = "-release"
+            applicationId = "com.org.basshead"
+           // signingConfig = signingConfig.getBaseName("ss")
+            buildConfigField("String", "PROD_KEY", "\"${projectProperties.prodKey}\"")
+        }
+    }
+
     buildTypes {
-        getByName("release") {
+        getByName("debug"){
             isMinifyEnabled = false
+            isShrinkResources = false
+            signingConfig = null
+            matchingFallbacks += "debug"
+        }
+        getByName("release") {
+            isMinifyEnabled = true
+            isShrinkResources = true
+
         }
     }
     compileOptions {
