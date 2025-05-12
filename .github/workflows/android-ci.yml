@@ -33,7 +33,4 @@ jobs:
 
       - name: Run all build and test tasks
         run: |
-          ./gradlew \
-            :composeApp:assembleInternalDebug \
-            :composeApp:assembleProductionRelease\
-            --stacktrace
+          ./gradlew :composeApp:assembleInternalDebug :composeApp:assembleProductionRelease --stacktrace
