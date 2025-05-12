@@ -11,8 +11,8 @@ repositories {
 }
 
 gradlePlugin {
-     plugins.register("app-config-plugin"){
-         id = "app-config-plugin"
-         implementationClass = "com.org.basshead.BuildPlugin"
-     }
+    plugins.register("app-config-plugin") {
+        id = "app-config-plugin"
+        implementationClass = "com.org.basshead.BuildPlugin"
+    }
 }
