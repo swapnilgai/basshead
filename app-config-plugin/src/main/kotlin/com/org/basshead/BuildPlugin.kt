@@ -32,7 +32,7 @@ internal fun Project.loadLocalProperty(file: String = "keystore.properties"): Pr
     }
     return ProjectProperties(
         prodKey = projectProperties.getProperty("PROD_API_KEY"),
-        devKey = projectProperties.getProperty("DEV_API_KEY")
+        devKey = projectProperties.getProperty("DEV_API_KEY"),
     )
 }
 
