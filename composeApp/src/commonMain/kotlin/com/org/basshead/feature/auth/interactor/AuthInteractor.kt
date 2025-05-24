@@ -12,6 +12,7 @@ import io.github.jan.supabase.auth.providers.builtin.Email
 interface AuthInteractor : Interactor {
     suspend fun signUp(email: String, password: String)
     suspend fun logIn(email: String, password: String)
+    suspend fun getCurrentUser()
 }
 
 class AuthInteractorImpl(val supabaseClient: SupabaseClient): AuthInteractor {
@@ -34,5 +35,11 @@ class AuthInteractorImpl(val supabaseClient: SupabaseClient): AuthInteractor {
        }
 
 
+    }
+
+    override suspend fun getCurrentUser() {
+        withInteractorContext(retryOption = RetryOption(retryCount = 2)) {
+            supabaseClient.auth.
+        }
     }
 }

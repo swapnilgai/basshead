@@ -1,8 +1,14 @@
-package com.org.basshead.app
+package com.org.basshead.navigation
 
 import kotlinx.serialization.Serializable
 
 sealed interface Route {
+
+    @Serializable
+    data object Splash
+
+    @Serializable
+    data object Auth
 
     @Serializable
     data object Dashboard
