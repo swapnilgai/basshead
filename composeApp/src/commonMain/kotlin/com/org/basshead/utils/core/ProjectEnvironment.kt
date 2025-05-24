@@ -1,4 +1,4 @@
-package com.org.basshead.utils.model
+package com.org.basshead.utils.core
 
 import com.org.basshead.BuildKonfig
 

@@ -23,7 +23,7 @@ data class RetryOption(
 
 interface Interactor
 
-suspend fun <T>Interactor.withInteractorContext(cacheOption: CacheOptions? = null, forceRefresh: Boolean = false, retryOption: RetryOption, block: suspend () -> T): T {
+suspend fun <T>Interactor.withInteractorContext(cacheOption: CacheOptions? = null, forceRefresh: Boolean = false, retryOption: RetryOption?= null, block: suspend () -> T): T {
     val cache = LRUCache.create(1000)
 
     val context = InteractorDispatcherProvider.dispatcher
@@ -64,7 +64,6 @@ suspend fun <T>Interactor.withInteractorContext(cacheOption: CacheOptions? = nul
                     if (retryOption.retryCount > attemptIndex) {
                         continue
                     }
-
                     coroutineContext.ensureActive()
                     throw e.toInteractorException()
                 }
