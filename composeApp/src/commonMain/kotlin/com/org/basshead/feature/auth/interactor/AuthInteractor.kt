@@ -39,7 +39,7 @@ class AuthInteractorImpl(val supabaseClient: SupabaseClient): AuthInteractor {
 
     override suspend fun getCurrentUser() {
         withInteractorContext(retryOption = RetryOption(retryCount = 2)) {
-            supabaseClient.auth.
+            supabaseClient.auth.currentUserOrNull()
         }
     }
 }

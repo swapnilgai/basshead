@@ -3,20 +3,16 @@ package com.org.basshead.feature.splash.components
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.material.CircularProgressIndicator
-import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import basshead.composeapp.generated.resources.Res
-import basshead.composeapp.generated.resources.compose_multiplatform
+import basshead.composeapp.generated.resources.dog
 import com.org.basshead.feature.splash.SplashViewModel
 import com.org.basshead.utils.ui.Route
 import com.org.basshead.utils.ui.UiState
@@ -43,16 +39,17 @@ fun SplashScreenRoot(viewModel: SplashViewModel = koinViewModel(),
 
 @Composable
 fun SplashScreen() {
-    Box(modifier = Modifier.fillMaxSize().background(MaterialTheme.colors.background),
-        contentAlignment = Alignment.Center) {
-        Column {
-            CircularProgressIndicator()
-            Spacer(modifier = Modifier.padding(20.dp))
-            Image(
-                painter = painterResource(Res.drawable.compose_multiplatform),
-                contentDescription = "",
-                modifier = Modifier.size(200.dp)
-            )
-        }
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color.White),
+        contentAlignment = Alignment.Center
+    ) {
+        Image(
+            painter = painterResource(Res.drawable.dog),
+            contentDescription = "Headbanging Dog",
+            modifier = Modifier
+                .size(250.dp)
+        )
     }
 }
