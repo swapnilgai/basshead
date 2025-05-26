@@ -5,6 +5,7 @@ import androidx.compose.runtime.remember
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.org.basshead.feature.auth.components.LoginScreenRoot
 import com.org.basshead.feature.splash.components.SplashScreenRoot
 import org.koin.core.module.flatten
 
@@ -32,6 +33,9 @@ fun NavigationGraph(navController: NavHostController) {
                     }
                 }
             }
+        }
+        composable(routes[Route.Auth::class.simpleName]!!) {
+            LoginScreenRoot()
         }
     }
 }

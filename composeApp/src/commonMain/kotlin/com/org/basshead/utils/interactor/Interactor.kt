@@ -63,6 +63,7 @@ suspend fun <T>Interactor.withInteractorContext(cacheOption: CacheOptions? = nul
                     break
                 } catch (e: Exception) {
                     if (retryOption.retryCount > attemptIndex) {
+                        attemptIndex++
                         continue
                     }
                     coroutineContext.ensureActive()

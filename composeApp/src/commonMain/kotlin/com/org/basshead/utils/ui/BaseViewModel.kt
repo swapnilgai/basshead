@@ -5,6 +5,7 @@ import androidx.compose.runtime.Immutable
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.org.basshead.utils.core.UiText
+import com.org.basshead.utils.interactor.InteractorException
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -35,7 +36,9 @@ open class BaseViewModel<T>(initialContent: T): ViewModel() {
     private val _navState: MutableStateFlow<UiState.Navigate?> = MutableStateFlow(null)
 
     val coroutineExceptionHandler = CoroutineExceptionHandler { _, error ->
-
+        (error as? InteractorException)?.let {
+            setError(it.msg)
+        }
     }
     val baseViewModelScope = viewModelScope + coroutineExceptionHandler
 

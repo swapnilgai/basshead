@@ -6,6 +6,7 @@ import com.org.basshead.utils.ui.BaseViewModel
 import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.auth.auth
 import io.github.jan.supabase.auth.status.SessionStatus
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class SplashViewModel(val supabaseClient: SupabaseClient): BaseViewModel<Unit>(Unit) {
@@ -25,6 +26,10 @@ class SplashViewModel(val supabaseClient: SupabaseClient): BaseViewModel<Unit>(U
                     SessionStatus.Initializing -> println("Initializing")
                     is SessionStatus.RefreshFailure -> println("Refresh failure ${it.cause}") //Either a network error or a internal server error
                     is SessionStatus.NotAuthenticated -> {
+                        delay(3000)
+                        navigate(
+                            destination = Route.Auth::class.simpleName!!
+                        )
                         if(it.isSignOut) {
                             println("User signed out")
                         } else {

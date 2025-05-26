@@ -10,17 +10,18 @@ import io.github.jan.supabase.exceptions.NotFoundRestException
 import io.github.jan.supabase.exceptions.SupabaseEncodingException
 import io.github.jan.supabase.exceptions.UnauthorizedRestException
 import io.github.jan.supabase.exceptions.UnknownRestException
+import io.ktor.client.network.sockets.SocketTimeoutException
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.stringResource
 
-sealed class InteractorException : Exception() {
-    data class RequestTimeout(val msg: UiText) : InteractorException()
-    data class Unauthorized(val msg: UiText) : InteractorException()
-    data class BadRequestRest(val msg: UiText) : InteractorException()
-    data class ServerError(val msg: UiText) : InteractorException()
-    data class Unknown(val msg: UiText) : InteractorException()
-    data class HttpRequestError(val msg: UiText) : InteractorException()
-    data class NotFound(val msg: UiText) : InteractorException()
+sealed class InteractorException(open val msg: UiText) : Exception() {
+    data class RequestTimeout(override val msg: UiText) : InteractorException(msg)
+    data class Unauthorized(override val msg: UiText) : InteractorException(msg)
+    data class BadRequestRest(override val msg: UiText) : InteractorException(msg)
+    data class ServerError(override val msg: UiText) : InteractorException(msg)
+    data class Unknown(override val msg: UiText) : InteractorException(msg)
+    data class HttpRequestError(override val msg: UiText) : InteractorException(msg)
+    data class NotFound(override val msg: UiText) : InteractorException(msg)
 }
 
 fun Exception.toInteractorException(): InteractorException {
