@@ -1,13 +1,10 @@
-package com.org.basshead.feature.auth.ui
+package com.org.basshead.feature.auth.presentation
 
 import com.org.basshead.feature.auth.interactor.AuthInteractor
-import com.org.basshead.navigation.Route
 import com.org.basshead.utils.ui.BaseViewModel
 import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.auth.auth
-import io.github.jan.supabase.auth.status.SessionSource
 import io.github.jan.supabase.auth.status.SessionStatus
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 sealed interface AuthActions{

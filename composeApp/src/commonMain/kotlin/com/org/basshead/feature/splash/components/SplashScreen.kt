@@ -9,12 +9,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import basshead.composeapp.generated.resources.Res
 import basshead.composeapp.generated.resources.dog
-import com.org.basshead.feature.splash.SplashViewModel
+import com.org.basshead.feature.splash.presentation.SplashViewModel
 import com.org.basshead.utils.core.LightOrange
 import com.org.basshead.utils.core.PrimaryOrange
 import com.org.basshead.utils.ui.Route
@@ -24,7 +23,7 @@ import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun SplashScreenRoot(viewModel: SplashViewModel = koinViewModel(),
-                    navigate: (destination: String, popUpTp: String?, inclusive: Boolean?) -> Unit){
+                     navigate: (destination: String, popUpTp: String?, inclusive: Boolean?) -> Unit){
 
     val state = viewModel.state.collectAsStateWithLifecycle()
 

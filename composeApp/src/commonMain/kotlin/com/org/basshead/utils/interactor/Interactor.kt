@@ -44,7 +44,8 @@ suspend fun <T>Interactor.withInteractorContext(cacheOption: CacheOptions? = nul
             while (true) {
                 try {
                     if (attemptIndex > 0) {
-                        delay(retryOption.initialDelay)
+                        val duration = retryOption.initialDelay * retryOption.delayIncrementalFactor * attemptIndex
+                        delay(duration.toLong())
                     }
 
                     blockResult = coroutineScope {

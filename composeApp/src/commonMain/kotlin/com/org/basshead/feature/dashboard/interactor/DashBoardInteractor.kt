@@ -1,0 +1,142 @@
+package com.org.basshead.feature.dashboard.interactor
+
+import com.org.basshead.feature.dashboard.model.DailyHeadbang
+import com.org.basshead.feature.dashboard.model.FestivalSuggestion
+import com.org.basshead.feature.dashboard.model.UserFestival
+import com.org.basshead.utils.cache.CacheKey
+import com.org.basshead.utils.cache.CacheOptions
+import com.org.basshead.utils.interactor.Interactor
+import com.org.basshead.utils.interactor.RetryOption
+import com.org.basshead.utils.interactor.withInteractorContext
+import io.github.jan.supabase.SupabaseClient
+import io.github.jan.supabase.auth.auth
+import io.github.jan.supabase.postgrest.postgrest
+import kotlinx.serialization.json.buildJsonObject
+import kotlinx.serialization.json.put
+import kotlinx.serialization.json.JsonArray
+import kotlinx.serialization.json.JsonPrimitive
+
+data class UserFestivalsPrimaryKey(val statuses: String) : CacheKey
+data class UserFestivalsSecondaryKey(val lastSeenId: String?=null) : CacheKey
+
+data class FestivalSuggestionsPrimaryKey(
+    val statuses: String,
+    val location: String?
+) : CacheKey
+
+data class FestivalSuggestionsSecondaryKey(
+    val lastSeenId: String?
+) : CacheKey
+
+
+interface DashBoardInteractor: Interactor {
+    suspend fun getDailyHeadbangs(
+        startDate: String? = null,
+        endDate: String? = null,
+        limit: Int = 30
+    ): List<DailyHeadbang>
+
+    suspend fun getUserFestivals(
+        statuses: List<String> = listOf("all"),
+        limit: Int = 10,
+        lastSeenId: String? = null,
+        lastSeenStatus: String? = null,
+        lastSeenTime: String? = null,
+        lastSeenRank: Int? = null
+    ): List<UserFestival>
+
+    suspend fun getFestivalSuggestions(
+        statuses: List<String> = listOf("upcoming", "ongoing"),
+        limit: Int = 10,
+        lastSeenId: String? = null,
+        location: String? = null
+    ): List<FestivalSuggestion>
+}
+
+class DashBoardInteractorImpl(
+    private val supabaseClient: SupabaseClient
+) : DashBoardInteractor {
+
+    override suspend fun getDailyHeadbangs(
+        startDate: String?,
+        endDate: String?,
+        limit: Int
+    ): List<DailyHeadbang> {
+        return withInteractorContext(retryOption = RetryOption(retryCount = 2)) {
+            val currentUser = supabaseClient.auth.currentUserOrNull()
+                ?: throw Exception("Not authenticated")
+
+            supabaseClient.postgrest.rpc(
+                "get_user_daily_headbangs",
+                parameters = buildJsonObject {
+                    put("_user_id", currentUser.id)
+                    startDate?.let { put("_start_date", it) }
+                    endDate?.let { put("_end_date", it) }
+                    put("_limit", limit)
+                }
+            ).decodeList<DailyHeadbang>()
+        }
+    }
+
+    override suspend fun getUserFestivals(
+        statuses: List<String>,
+        limit: Int,
+        lastSeenId: String?,
+        lastSeenStatus: String?,
+        lastSeenTime: String?,
+        lastSeenRank: Int?
+    ): List<UserFestival> {
+
+        return withInteractorContext(cacheOption = CacheOptions(key = UserFestivalsPrimaryKey(statuses = statuses.toString()),
+            secondaryKey = UserFestivalsSecondaryKey(lastSeenId = lastSeenId)), retryOption = RetryOption(retryCount = 2)) {
+
+            val currentUser = supabaseClient.auth.currentUserOrNull()
+                ?: throw Exception("Not authenticated")
+
+            supabaseClient.postgrest.rpc(
+                "get_user_festivals",
+                parameters = buildJsonObject {
+                    put("_user_id", currentUser.id)
+                    put("_status", JsonArray(statuses.map { JsonPrimitive(it) }))
+                    put("_limit", limit)
+                    lastSeenId?.let { put("_last_seen_id", it) }
+                    lastSeenStatus?.let { put("_last_seen_status", it) }
+                    lastSeenTime?.let { put("_last_seen_time", it) }
+                    lastSeenRank?.let { put("_last_seen_rank", it) }
+                }
+            ).decodeList<UserFestival>()
+        }
+    }
+
+    override suspend fun getFestivalSuggestions(
+        statuses: List<String>,
+        limit: Int,
+        lastSeenId: String?,
+        location: String?
+    ): List<FestivalSuggestion> {
+        return withInteractorContext(
+            cacheOption = CacheOptions(
+                key = FestivalSuggestionsPrimaryKey(
+                    statuses = statuses.toString(),
+                    location = location
+                ),
+                secondaryKey = FestivalSuggestionsSecondaryKey(lastSeenId = lastSeenId)
+            ),
+            retryOption = RetryOption(retryCount = 2)
+        ) {
+            val currentUser = supabaseClient.auth.currentUserOrNull()
+                ?: throw Exception("Not authenticated")
+
+            supabaseClient.postgrest.rpc(
+                "get_festival_suggestions",
+                parameters = buildJsonObject {
+                    put("_user_id", currentUser.id)
+                    put("_status", JsonArray(statuses.map { JsonPrimitive(it) }))
+                    put("_limit", limit)
+                    lastSeenId?.let { put("_last_seen_id", it) }
+                    location?.let { put("_location", it) }
+                }
+            ).decodeList<FestivalSuggestion>()
+        }
+    }
+}

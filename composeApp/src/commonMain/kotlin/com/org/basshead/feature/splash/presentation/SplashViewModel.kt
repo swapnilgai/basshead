@@ -1,6 +1,5 @@
-package com.org.basshead.feature.splash
+package com.org.basshead.feature.splash.presentation
 
-import com.org.basshead.feature.auth.interactor.AuthInteractor
 import com.org.basshead.navigation.Route
 import com.org.basshead.utils.ui.BaseViewModel
 import io.github.jan.supabase.SupabaseClient

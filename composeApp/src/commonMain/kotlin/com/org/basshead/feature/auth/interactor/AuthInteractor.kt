@@ -34,8 +34,6 @@ class AuthInteractorImpl(val supabaseClient: SupabaseClient): AuthInteractor {
                this.password = password
            }
        }
-
-
     }
 
     override suspend fun getCurrentUser() {
