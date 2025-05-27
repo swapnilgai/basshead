@@ -1,6 +1,5 @@
 package com.org.basshead.utils.interactor
 
-import androidx.compose.runtime.Composable
 import basshead.composeapp.generated.resources.Res
 import basshead.composeapp.generated.resources.error_unknown
 import com.org.basshead.utils.core.UiText
@@ -10,9 +9,6 @@ import io.github.jan.supabase.exceptions.NotFoundRestException
 import io.github.jan.supabase.exceptions.SupabaseEncodingException
 import io.github.jan.supabase.exceptions.UnauthorizedRestException
 import io.github.jan.supabase.exceptions.UnknownRestException
-import io.ktor.client.network.sockets.SocketTimeoutException
-import org.jetbrains.compose.resources.stringResource
-import org.jetbrains.compose.resources.stringResource
 
 sealed class InteractorException(open val msg: UiText) : Exception() {
     data class RequestTimeout(override val msg: UiText) : InteractorException(msg)
@@ -25,7 +21,7 @@ sealed class InteractorException(open val msg: UiText) : Exception() {
 }
 
 fun Exception.toInteractorException(): InteractorException {
-    return when(this) {
+    return when (this) {
         is HttpRequestException -> InteractorException.HttpRequestError(UiText.StringResourceId(Res.string.error_unknown))
         is UnauthorizedRestException -> InteractorException.Unauthorized(UiText.StringResourceId(Res.string.error_unknown))
         is BadRequestRestException -> InteractorException.BadRequestRest(UiText.StringResourceId(Res.string.error_unknown))

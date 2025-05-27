@@ -1,8 +1,13 @@
 package com.org.basshead.feature.dashboard.interactor
 
+// 📂 Package: com.org.basshead.feature.dashboard.interactor
+
 import com.org.basshead.feature.dashboard.model.DailyHeadbang
+import com.org.basshead.feature.dashboard.model.DailyHeadbangState
 import com.org.basshead.feature.dashboard.model.FestivalSuggestion
+import com.org.basshead.feature.dashboard.model.FestivalSuggestionState
 import com.org.basshead.feature.dashboard.model.UserFestival
+import com.org.basshead.feature.dashboard.model.UserFestivalState
 import com.org.basshead.utils.cache.CacheKey
 import com.org.basshead.utils.cache.CacheOptions
 import com.org.basshead.utils.interactor.Interactor
@@ -11,30 +16,24 @@ import com.org.basshead.utils.interactor.withInteractorContext
 import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.auth.auth
 import io.github.jan.supabase.postgrest.postgrest
-import kotlinx.serialization.json.buildJsonObject
-import kotlinx.serialization.json.put
 import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonPrimitive
+import kotlinx.serialization.json.buildJsonObject
+import kotlinx.serialization.json.put
 
+// Cache Keys
 data class UserFestivalsPrimaryKey(val statuses: String) : CacheKey
-data class UserFestivalsSecondaryKey(val lastSeenId: String?=null) : CacheKey
+data class UserFestivalsSecondaryKey(val lastSeenId: String? = null) : CacheKey
+data class FestivalSuggestionsPrimaryKey(val statuses: String, val location: String?) : CacheKey
+data class FestivalSuggestionsSecondaryKey(val lastSeenId: String?) : CacheKey
 
-data class FestivalSuggestionsPrimaryKey(
-    val statuses: String,
-    val location: String?
-) : CacheKey
-
-data class FestivalSuggestionsSecondaryKey(
-    val lastSeenId: String?
-) : CacheKey
-
-
-interface DashBoardInteractor: Interactor {
+// Interface
+interface DashBoardInteractor : Interactor {
     suspend fun getDailyHeadbangs(
         startDate: String? = null,
         endDate: String? = null,
-        limit: Int = 30
-    ): List<DailyHeadbang>
+        limit: Int = 30,
+    ): List<DailyHeadbangState>
 
     suspend fun getUserFestivals(
         statuses: List<String> = listOf("all"),
@@ -42,26 +41,27 @@ interface DashBoardInteractor: Interactor {
         lastSeenId: String? = null,
         lastSeenStatus: String? = null,
         lastSeenTime: String? = null,
-        lastSeenRank: Int? = null
-    ): List<UserFestival>
+        lastSeenRank: Int? = null,
+    ): List<UserFestivalState>
 
     suspend fun getFestivalSuggestions(
         statuses: List<String> = listOf("upcoming", "ongoing"),
         limit: Int = 10,
         lastSeenId: String? = null,
-        location: String? = null
-    ): List<FestivalSuggestion>
+        location: String? = null,
+    ): List<FestivalSuggestionState>
 }
 
+// Implementation
 class DashBoardInteractorImpl(
-    private val supabaseClient: SupabaseClient
+    private val supabaseClient: SupabaseClient,
 ) : DashBoardInteractor {
 
     override suspend fun getDailyHeadbangs(
         startDate: String?,
         endDate: String?,
-        limit: Int
-    ): List<DailyHeadbang> {
+        limit: Int,
+    ): List<DailyHeadbangState> {
         return withInteractorContext(retryOption = RetryOption(retryCount = 2)) {
             val currentUser = supabaseClient.auth.currentUserOrNull()
                 ?: throw Exception("Not authenticated")
@@ -73,8 +73,15 @@ class DashBoardInteractorImpl(
                     startDate?.let { put("_start_date", it) }
                     endDate?.let { put("_end_date", it) }
                     put("_limit", limit)
-                }
+                },
             ).decodeList<DailyHeadbang>()
+                .map { networkModel ->
+                    DailyHeadbangState(
+                        date = networkModel.date,
+                        totalCount = networkModel.totalCount,
+                        hasFestival = networkModel.hasFestival,
+                    )
+                }
         }
     }
 
@@ -84,12 +91,15 @@ class DashBoardInteractorImpl(
         lastSeenId: String?,
         lastSeenStatus: String?,
         lastSeenTime: String?,
-        lastSeenRank: Int?
-    ): List<UserFestival> {
-
-        return withInteractorContext(cacheOption = CacheOptions(key = UserFestivalsPrimaryKey(statuses = statuses.toString()),
-            secondaryKey = UserFestivalsSecondaryKey(lastSeenId = lastSeenId)), retryOption = RetryOption(retryCount = 2)) {
-
+        lastSeenRank: Int?,
+    ): List<UserFestivalState> {
+        return withInteractorContext(
+            cacheOption = CacheOptions(
+                key = UserFestivalsPrimaryKey(statuses = statuses.toString()),
+                secondaryKey = UserFestivalsSecondaryKey(lastSeenId = lastSeenId),
+            ),
+            retryOption = RetryOption(retryCount = 2),
+        ) {
             val currentUser = supabaseClient.auth.currentUserOrNull()
                 ?: throw Exception("Not authenticated")
 
@@ -103,8 +113,24 @@ class DashBoardInteractorImpl(
                     lastSeenStatus?.let { put("_last_seen_status", it) }
                     lastSeenTime?.let { put("_last_seen_time", it) }
                     lastSeenRank?.let { put("_last_seen_rank", it) }
-                }
+                },
             ).decodeList<UserFestival>()
+                .map { networkModel ->
+                    UserFestivalState(
+                        id = networkModel.id,
+                        name = networkModel.name,
+                        description = networkModel.description,
+                        location = networkModel.location,
+                        startTime = networkModel.startTime,
+                        endTime = networkModel.endTime,
+                        imageUrl = networkModel.imageUrl,
+                        createdAt = networkModel.createdAt,
+                        status = networkModel.status,
+                        totalHeadbangs = networkModel.totalHeadbangs,
+                        userRank = networkModel.userRank,
+                        totalParticipants = networkModel.totalParticipants,
+                    )
+                }
         }
     }
 
@@ -112,17 +138,17 @@ class DashBoardInteractorImpl(
         statuses: List<String>,
         limit: Int,
         lastSeenId: String?,
-        location: String?
-    ): List<FestivalSuggestion> {
+        location: String?,
+    ): List<FestivalSuggestionState> {
         return withInteractorContext(
             cacheOption = CacheOptions(
                 key = FestivalSuggestionsPrimaryKey(
                     statuses = statuses.toString(),
-                    location = location
+                    location = location,
                 ),
-                secondaryKey = FestivalSuggestionsSecondaryKey(lastSeenId = lastSeenId)
+                secondaryKey = FestivalSuggestionsSecondaryKey(lastSeenId = lastSeenId),
             ),
-            retryOption = RetryOption(retryCount = 2)
+            retryOption = RetryOption(retryCount = 2),
         ) {
             val currentUser = supabaseClient.auth.currentUserOrNull()
                 ?: throw Exception("Not authenticated")
@@ -135,8 +161,22 @@ class DashBoardInteractorImpl(
                     put("_limit", limit)
                     lastSeenId?.let { put("_last_seen_id", it) }
                     location?.let { put("_location", it) }
-                }
+                },
             ).decodeList<FestivalSuggestion>()
+                .map { networkModel ->
+                    FestivalSuggestionState(
+                        id = networkModel.id,
+                        name = networkModel.name,
+                        description = networkModel.description,
+                        location = networkModel.location,
+                        startTime = networkModel.startTime,
+                        endTime = networkModel.endTime,
+                        imageUrl = networkModel.imageUrl,
+                        createdAt = networkModel.createdAt,
+                        status = networkModel.status,
+                        totalParticipants = networkModel.totalParticipants,
+                    )
+                }
         }
     }
 }

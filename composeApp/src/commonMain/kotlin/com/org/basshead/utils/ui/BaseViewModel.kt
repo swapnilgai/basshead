@@ -18,18 +18,18 @@ import kotlinx.coroutines.plus
 
 @Immutable
 sealed interface Route {
-    data class Back(val source: String?): Route
-    data class InternalDirection(val destination: String, val popUpTp: String? = null, val inclusive: Boolean = false): Route
+    data class Back(val source: String?) : Route
+    data class InternalDirection(val destination: String, val popUpTp: String? = null, val inclusive: Boolean = false) : Route
 }
 
 @Immutable
-sealed interface UiState<out T>{
-    data class Error(val message: UiText): UiState<Nothing>
-    data class Content<T>(val data: T, val isLoadingUi:  Boolean = true): UiState<T>
-    data class Navigate(val route: Route): UiState<Route>
+sealed interface UiState<out T> {
+    data class Error(val message: UiText) : UiState<Nothing>
+    data class Content<T>(val data: T, val isLoadingUi: Boolean = true) : UiState<T>
+    data class Navigate(val route: Route) : UiState<Route>
 }
 
-open class BaseViewModel<T>(initialContent: T): ViewModel() {
+open class BaseViewModel<T>(initialContent: T) : ViewModel() {
     private val _errorState: MutableStateFlow<UiState.Error?> = MutableStateFlow(null)
     private val _contentState: MutableStateFlow<UiState.Content<T>> =
         MutableStateFlow(UiState.Content(initialContent))
@@ -47,21 +47,21 @@ open class BaseViewModel<T>(initialContent: T): ViewModel() {
     }.distinctUntilChanged().filterNotNull().stateIn(
         baseViewModelScope,
         SharingStarted.WhileSubscribed(5000L),
-        UiState.Content(initialContent)
+        UiState.Content(initialContent),
     )
 
-    protected fun getContent() : T { return _contentState.value.data }
+    protected fun getContent(): T { return _contentState.value.data }
 
     @MainThread
-    protected fun setContent(data: T){
+    protected fun setContent(data: T) {
         _errorState.update { null }
-        _contentState.update{
+        _contentState.update {
             UiState.Content(data = data, isLoadingUi = false)
         }
     }
 
     @MainThread
-    protected fun setLoading(){
+    protected fun setLoading() {
         _errorState.update { null }
         _contentState.update {
             it.copy(isLoadingUi = true)
@@ -69,16 +69,16 @@ open class BaseViewModel<T>(initialContent: T): ViewModel() {
     }
 
     @MainThread
-    protected fun setError(msg: UiText){
+    protected fun setError(msg: UiText) {
         _errorState.update { UiState.Error(message = msg) }
     }
 
     @MainThread
-    protected fun navigate(destination: String, popUpTp : String ? = null, inclusive: Boolean = false) {
+    protected fun navigate(destination: String, popUpTp: String? = null, inclusive: Boolean = false) {
         _navState.update { UiState.Navigate(Route.InternalDirection(destination = destination, popUpTp = popUpTp, inclusive = inclusive)) }
     }
 
-    protected fun navigateBack(source: String? = null){
+    protected fun navigateBack(source: String? = null) {
         _navState.update { UiState.Navigate(Route.Back(source = source)) }
     }
 }

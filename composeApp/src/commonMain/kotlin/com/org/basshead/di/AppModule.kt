@@ -8,9 +8,10 @@ import org.koin.dsl.module
 
 val appModule = module {
     single<ProjectEnvironment> {
-        if(BuildKonfig.environment == "dev")
+        if (BuildKonfig.environment == "dev") {
             DevelopmentEnvironment()
-        else
+        } else {
             ProductionEnvironment()
+        }
     }
 }

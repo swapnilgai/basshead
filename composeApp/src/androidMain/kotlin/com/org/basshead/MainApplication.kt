@@ -1,14 +1,14 @@
 package com.org.basshead
 
 import android.app.Application
-import com.org.basshead.di.initKoin
+import com.org.basshead.di.InitKoin
 import org.koin.android.ext.koin.androidContext
 
-class MainApplication: Application() {
+class MainApplication : Application() {
 
     override fun onCreate() {
         super.onCreate()
-        initKoin {
+        InitKoin {
             androidContext(this@MainApplication)
         }
     }

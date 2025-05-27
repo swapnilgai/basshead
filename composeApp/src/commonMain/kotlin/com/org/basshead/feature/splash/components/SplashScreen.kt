@@ -22,15 +22,16 @@ import org.jetbrains.compose.resources.painterResource
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
-fun SplashScreenRoot(viewModel: SplashViewModel = koinViewModel(),
-                     navigate: (destination: String, popUpTp: String?, inclusive: Boolean?) -> Unit){
-
+fun SplashScreenRoot(
+    viewModel: SplashViewModel = koinViewModel(),
+    navigate: (destination: String, popUpTp: String?, inclusive: Boolean?) -> Unit,
+) {
     val state = viewModel.state.collectAsStateWithLifecycle()
 
-    when(val currentState = state.value) {
+    when (val currentState = state.value) {
         is UiState.Content -> { SplashScreen() }
         is UiState.Navigate -> {
-            when(currentState.route) {
+            when (currentState.route) {
                 is Route.InternalDirection -> navigate(currentState.route.destination, currentState.route.popUpTp, currentState.route.inclusive)
                 is Route.Back -> {}
             }
@@ -48,19 +49,17 @@ fun SplashScreen() {
                 brush = Brush.verticalGradient(
                     colors = listOf(
                         LightOrange,
-                        PrimaryOrange
-                    )
-                )
+                        PrimaryOrange,
+                    ),
+                ),
             ),
-        contentAlignment = Alignment.Center
+        contentAlignment = Alignment.Center,
     ) {
         Image(
             painter = painterResource(Res.drawable.dog),
             contentDescription = "Headbanging Dog",
             modifier = Modifier
-                .size(200.dp)
+                .size(200.dp),
         )
     }
 }
-
-

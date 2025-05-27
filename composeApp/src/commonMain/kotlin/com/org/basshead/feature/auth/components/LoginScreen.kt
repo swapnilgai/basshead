@@ -54,9 +54,8 @@ import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 
-
 @Composable
-fun LoginScreenRoot(viewModel: AuthViewModel = koinViewModel()){
+fun LoginScreenRoot(viewModel: AuthViewModel = koinViewModel()) {
     val state = viewModel.state.collectAsStateWithLifecycle()
     var showError by remember { mutableStateOf(true) }
 
@@ -64,18 +63,21 @@ fun LoginScreenRoot(viewModel: AuthViewModel = koinViewModel()){
     var password by remember { mutableStateOf("") }
 
     val onLoginClicked = remember {
-        { viewModel.onAction(AuthActions.onLoginClicked(email, password)) }
+        {
+            viewModel.onAction(AuthActions.OnLoginClicked(email, password))
+        }
     }
 
     val onSignUpClicked = remember {
         {
-            viewModel.onAction(AuthActions.onSignUpClicked(email, password))
+            viewModel.onAction(AuthActions.OnSignUpClicked(email, password))
         }
     }
 
-    LaunchedEffect(state.value){
-        if(state.value is UiState.Error)
+    LaunchedEffect(state.value) {
+        if (state.value is UiState.Error) {
             showError = true
+        }
     }
 
     when (val currentState = state.value) {
@@ -86,10 +88,10 @@ fun LoginScreenRoot(viewModel: AuthViewModel = koinViewModel()){
                 onEmailChange = { email = it },
                 onPasswordChange = { password = it },
                 onLogInClicked = onLoginClicked,
-                onSignUpClicked = onSignUpClicked
+                onSignUpClicked = onSignUpClicked,
             )
 
-            if(currentState.isLoadingUi) LoadingScreen()
+            if (currentState.isLoadingUi) LoadingScreen()
         }
 
         is UiState.Error -> {
@@ -99,7 +101,7 @@ fun LoginScreenRoot(viewModel: AuthViewModel = koinViewModel()){
                 onEmailChange = { email = it },
                 onPasswordChange = { password = it },
                 onLogInClicked = onLoginClicked,
-                onSignUpClicked = onSignUpClicked
+                onSignUpClicked = onSignUpClicked,
             )
 
             if (showError) {
@@ -112,33 +114,36 @@ fun LoginScreenRoot(viewModel: AuthViewModel = koinViewModel()){
 }
 
 @Composable
-fun LoginScreen(  email: String,
-                  password: String,
-                  onEmailChange: (String) -> Unit,
-                  onPasswordChange: (String) -> Unit,
-                  onLogInClicked: () -> Unit,
-                  onSignUpClicked: () -> Unit){
-
+fun LoginScreen(
+    email: String,
+    password: String,
+    onEmailChange: (String) -> Unit,
+    onPasswordChange: (String) -> Unit,
+    onLogInClicked: () -> Unit,
+    onSignUpClicked: () -> Unit,
+) {
     val scrollState = rememberScrollState()
 
-    Column(horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = Modifier.fillMaxSize()
-                    .verticalScroll(scrollState)
-                    .background( brush = Brush.verticalGradient(
-                        colors = listOf(
-                            LightOrange,
-                            PrimaryOrange
-                        )
-                    )
-                ).imePadding()
-            ) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier.fillMaxSize()
+            .verticalScroll(scrollState)
+            .background(
+                brush = Brush.verticalGradient(
+                    colors = listOf(
+                        LightOrange,
+                        PrimaryOrange,
+                    ),
+                ),
+            ).imePadding(),
+    ) {
         Spacer(modifier = Modifier.height(128.dp))
         Column(modifier = Modifier.padding(24.dp)) {
             LoginHeader(
                 email = email,
                 password = password,
                 onEmailChange = onEmailChange,
-                onPasswordChanged = onPasswordChange
+                onPasswordChanged = onPasswordChange,
             )
             Spacer(modifier = Modifier.height(32.dp))
             LoginFooter(onLogInClicked = onLogInClicked, onSignUpClicked = onSignUpClicked)
@@ -147,24 +152,24 @@ fun LoginScreen(  email: String,
 }
 
 @Composable
-fun LoginHeader(email: String, password: String, onEmailChange: (String) -> Unit, onPasswordChanged: (String) -> Unit){
-
+fun LoginHeader(email: String, password: String, onEmailChange: (String) -> Unit, onPasswordChanged: (String) -> Unit) {
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
         Image(
-            painter = painterResource(Res.drawable.dog), contentDescription = "",
-            modifier = Modifier.size(100.dp)
+            painter = painterResource(Res.drawable.dog),
+            contentDescription = "",
+            modifier = Modifier.size(100.dp),
         )
         Text(
             text = stringResource(Res.string.app_name),
             fontSize = 24.sp,
             fontWeight = FontWeight.Bold,
-            color = Color.White
+            color = Color.White,
         )
         Text(
             text = stringResource(Res.string.tagline),
             fontWeight = FontWeight.Light,
             color = Color.White,
-            fontSize = 16.sp
+            fontSize = 16.sp,
         )
         OutlinedTextField(
             value = email,
@@ -172,7 +177,7 @@ fun LoginHeader(email: String, password: String, onEmailChange: (String) -> Unit
             label = { Text(stringResource(Res.string.email)) },
             modifier = Modifier.fillMaxWidth(),
             singleLine = true,
-            keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Email)
+            keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Email),
         )
 
         Spacer(modifier = Modifier.height(8.dp))
@@ -184,20 +189,20 @@ fun LoginHeader(email: String, password: String, onEmailChange: (String) -> Unit
             label = { Text(stringResource(Res.string.password)) },
             singleLine = true,
             visualTransformation = PasswordVisualTransformation(),
-            keyboardOptions =  KeyboardOptions.Default.copy( keyboardType =  KeyboardType.Password)
+            keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Password),
         )
     }
 }
 
 @Composable
-fun LoginFooter(onLogInClicked: () -> Unit, onSignUpClicked: () -> Unit){
+fun LoginFooter(onLogInClicked: () -> Unit, onSignUpClicked: () -> Unit) {
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
         Button(
             shape = RoundedCornerShape(50),
             modifier = Modifier.fillMaxWidth(),
             onClick = { onLogInClicked() },
-            colors = ButtonDefaults.buttonColors(PrimaryOrange)
-        ){
+            colors = ButtonDefaults.buttonColors(PrimaryOrange),
+        ) {
             Text(stringResource(Res.string.login))
         }
         Spacer(modifier = Modifier.height(16.dp))
@@ -205,8 +210,8 @@ fun LoginFooter(onLogInClicked: () -> Unit, onSignUpClicked: () -> Unit){
             shape = RoundedCornerShape(50),
             modifier = Modifier.fillMaxWidth(),
             onClick = { onSignUpClicked() },
-            colors = ButtonDefaults.buttonColors(DesertWhite)
-        ){
+            colors = ButtonDefaults.buttonColors(DesertWhite),
+        ) {
             Text(stringResource(Res.string.create_account))
         }
     }

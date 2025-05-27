@@ -21,5 +21,4 @@ sealed interface Route {
 
     @Serializable
     data class FestivalLeaderBoard(val festivalID: String)
-
 }

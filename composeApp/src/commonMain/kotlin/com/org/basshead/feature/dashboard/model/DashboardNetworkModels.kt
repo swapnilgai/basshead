@@ -9,7 +9,7 @@ data class DailyHeadbang(
     @SerialName("total_count")
     val totalCount: Int,
     @SerialName("has_festival")
-    val hasFestival: Boolean
+    val hasFestival: Boolean,
 )
 
 @Serializable
@@ -32,7 +32,7 @@ data class UserFestival(
     @SerialName("user_rank")
     val userRank: Int?,
     @SerialName("total_participants")
-    val totalParticipants: Int
+    val totalParticipants: Int,
 )
 
 @Serializable
@@ -46,5 +46,5 @@ data class FestivalSuggestion(
     @SerialName("image_url") val imageUrl: String?,
     @SerialName("created_at") val createdAt: String,
     val status: String,
-    @SerialName("total_participants") val totalParticipants: Int
+    @SerialName("total_participants") val totalParticipants: Int,
 )

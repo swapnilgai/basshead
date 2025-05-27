@@ -7,7 +7,6 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.org.basshead.feature.auth.components.LoginScreenRoot
 import com.org.basshead.feature.splash.components.SplashScreenRoot
-import org.koin.core.module.flatten
 
 @Composable
 fun NavigationGraph(navController: NavHostController) {
@@ -18,7 +17,7 @@ fun NavigationGraph(navController: NavHostController) {
             Route.Dashboard::class.simpleName to "dashboard",
             Route.Profile::class.simpleName to "profile",
             Route.FestivalDetails::class.simpleName to "festival_detail",
-            Route.FestivalLeaderBoard::class.simpleName to "festival_leaderboard"
+            Route.FestivalLeaderBoard::class.simpleName to "festival_leaderboard",
         )
     }
 
@@ -28,7 +27,7 @@ fun NavigationGraph(navController: NavHostController) {
                 navController.navigate(routes[destination]!!) {
                     popUpTp?.let {
                         this.popUpTo(routes[popUpTp]!!) {
-                            this.inclusive = inclusive?: false
+                            this.inclusive = inclusive ?: false
                         }
                     }
                 }
