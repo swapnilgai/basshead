@@ -9,6 +9,7 @@ plugins {
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.buildKonfig)
     id("app-config-plugin")
+    alias(libs.plugins.kotlinSerialization)
 }
 
 val projectProperties: ProjectProperties = projectProperties().get()
@@ -56,6 +57,7 @@ kotlin {
             implementation(libs.koin.compose)
             implementation(libs.koin.compose.viewmodel)
             implementation(libs.jetbrains.compose.navigation)
+            implementation(libs.kotlinx.serialization.json)
             api(libs.koin.core)
         }
     }

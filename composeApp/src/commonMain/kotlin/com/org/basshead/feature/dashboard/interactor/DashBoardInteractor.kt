@@ -1,7 +1,5 @@
 package com.org.basshead.feature.dashboard.interactor
 
-// 📂 Package: com.org.basshead.feature.dashboard.interactor
-
 import com.org.basshead.feature.dashboard.model.DailyHeadbang
 import com.org.basshead.feature.dashboard.model.DailyHeadbangState
 import com.org.basshead.feature.dashboard.model.FestivalSuggestion
@@ -16,6 +14,7 @@ import com.org.basshead.utils.interactor.withInteractorContext
 import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.auth.auth
 import io.github.jan.supabase.postgrest.postgrest
+import io.github.jan.supabase.postgrest.rpc
 import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.buildJsonObject
@@ -74,14 +73,13 @@ class DashBoardInteractorImpl(
                     endDate?.let { put("_end_date", it) }
                     put("_limit", limit)
                 },
-            ).decodeList<DailyHeadbang>()
-                .map { networkModel ->
-                    DailyHeadbangState(
-                        date = networkModel.date,
-                        totalCount = networkModel.totalCount,
-                        hasFestival = networkModel.hasFestival,
-                    )
-                }
+            ).decodeList<DailyHeadbang>().map {
+                DailyHeadbangState(
+                    date = it.date,
+                    totalCount = it.totalCount,
+                    hasFestival = it.hasFestival,
+                )
+            }.ifEmpty { emptyList() }
         }
     }
 
@@ -114,23 +112,22 @@ class DashBoardInteractorImpl(
                     lastSeenTime?.let { put("_last_seen_time", it) }
                     lastSeenRank?.let { put("_last_seen_rank", it) }
                 },
-            ).decodeList<UserFestival>()
-                .map { networkModel ->
-                    UserFestivalState(
-                        id = networkModel.id,
-                        name = networkModel.name,
-                        description = networkModel.description,
-                        location = networkModel.location,
-                        startTime = networkModel.startTime,
-                        endTime = networkModel.endTime,
-                        imageUrl = networkModel.imageUrl,
-                        createdAt = networkModel.createdAt,
-                        status = networkModel.status,
-                        totalHeadbangs = networkModel.totalHeadbangs,
-                        userRank = networkModel.userRank,
-                        totalParticipants = networkModel.totalParticipants,
-                    )
-                }
+            ).decodeList<UserFestival>().map {
+                UserFestivalState(
+                    id = it.id,
+                    name = it.name,
+                    description = it.description,
+                    location = it.location,
+                    startTime = it.startTime,
+                    endTime = it.endTime,
+                    imageUrl = it.imageUrl,
+                    createdAt = it.createdAt,
+                    status = it.status,
+                    totalHeadbangs = it.totalHeadbangs,
+                    userRank = it.userRank,
+                    totalParticipants = it.totalParticipants,
+                )
+            }.ifEmpty { emptyList() }
         }
     }
 
@@ -148,7 +145,7 @@ class DashBoardInteractorImpl(
                 ),
                 secondaryKey = FestivalSuggestionsSecondaryKey(lastSeenId = lastSeenId),
             ),
-            retryOption = RetryOption(retryCount = 2),
+            retryOption = RetryOption(retryCount = 0),
         ) {
             val currentUser = supabaseClient.auth.currentUserOrNull()
                 ?: throw Exception("Not authenticated")
@@ -162,21 +159,20 @@ class DashBoardInteractorImpl(
                     lastSeenId?.let { put("_last_seen_id", it) }
                     location?.let { put("_location", it) }
                 },
-            ).decodeList<FestivalSuggestion>()
-                .map { networkModel ->
-                    FestivalSuggestionState(
-                        id = networkModel.id,
-                        name = networkModel.name,
-                        description = networkModel.description,
-                        location = networkModel.location,
-                        startTime = networkModel.startTime,
-                        endTime = networkModel.endTime,
-                        imageUrl = networkModel.imageUrl,
-                        createdAt = networkModel.createdAt,
-                        status = networkModel.status,
-                        totalParticipants = networkModel.totalParticipants,
-                    )
-                }
+            ).decodeList<FestivalSuggestion>().map {
+                FestivalSuggestionState(
+                    id = it.id,
+                    name = it.name,
+                    description = it.description,
+                    location = it.location,
+                    startTime = it.startTime,
+                    endTime = it.endTime,
+                    imageUrl = it.imageUrl,
+                    createdAt = it.createdAt,
+                    status = it.status,
+                    totalParticipants = it.totalParticipants,
+                )
+            }.ifEmpty { emptyList() }
         }
     }
 }

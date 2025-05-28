@@ -1,6 +1,7 @@
 package com.org.basshead.feature.auth.presentation
 
 import com.org.basshead.feature.auth.interactor.AuthInteractor
+import com.org.basshead.navigation.Route
 import com.org.basshead.utils.ui.BaseViewModel
 import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.auth.auth
@@ -31,6 +32,8 @@ class AuthViewModel(val supabaseClient: SupabaseClient, val authInteractor: Auth
             setLoading()
             authInteractor.logIn(email, password)
             setContent(getContent())
+//            navigate(destination = Route.Dashboard::class.simpleName!!,
+//                popUpTp = Route.Splash::class.simpleName, inclusive = true)
         }
     }
 
@@ -49,7 +52,11 @@ class AuthViewModel(val supabaseClient: SupabaseClient, val authInteractor: Auth
                 when (it) {
                     is SessionStatus.Authenticated -> {
                         println("Initializing")
-                        // navigate(destination = Route.Auth::class.simpleName!!, popUpTp = Route.Splash::class.simpleName)
+                        navigate(
+                            destination = Route.Dashboard::class.simpleName!!,
+                            popUpTp = Route.Splash::class.simpleName,
+                            inclusive = true,
+                        )
                     }
                     SessionStatus.Initializing -> println("Initializing")
                     is SessionStatus.RefreshFailure -> println("Refresh failure ${it.cause}") // Either a network error or a internal server error

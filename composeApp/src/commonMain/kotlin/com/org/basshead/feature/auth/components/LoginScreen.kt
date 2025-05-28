@@ -49,13 +49,17 @@ import com.org.basshead.utils.components.LoadingScreen
 import com.org.basshead.utils.core.DesertWhite
 import com.org.basshead.utils.core.LightOrange
 import com.org.basshead.utils.core.PrimaryOrange
+import com.org.basshead.utils.ui.Route
 import com.org.basshead.utils.ui.UiState
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
-fun LoginScreenRoot(viewModel: AuthViewModel = koinViewModel()) {
+fun LoginScreenRoot(
+    viewModel: AuthViewModel = koinViewModel(),
+    navigate: (destination: String, popUpTp: String?, inclusive: Boolean?) -> Unit,
+) {
     val state = viewModel.state.collectAsStateWithLifecycle()
     var showError by remember { mutableStateOf(true) }
 
@@ -106,6 +110,12 @@ fun LoginScreenRoot(viewModel: AuthViewModel = koinViewModel()) {
 
             if (showError) {
                 ErrorScreen(currentState.message.asString()) { showError = false }
+            }
+        }
+        is UiState.Navigate -> {
+            when (currentState.route) {
+                is Route.InternalDirection -> navigate(currentState.route.destination, currentState.route.popUpTp, currentState.route.inclusive)
+                is Route.Back -> {}
             }
         }
 
