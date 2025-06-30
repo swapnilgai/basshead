@@ -59,6 +59,8 @@ kotlin {
             implementation(libs.jetbrains.compose.navigation)
             implementation(libs.kotlinx.serialization.json)
             api(libs.koin.core)
+            implementation(libs.coil.compose)
+            implementation(libs.coil.network.ktor)
         }
     }
 }
@@ -144,3 +146,5 @@ buildkonfig {
 dependencies {
     debugImplementation(compose.uiTooling)
 }
+
+

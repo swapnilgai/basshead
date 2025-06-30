@@ -6,6 +6,9 @@ import com.org.basshead.feature.dashboard.model.FestivalSuggestion
 import com.org.basshead.feature.dashboard.model.FestivalSuggestionState
 import com.org.basshead.feature.dashboard.model.UserFestival
 import com.org.basshead.feature.dashboard.model.UserFestivalState
+import com.org.basshead.feature.dashboard.model.UserProfile
+import com.org.basshead.feature.dashboard.model.UserProfileState
+import com.org.basshead.feature.dashboard.model.toUiModel
 import com.org.basshead.utils.cache.CacheKey
 import com.org.basshead.utils.cache.CacheOptions
 import com.org.basshead.utils.interactor.Interactor
@@ -26,6 +29,11 @@ data class UserFestivalsSecondaryKey(val lastSeenId: String? = null) : CacheKey
 data class FestivalSuggestionsPrimaryKey(val statuses: String, val location: String?) : CacheKey
 data class FestivalSuggestionsSecondaryKey(val lastSeenId: String?) : CacheKey
 
+// Object-based CacheKey for user profile
+object UserProfileKey : CacheKey {
+    override fun toString(): String = "UserProfileKey"
+}
+
 // Interface
 interface DashBoardInteractor : Interactor {
     suspend fun getDailyHeadbangs(
@@ -36,19 +44,20 @@ interface DashBoardInteractor : Interactor {
 
     suspend fun getUserFestivals(
         statuses: List<String> = listOf("all"),
-        limit: Int = 10,
+        limit: Int = 2,
         lastSeenId: String? = null,
         lastSeenStatus: String? = null,
         lastSeenTime: String? = null,
-        lastSeenRank: Int? = null,
     ): List<UserFestivalState>
 
     suspend fun getFestivalSuggestions(
         statuses: List<String> = listOf("upcoming", "ongoing"),
-        limit: Int = 10,
+        limit: Int = 3,
         lastSeenId: String? = null,
         location: String? = null,
     ): List<FestivalSuggestionState>
+
+    suspend fun getUserProfile(): UserProfileState?
 }
 
 // Implementation
@@ -60,27 +69,26 @@ class DashBoardInteractorImpl(
         startDate: String?,
         endDate: String?,
         limit: Int,
-    ): List<DailyHeadbangState> {
-        return withInteractorContext(retryOption = RetryOption(retryCount = 2)) {
-            val currentUser = supabaseClient.auth.currentUserOrNull()
-                ?: throw Exception("Not authenticated")
+    ): List<DailyHeadbangState> = withInteractorContext(retryOption = RetryOption(retryCount = 2)) {
+        val currentUser = supabaseClient.auth.currentUserOrNull()
+            ?: throw Exception("Not authenticated")
 
-            supabaseClient.postgrest.rpc(
-                "get_user_daily_headbangs",
-                parameters = buildJsonObject {
-                    put("_user_id", currentUser.id)
-                    startDate?.let { put("_start_date", it) }
-                    endDate?.let { put("_end_date", it) }
-                    put("_limit", limit)
-                },
-            ).decodeList<DailyHeadbang>().map {
+        supabaseClient.postgrest.rpc(
+            "get_user_daily_headbangs",
+            parameters = buildJsonObject {
+                put("_user_id", currentUser.id)
+                startDate?.let { put("_start_date", it) }
+                endDate?.let { put("_end_date", it) }
+                put("_limit", limit)
+            },
+        ).decodeList<DailyHeadbang>()
+            .map { networkModel ->
                 DailyHeadbangState(
-                    date = it.date,
-                    totalCount = it.totalCount,
-                    hasFestival = it.hasFestival,
+                    date = networkModel.date,
+                    totalCount = networkModel.totalCount,
+                    hasFestival = networkModel.hasFestival,
                 )
-            }.ifEmpty { emptyList() }
-        }
+            }
     }
 
     override suspend fun getUserFestivals(
@@ -89,46 +97,44 @@ class DashBoardInteractorImpl(
         lastSeenId: String?,
         lastSeenStatus: String?,
         lastSeenTime: String?,
-        lastSeenRank: Int?,
-    ): List<UserFestivalState> {
-        return withInteractorContext(
-            cacheOption = CacheOptions(
-                key = UserFestivalsPrimaryKey(statuses = statuses.toString()),
-                secondaryKey = UserFestivalsSecondaryKey(lastSeenId = lastSeenId),
-            ),
-            retryOption = RetryOption(retryCount = 2),
-        ) {
-            val currentUser = supabaseClient.auth.currentUserOrNull()
-                ?: throw Exception("Not authenticated")
+    ): List<UserFestivalState> = withInteractorContext(
+        cacheOption = CacheOptions(
+            key = UserFestivalsPrimaryKey(statuses = statuses.toString()),
+            secondaryKey = UserFestivalsSecondaryKey(lastSeenId = lastSeenId),
+        ),
+        retryOption = RetryOption(retryCount = 2),
+    ) {
+        val currentUser = supabaseClient.auth.currentUserOrNull()
+            ?: throw Exception("Not authenticated")
 
-            supabaseClient.postgrest.rpc(
-                "get_user_festivals",
-                parameters = buildJsonObject {
-                    put("_user_id", currentUser.id)
-                    put("_status", JsonArray(statuses.map { JsonPrimitive(it) }))
-                    put("_limit", limit)
-                    lastSeenId?.let { put("_last_seen_id", it) }
-                    lastSeenStatus?.let { put("_last_seen_status", it) }
-                    lastSeenTime?.let { put("_last_seen_time", it) }
-                    lastSeenRank?.let { put("_last_seen_rank", it) }
-                },
-            ).decodeList<UserFestival>().map {
+        // Pass parameters directly without conversion
+        supabaseClient.postgrest.rpc(
+            "get_user_festivals",
+            parameters = buildJsonObject {
+                put("_user_id", currentUser.id)
+                put("_status", JsonArray(statuses.map { JsonPrimitive(it) }))
+                put("_limit", limit)
+                lastSeenId?.let { put("_last_seen_id", it) }
+                lastSeenStatus?.let { put("_last_seen_status", it) }
+                lastSeenTime?.let { put("_last_seen_time", it) }
+            },
+        ).decodeList<UserFestival>()
+            .map { networkModel ->
                 UserFestivalState(
-                    id = it.id,
-                    name = it.name,
-                    description = it.description,
-                    location = it.location,
-                    startTime = it.startTime,
-                    endTime = it.endTime,
-                    imageUrl = it.imageUrl,
-                    createdAt = it.createdAt,
-                    status = it.status,
-                    totalHeadbangs = it.totalHeadbangs,
-                    userRank = it.userRank,
-                    totalParticipants = it.totalParticipants,
+                    id = networkModel.id,
+                    name = networkModel.name,
+                    description = networkModel.description,
+                    location = networkModel.location,
+                    startTime = networkModel.startTime,
+                    endTime = networkModel.endTime,
+                    imageUrl = networkModel.imageUrl,
+                    createdAt = networkModel.createdAt,
+                    status = networkModel.status,
+                    totalHeadbangs = networkModel.totalHeadbangs,
+                    userRank = networkModel.userRank,
+                    totalParticipants = networkModel.totalParticipants,
                 )
-            }.ifEmpty { emptyList() }
-        }
+            }
     }
 
     override suspend fun getFestivalSuggestions(
@@ -136,43 +142,48 @@ class DashBoardInteractorImpl(
         limit: Int,
         lastSeenId: String?,
         location: String?,
-    ): List<FestivalSuggestionState> {
-        return withInteractorContext(
-            cacheOption = CacheOptions(
-                key = FestivalSuggestionsPrimaryKey(
-                    statuses = statuses.toString(),
-                    location = location,
-                ),
-                secondaryKey = FestivalSuggestionsSecondaryKey(lastSeenId = lastSeenId),
+    ): List<FestivalSuggestionState> = withInteractorContext(
+        cacheOption = CacheOptions(
+            key = FestivalSuggestionsPrimaryKey(
+                statuses = statuses.toString(),
+                location = location,
             ),
-            retryOption = RetryOption(retryCount = 0),
-        ) {
-            val currentUser = supabaseClient.auth.currentUserOrNull()
-                ?: throw Exception("Not authenticated")
+            secondaryKey = FestivalSuggestionsSecondaryKey(lastSeenId = lastSeenId),
+        ),
+        retryOption = RetryOption(retryCount = 0),
+    ) {
+        val currentUser = supabaseClient.auth.currentUserOrNull()
+            ?: throw Exception("Not authenticated")
 
-            supabaseClient.postgrest.rpc(
-                "get_festival_suggestions",
-                parameters = buildJsonObject {
-                    put("_user_id", currentUser.id)
-                    put("_status", JsonArray(statuses.map { JsonPrimitive(it) }))
-                    put("_limit", limit)
-                    lastSeenId?.let { put("_last_seen_id", it) }
-                    location?.let { put("_location", it) }
-                },
-            ).decodeList<FestivalSuggestion>().map {
-                FestivalSuggestionState(
-                    id = it.id,
-                    name = it.name,
-                    description = it.description,
-                    location = it.location,
-                    startTime = it.startTime,
-                    endTime = it.endTime,
-                    imageUrl = it.imageUrl,
-                    createdAt = it.createdAt,
-                    status = it.status,
-                    totalParticipants = it.totalParticipants,
-                )
-            }.ifEmpty { emptyList() }
-        }
+        supabaseClient.postgrest.rpc(
+            "get_festival_suggestions",
+            parameters = buildJsonObject {
+                put("_user_id", currentUser.id)
+                put("_status", JsonArray(statuses.map { JsonPrimitive(it) }))
+                put("_limit", limit)
+                lastSeenId?.let { put("_last_seen_id", it) }
+                location?.let { put("_location", it) }
+            },
+        ).decodeList<FestivalSuggestion>()
+            .map { networkModel -> networkModel.toUiModel() }
+    }
+
+    override suspend fun getUserProfile(): UserProfileState? = withInteractorContext(
+        cacheOption = CacheOptions(
+            key = UserProfileKey
+        ),
+        retryOption = RetryOption(retryCount = 1)
+    ) {
+        val currentUser = supabaseClient.auth.currentUserOrNull()
+            ?: return@withInteractorContext null
+
+        supabaseClient.postgrest["profiles"]
+            .select {
+                filter {
+                    eq("id", currentUser.id)
+                }
+            }
+            .decodeSingle<UserProfile>()
+            .toUiModel()
     }
 }

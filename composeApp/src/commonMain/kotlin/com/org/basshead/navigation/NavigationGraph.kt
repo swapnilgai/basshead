@@ -6,7 +6,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.org.basshead.feature.auth.components.LoginScreenRoot
-import com.org.basshead.feature.dashboard.components.DashboardList
+import com.org.basshead.feature.dashboard.components.DashboardScreenRoot
 import com.org.basshead.feature.splash.components.SplashScreenRoot
 
 @Composable
@@ -34,7 +34,7 @@ fun NavigationGraph(navController: NavHostController) {
             }
         }
         composable(routes[Route.Dashboard::class.simpleName]!!) {
-            DashboardList { destination, popUpTp, inclusive ->
+            DashboardScreenRoot { destination, popUpTp, inclusive ->
                 navigate(navController, routes, destination, popUpTp, inclusive)
             }
         }

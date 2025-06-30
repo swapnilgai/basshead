@@ -11,7 +11,7 @@ import io.github.jan.supabase.auth.user.UserInfo
 interface AuthInteractor : Interactor {
     suspend fun signUp(email: String, password: String): UserInfo?
     suspend fun logIn(email: String, password: String)
-    suspend fun getCurrentUser()
+    suspend fun getCurrentUser(): UserInfo?
 }
 
 class AuthInteractorImpl(val supabaseClient: SupabaseClient) : AuthInteractor {
@@ -34,8 +34,8 @@ class AuthInteractorImpl(val supabaseClient: SupabaseClient) : AuthInteractor {
         }
     }
 
-    override suspend fun getCurrentUser() {
-        withInteractorContext(retryOption = RetryOption(retryCount = 2)) {
+    override suspend fun getCurrentUser() : UserInfo? {
+      return withInteractorContext(retryOption = RetryOption(retryCount = 2)) {
             supabaseClient.auth.currentUserOrNull()
         }
     }

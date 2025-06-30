@@ -43,3 +43,4 @@ out
 .cxx
 .kotlin
 keystore.properties
+.vscode/*

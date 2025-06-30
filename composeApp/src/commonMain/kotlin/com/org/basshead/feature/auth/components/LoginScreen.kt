@@ -115,7 +115,7 @@ fun LoginScreenRoot(
         is UiState.Navigate -> {
             when (currentState.route) {
                 is Route.InternalDirection -> navigate(currentState.route.destination, currentState.route.popUpTp, currentState.route.inclusive)
-                is Route.Back -> {}
+                is Route.Back -> navigate("back", null, null)
             }
         }
 
