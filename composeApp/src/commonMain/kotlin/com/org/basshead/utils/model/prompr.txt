@@ -1,0 +1,39 @@
+We have a custome hardware which can sync with head bangs in music festivals, its similar to syn steps, but expect steps it sync head bangs.
+It can start with flash screen and log/ signup screen, then on glo in success it can go to home screen.
+Home screen has two tabs current activity/ ongoing music festivals and next tag is upcoming festivals which user can choose to check in.
+
+Tab2 -> upcoming festivals tab: In this user can see upcoming musci festival list, on clicking user can see festival details like location start time
+ and bottom stick with check in button.
+Tab2 -> current activity/ ongoing tab: When user click on check in button from upcoming music festival list it we can see that festival in current festival where user hase clicked in chec in.
+
+Festival type:
+Ongoing festivals: festival is currently on going
+Completed festivals: festival is completed.
+upcoming festivals: festival is upcoming.
+
+On Click
+Ongoing festivals: User can see festival name and small details on top which will be 90% gone on swipe up. in rest of the screen user can see particapitents leaderbaord.
+Loeader board: based on my head bangs user can egt rank.
+There will be there dots on top right corner which can have quit button. On clicking quit button there should be a pop up to confirm and on ues quit on no dis appear pop up.
+
+
+Not sure where to add profile icon ?
+Profile page: op top name of user then,  user icon/ avatar is like image. but that wil be sliding selection for 20+ icons we provide. this will be 50% of screen.
+In remaining screen logout, for provide feedback screen.
+
+I am using jetpack multicompose and supabase for backend project.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

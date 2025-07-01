@@ -1,7 +1,8 @@
 package com.org.basshead.utils.httpclient
 
-import com.org.basshead.utils.model.ProjectEnvironment
+import com.org.basshead.utils.core.ProjectEnvironment
 import io.github.jan.supabase.SupabaseClient
+import io.github.jan.supabase.auth.Auth
 import io.github.jan.supabase.createSupabaseClient
 import io.github.jan.supabase.postgrest.Postgrest
 
@@ -12,5 +13,6 @@ class HttpClient(projectEnvironment: ProjectEnvironment) {
         supabaseKey = projectEnvironment.apiKey,
     ) {
         install(Postgrest)
+        install(Auth)
     }
 }
