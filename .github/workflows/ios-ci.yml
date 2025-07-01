@@ -35,14 +35,26 @@ jobs:
       - name: Run KtLint
         run: ./gradlew ktlintCheck --info --stacktrace
 
-      - name: Build iOS frameworks (device and simulator)
+      - name: Build iOS app (archive)
         run: |
-          ./gradlew :composeApp:linkReleaseFrameworkIosArm64 :composeApp:linkReleaseFrameworkIosSimulatorArm64 --stacktrace
+          cd iosApp
+          xcodebuild -workspace iosApp.xcworkspace \
+            -scheme iosApp \
+            -configuration Release \
+            -sdk iphoneos \
+            -archivePath $PWD/build/iosApp.xcarchive \
+            archive
 
-      - name: Archive iOS frameworks
+      - name: Export IPA
+        run: |
+          cd iosApp
+          xcodebuild -exportArchive \
+            -archivePath build/iosApp.xcarchive \
+            -exportPath build/ipa \
+            -exportOptionsPlist ExportOptions.plist
+
+      - name: Upload IPA
         uses: actions/upload-artifact@v4
         with:
-          name: ios-frameworks
-          path: |
-            composeApp/build/bin/iosArm64/releaseFramework/
-            composeApp/build/bin/iosSimulatorArm64/releaseFramework/
+          name: ios-ipa
+          path: iosApp/build/ipa/*.ipa
