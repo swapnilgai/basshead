@@ -24,12 +24,12 @@ import androidx.compose.ui.unit.dp
 import basshead.composeapp.generated.resources.Res
 import basshead.composeapp.generated.resources.error_unknown
 import coil3.compose.AsyncImage
-import com.org.basshead.feature.dashboard.model.FestivalSuggestionState
+import com.org.basshead.feature.dashboard.model.FestivalItemState
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun FestivalItem(
-    festival: FestivalSuggestionState,
+    festival: FestivalItemState,
     modifier: Modifier = Modifier,
 ) {
     Card(
@@ -49,7 +49,6 @@ fun FestivalItem(
                     .height(180.dp)
                     .clip(RoundedCornerShape(8.dp)),
                 contentScale = ContentScale.Crop,
-//                placeholder = painterResource(Res.drawable.dog)
             )
 
             Spacer(modifier = Modifier.height(2.dp))
@@ -75,7 +74,7 @@ fun FestivalItem(
 
             Text(
                 modifier = Modifier.padding(horizontal = 16.dp),
-                text = festival.dateString,
+                text = festival.dateString ?: "",
                 style = MaterialTheme.typography.body2,
                 color = MaterialTheme.colors.onSurface,
             )

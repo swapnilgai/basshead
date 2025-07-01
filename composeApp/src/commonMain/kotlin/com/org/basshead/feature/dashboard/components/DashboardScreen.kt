@@ -24,6 +24,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.org.basshead.feature.dashboard.model.DashBoardUiState
+import com.org.basshead.feature.dashboard.model.FestivalItemState
 import com.org.basshead.feature.dashboard.model.FestivalSuggestionState
 import com.org.basshead.feature.dashboard.presentation.DashBoardActions
 import com.org.basshead.feature.dashboard.presentation.DashBoardViewModel
@@ -47,9 +49,9 @@ fun DashboardScreenRoot(
     // Track pagination triggers to avoid unnecessary calls
     var lastTriggeredIndex by remember { mutableIntStateOf(-1) }
 
-    // Helper to extract the list safely from UiState.Content
-    fun extractFestivalList(uiState: UiState<*>): List<FestivalSuggestionState> =
-        (uiState as? UiState.Content<*>)?.data as? List<FestivalSuggestionState> ?: emptyList()
+    // Helper to extract the DashBoardUiState safely from UiState.Content
+    fun extractUiState(uiState: UiState<*>): DashBoardUiState =
+        (uiState as? UiState.Content<*>)?.data as? DashBoardUiState ?: DashBoardUiState()
 
     // Optimized pagination trigger with debouncing
     LaunchedEffect(listState, hasMore) {
@@ -64,7 +66,9 @@ fun DashboardScreenRoot(
         }
             .distinctUntilChanged() // Only emit when values actually change
             .collect { (lastVisibleIndex, totalItems, visibleCount) ->
-                val festivalList = extractFestivalList(state.value)
+                val dashBoardUiState = extractUiState(state.value)
+                val joinedFestivals = dashBoardUiState.joinedFestivals
+                val suggestionFestivals = dashBoardUiState.suggestionFestivals
 
                 // Only trigger pagination if:
                 // 1. We have items to show
@@ -73,7 +77,7 @@ fun DashboardScreenRoot(
                 // 4. We're not already loading more
                 // 5. There might be more data
                 // 6. We're not in an error state
-                if (festivalList.isNotEmpty() &&
+                if ((joinedFestivals.isNotEmpty() || suggestionFestivals.isNotEmpty()) &&
                     lastVisibleIndex >= totalItems - 1 &&
                     lastVisibleIndex > lastTriggeredIndex &&
                     !isLoadingMore &&
@@ -89,15 +93,18 @@ fun DashboardScreenRoot(
 
     // Reset trigger when data changes significantly (e.g., refresh)
     LaunchedEffect(state.value) {
-        val currentList = extractFestivalList(state.value)
-        if (currentList.isEmpty()) {
+        val currentList = extractUiState(state.value)
+        if (currentList.suggestionFestivals.isEmpty() && currentList.joinedFestivals.isEmpty()) {
             lastTriggeredIndex = -1
         }
     }
 
     when (val currentState = state.value) {
         is UiState.Content -> {
-            val festivalList = extractFestivalList(currentState)
+            val dashBoardUiState = extractUiState(currentState)
+            val joinedFestivals = dashBoardUiState.joinedFestivals
+            val suggestionFestivals = dashBoardUiState.suggestionFestivals
+            val profile = dashBoardUiState.profile
 
             Box(modifier = Modifier.fillMaxSize()) {
                 LazyColumn(
@@ -105,18 +112,44 @@ fun DashboardScreenRoot(
                     modifier = Modifier.fillMaxSize(),
                     contentPadding = PaddingValues(bottom = 16.dp),
                 ) {
-                    items(
-                        items = festivalList,
-                        key = { it.id },
-                    ) { festival ->
-                        FestivalItem(
-                            festival = festival,
-                            modifier = Modifier.animateItem(),
-                        )
+                    if (joinedFestivals.isNotEmpty()) {
+                        item(key = "joined_header") {
+                            Text(
+                                text = "Your Festivals",
+                                style = MaterialTheme.typography.h6,
+                                modifier = Modifier.padding(16.dp)
+                            )
+                        }
+                        items(
+                            items = joinedFestivals,
+                            key = { it.id },
+                        ) { festival ->
+                            FestivalItem(
+                                festival = festival,
+                                modifier = Modifier.animateItem(),
+                            )
+                        }
                     }
-
+                    if (suggestionFestivals.isNotEmpty()) {
+                        item(key = "suggestion_header") {
+                            Text(
+                                text = "Suggestions",
+                                style = MaterialTheme.typography.h6,
+                                modifier = Modifier.padding(16.dp)
+                            )
+                        }
+                        items(
+                            items = suggestionFestivals,
+                            key = { it.id },
+                        ) { festival ->
+                            FestivalItem(
+                                festival = festival,
+                                modifier = Modifier.animateItem(),
+                            )
+                        }
+                    }
                     // Show loading indicator when loading more (but not initial load)
-                    if (isLoadingMore && festivalList.isNotEmpty()) {
+                    if (isLoadingMore && (joinedFestivals.isNotEmpty() || suggestionFestivals.isNotEmpty())) {
                         item(key = "loading_more") {
                             Box(
                                 modifier = Modifier
@@ -131,9 +164,8 @@ fun DashboardScreenRoot(
                             }
                         }
                     }
-
                     // Show "No more items" indicator when pagination ends
-                    if (!isLoadingMore && festivalList.isNotEmpty() && !hasMore) {
+                    if (!isLoadingMore && (joinedFestivals.isNotEmpty() || suggestionFestivals.isNotEmpty()) && !hasMore) {
                         item(key = "end_of_list") {
                             Box(
                                 modifier = Modifier
@@ -150,7 +182,7 @@ fun DashboardScreenRoot(
                         }
                     }
                 }
-                if (currentState.isLoadingUi && festivalList.isEmpty()) {
+                if (currentState.isLoadingUi && joinedFestivals.isEmpty() && suggestionFestivals.isEmpty()) {
                     LoadingScreen()
                 }
             }

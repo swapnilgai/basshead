@@ -1,9 +1,12 @@
 package com.org.basshead.feature.dashboard.presentation
 
 import com.org.basshead.feature.dashboard.interactor.DashBoardInteractor
-import com.org.basshead.feature.dashboard.model.FestivalSuggestionState
+import com.org.basshead.feature.dashboard.model.DashBoardUiState
+import com.org.basshead.feature.dashboard.model.FestivalItemState
+import com.org.basshead.feature.dashboard.model.UserProfileState
 import com.org.basshead.utils.ui.BaseViewModel
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -17,7 +20,7 @@ sealed interface DashBoardActions {
 
 class DashBoardViewModel(
     private val dashBoardInteractor: DashBoardInteractor,
-) : BaseViewModel<List<FestivalSuggestionState>>(emptyList()) {
+) : BaseViewModel<DashBoardUiState>(DashBoardUiState()) {
 
     // Pagination state
     private var lastSeenId: String? = null
@@ -46,15 +49,25 @@ class DashBoardViewModel(
     }
 
     private fun loadInitialData() {
-        resetPaginationState()
         setLoading()
+        resetPaginationState()
         baseViewModelScope.launch {
-            val result = dashBoardInteractor.getFestivalSuggestions(
-                limit = pageSize,
-                lastSeenId = null,
+            val festivalSuggestionsAsync = async { dashBoardInteractor.getFestivalSuggestions(limit = pageSize, lastSeenId = null) }
+            val userFestivalAsync = async { dashBoardInteractor.getUserFestivals() }
+            val profileAsync = async { dashBoardInteractor.getUserProfile() }
+
+            val suggestionFestivals = festivalSuggestionsAsync.await()
+            val joinedFestivals = userFestivalAsync.await()
+            val profile = profileAsync.await()
+
+            updatePaginationState(suggestionFestivals)
+            setContent(
+                DashBoardUiState(
+                    joinedFestivals = joinedFestivals,
+                    suggestionFestivals = suggestionFestivals,
+                    profile = profile
+                )
             )
-            updatePaginationState(result)
-            setContent(result)
         }
     }
 
@@ -71,32 +84,42 @@ class DashBoardViewModel(
         // Early return conditions to prevent unnecessary calls
         if (isLoadingMoreInternal || !_hasMore.value) return
 
-        val currentList = getContent()
-        if (currentList.isEmpty()) return
-
+        val currentState = getContent()
+        val currentSuggestionList = currentState.suggestionFestivals
+        val currentJoinedList = currentState.joinedFestivals
+        if (currentSuggestionList.isEmpty() && currentJoinedList.isEmpty()) return
+        setLoading()
         isLoadingMoreInternal = true
         _isLoadingMore.value = true
 
         baseViewModelScope.launch {
-            val result = dashBoardInteractor.getFestivalSuggestions(
-                limit = pageSize,
-                lastSeenId = lastSeenId,
-            )
+            val festivalSuggestionsAsync = async { dashBoardInteractor.getFestivalSuggestions(limit = pageSize, lastSeenId = lastSeenId) }
+            val userFestivalAsync = async { dashBoardInteractor.getUserFestivals() }
+            val profileAsync = async { dashBoardInteractor.getUserProfile() }
 
-            val currentList = getContent()
+            val suggestionFestivals = festivalSuggestionsAsync.await()
+            val joinedFestivals = userFestivalAsync.await()
+            val profile = profileAsync.await()
 
             // Only add truly new items (double-check for duplicates)
-            val newItems = result.filter { newItem ->
-                currentList.none { it.id == newItem.id }
+            val newSuggestions = suggestionFestivals.filter { newItem ->
+                currentSuggestionList.none { it.id == newItem.id }
+            }
+            val newJoined = joinedFestivals.filter { newItem ->
+                currentJoinedList.none { it.id == newItem.id }
             }
 
-            if (newItems.isNotEmpty()) {
-                val updatedList = currentList + newItems
-                setContent(updatedList)
+            if (newSuggestions.isNotEmpty() || newJoined.isNotEmpty()) {
+                val updatedState = DashBoardUiState(
+                    joinedFestivals = currentJoinedList + newJoined,
+                    suggestionFestivals = currentSuggestionList + newSuggestions,
+                    profile = profile
+                )
+                setContent(updatedState)
 
-                // Update pagination state - use the last item from NEW items, not the combined list
-                lastSeenId = newItems.lastOrNull()?.id
-                _hasMore.value = result.size == pageSize
+                // Update pagination state - use the last item from NEW suggestions
+                lastSeenId = newSuggestions.lastOrNull()?.id
+                _hasMore.value = suggestionFestivals.size == pageSize
             } else {
                 // No new items means we've reached the end
                 _hasMore.value = false
@@ -119,7 +142,7 @@ class DashBoardViewModel(
         loadMoreJob?.cancel()
     }
 
-    private fun updatePaginationState(result: List<FestivalSuggestionState>) {
+    private fun updatePaginationState(result: List<FestivalItemState>) {
         lastSeenId = result.lastOrNull()?.id
         _hasMore.value = result.size == pageSize
     }
