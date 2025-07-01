@@ -5,6 +5,13 @@ on:
     branches: [ "main", "develop" ]
   pull_request:
     branches: [ "main", "develop" ]
+  workflow_dispatch:
+    inputs:
+      build_ios:
+        description: 'Build iOS app'
+        required: false
+        default: 'true'
+        type: boolean
 
 env:
   GRADLE_OPTS: "-Dorg.gradle.jvmargs=-Xmx3072m -Dorg.gradle.daemon=false -Dkotlin.incremental=false"
@@ -194,17 +201,3 @@ jobs:
           name: ios-release-build
           path: iosApp/build/Build/Products/Release-iphonesimulator/*.app
           retention-days: 14
-
-# Add workflow dispatch for manual triggers
-on:
-  push:
-    branches: [ "main", "develop" ]
-  pull_request:
-    branches: [ "main", "develop" ]
-  workflow_dispatch:
-    inputs:
-      build_ios:
-        description: 'Build iOS app'
-        required: false
-        default: 'true'
-        type: boolean
