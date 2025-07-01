@@ -52,9 +52,9 @@ jobs:
             composeApp/build/outputs/apk/productionRelease/*.apk
           retention-days: 14
 
-  # iOS build - only when you're ready
-  ios-check:
-    name: iOS Compatibility Check
+  # iOS build - ACTUAL iOS APP BUILD
+  ios-build:
+    name: iOS Build (Real Build)
     runs-on: macos-latest
     needs: android-build
     # Only run on main branch or manual trigger to save minutes
@@ -81,34 +81,54 @@ jobs:
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
 
-      # Check if iOS targets are configured
-      - name: Check iOS Configuration
-        run: |
-          echo "Checking if iOS targets are configured..."
-          ./gradlew tasks --all | grep -i ios || echo "No iOS tasks found - project may need iOS configuration"
-        continue-on-error: true
+      - name: Cache Kotlin/Native
+        uses: actions/cache@v4
+        with:
+          path: ~/.konan
+          key: ${{ runner.os }}-konan-${{ hashFiles('**/*.gradle*') }}
+          restore-keys: |
+            ${{ runner.os }}-konan-
 
-      # Try to build iOS framework if configured
-      - name: Build iOS Framework (if available)
+      # Force build iOS framework even if not configured
+      - name: Build iOS Framework
         run: |
-          if ./gradlew tasks --all | grep -q "linkDebugFrameworkIos"; then
-            echo "iOS targets found, building framework..."
-            ./gradlew linkDebugFrameworkIosX64 --stacktrace
+          echo "Building iOS framework..."
+          ./gradlew :composeApp:linkDebugFrameworkIosX64 --stacktrace
+
+      # Install CocoaPods if iosApp exists
+      - name: Setup iOS Dependencies
+        run: |
+          if [ -d "iosApp" ]; then
+            echo "iosApp folder found, installing dependencies..."
+            gem install cocoapods
+            cd iosApp
+            pod install
           else
-            echo "No iOS targets configured yet. Skipping iOS build."
-            echo "To enable iOS builds, you need to:"
-            echo "1. Add iOS targets to your build.gradle.kts"
-            echo "2. Create iosApp module"
-            echo "3. Configure Compose Multiplatform for iOS"
+            echo "No iosApp folder found, creating minimal iOS app..."
+            # This would need your project structure
           fi
-        continue-on-error: true
 
-      - name: iOS Status Summary
+      # Build actual iOS app
+      - name: Build iOS App
         run: |
-          echo "## iOS Build Status 🍎" >> $GITHUB_STEP_SUMMARY
-          echo "This job checks if your project is ready for iOS builds." >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "If you see 'No iOS targets configured', you need to:" >> $GITHUB_STEP_SUMMARY
-          echo "1. Add iOS targets to your Kotlin Multiplatform configuration" >> $GITHUB_STEP_SUMMARY
-          echo "2. Create an iosApp module with Xcode project" >> $GITHUB_STEP_SUMMARY
-          echo "3. Set up Compose Multiplatform for iOS" >> $GITHUB_STEP_SUMMARY
+          if [ -d "iosApp" ]; then
+            echo "Building iOS app..."
+            cd iosApp
+            xcodebuild -workspace iosApp.xcworkspace \
+              -scheme iosApp \
+              -configuration Debug \
+              -destination 'platform=iOS Simulator,name=iPhone 15,OS=17.4' \
+              -derivedDataPath build \
+              build
+          else
+            echo "❌ Cannot build iOS app - iosApp folder missing"
+            echo "Your project needs iOS configuration first"
+            exit 1
+          fi
+
+      - name: Upload iOS App
+        uses: actions/upload-artifact@v4
+        with:
+          name: ios-debug-app
+          path: iosApp/build/Build/Products/Debug-iphonesimulator/*.app
+          retention-days: 14
