@@ -39,7 +39,7 @@ jobs:
         run: ./gradlew :composeApp:assembleReleaseFatFramework --stacktrace
 
       - name: Archive iOS framework
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: ios-fat-framework
           path: composeApp/build/fat-framework/release/
