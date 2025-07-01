@@ -45,8 +45,10 @@ jobs:
         
       # Android builds
       - name: Set keystore.properties from secret
-        if: ${{ secrets.KEYSTORE_PROPERTIES }}
+        if: ${{ env.KEYSTORE_PROPERTIES != '' }}
         run: echo "${{ secrets.KEYSTORE_PROPERTIES }}" | base64 --decode > keystore.properties
+        env:
+          KEYSTORE_PROPERTIES: ${{ secrets.KEYSTORE_PROPERTIES }}
         
       - name: Build Android Debug APK
         run: ./gradlew :composeApp:assembleInternalDebug -Pbuildkonfig.flavor=internalDebug --stacktrace
