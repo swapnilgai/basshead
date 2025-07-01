@@ -18,31 +18,31 @@ jobs:
   android-build:
     name: Android Build (Existing Working Flow)
     runs-on: ubuntu-latest
-    
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
-        
+
       - name: Set up JDK 17
         uses: actions/setup-java@v3
         with:
           java-version: '17'
           distribution: 'temurin'
           cache: gradle
-          
+
       - name: Set gradle.properties from secret
         run: echo "${{ secrets.KEYSTORE_PROPERTIES }}" | base64 --decode > keystore.properties
-        
+
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
-        
+
       - name: Run KtLint
         run: ./gradlew ktlintCheck --info --stacktrace
-        
+
       - name: Run all build and test tasks
         run: |
           ./gradlew :composeApp:assembleInternalDebug :composeApp:assembleProductionRelease -Pbuildkonfig.flavor=internalDebug --stacktrace
-          
+
       - name: Upload Android APKs
         uses: actions/upload-artifact@v4
         with:
@@ -61,33 +61,33 @@ jobs:
     if: |
       (github.event_name == 'push' && github.ref == 'refs/heads/main') || 
       (github.event_name == 'workflow_dispatch')
-    
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
-        
+
       - name: Set up JDK 17
         uses: actions/setup-java@v3
         with:
           java-version: '17'
           distribution: 'temurin'
           cache: gradle
-          
+
       - name: Setup Xcode
         uses: maxim-lobanov/setup-xcode@v1
         with:
           xcode-version: '15.4'
-          
+
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
-        
+
       # Check if iOS targets are configured
       - name: Check iOS Configuration
         run: |
           echo "Checking if iOS targets are configured..."
           ./gradlew tasks --all | grep -i ios || echo "No iOS tasks found - project may need iOS configuration"
         continue-on-error: true
-        
+
       # Try to build iOS framework if configured
       - name: Build iOS Framework (if available)
         run: |
@@ -102,7 +102,7 @@ jobs:
             echo "3. Configure Compose Multiplatform for iOS"
           fi
         continue-on-error: true
-        
+
       - name: iOS Status Summary
         run: |
           echo "## iOS Build Status 🍎" >> $GITHUB_STEP_SUMMARY
