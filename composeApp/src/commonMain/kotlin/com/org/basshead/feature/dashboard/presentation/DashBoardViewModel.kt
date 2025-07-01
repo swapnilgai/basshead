@@ -16,7 +16,7 @@ sealed interface DashBoardActions {
 }
 
 class DashBoardViewModel(
-    private val dashBoardInteractor: DashBoardInteractor
+    private val dashBoardInteractor: DashBoardInteractor,
 ) : BaseViewModel<List<FestivalSuggestionState>>(emptyList()) {
 
     // Pagination state
@@ -49,12 +49,12 @@ class DashBoardViewModel(
         resetPaginationState()
         setLoading()
         baseViewModelScope.launch {
-                val result = dashBoardInteractor.getFestivalSuggestions(
-                    limit = pageSize,
-                    lastSeenId = null
-                )
-                updatePaginationState(result)
-                setContent(result)
+            val result = dashBoardInteractor.getFestivalSuggestions(
+                limit = pageSize,
+                lastSeenId = null,
+            )
+            updatePaginationState(result)
+            setContent(result)
         }
     }
 
@@ -78,32 +78,31 @@ class DashBoardViewModel(
         _isLoadingMore.value = true
 
         baseViewModelScope.launch {
-                val result = dashBoardInteractor.getFestivalSuggestions(
-                    limit = pageSize,
-                    lastSeenId = lastSeenId
-                )
+            val result = dashBoardInteractor.getFestivalSuggestions(
+                limit = pageSize,
+                lastSeenId = lastSeenId,
+            )
 
-                val currentList = getContent()
+            val currentList = getContent()
 
-                // Only add truly new items (double-check for duplicates)
-                val newItems = result.filter { newItem ->
-                    currentList.none { it.id == newItem.id }
-                }
+            // Only add truly new items (double-check for duplicates)
+            val newItems = result.filter { newItem ->
+                currentList.none { it.id == newItem.id }
+            }
 
-                if (newItems.isNotEmpty()) {
-                    val updatedList = currentList + newItems
-                    setContent(updatedList)
+            if (newItems.isNotEmpty()) {
+                val updatedList = currentList + newItems
+                setContent(updatedList)
 
-                    // Update pagination state - use the last item from NEW items, not the combined list
-                    lastSeenId = newItems.lastOrNull()?.id
-                    _hasMore.value = result.size == pageSize
-                } else {
-                    // No new items means we've reached the end
-                    _hasMore.value = false
-                }
-                isLoadingMoreInternal = false
-                _isLoadingMore.value = false
-
+                // Update pagination state - use the last item from NEW items, not the combined list
+                lastSeenId = newItems.lastOrNull()?.id
+                _hasMore.value = result.size == pageSize
+            } else {
+                // No new items means we've reached the end
+                _hasMore.value = false
+            }
+            isLoadingMoreInternal = false
+            _isLoadingMore.value = false
         }
     }
 

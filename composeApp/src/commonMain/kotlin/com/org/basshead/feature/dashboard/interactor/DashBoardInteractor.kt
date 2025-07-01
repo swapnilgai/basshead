@@ -170,9 +170,9 @@ class DashBoardInteractorImpl(
 
     override suspend fun getUserProfile(): UserProfileState? = withInteractorContext(
         cacheOption = CacheOptions(
-            key = UserProfileKey
+            key = UserProfileKey,
         ),
-        retryOption = RetryOption(retryCount = 1)
+        retryOption = RetryOption(retryCount = 1),
     ) {
         val currentUser = supabaseClient.auth.currentUserOrNull()
             ?: return@withInteractorContext null

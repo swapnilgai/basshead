@@ -49,7 +49,6 @@ data class FestivalSuggestion(
     @SerialName("total_participants") val totalParticipants: Int,
 )
 
-
 @Serializable
 data class UserProfile(
     val id: String,
@@ -57,5 +56,5 @@ data class UserProfile(
     @SerialName("avatar_url") val avatarUrl: String?,
     @SerialName("is_admin") val isAdmin: Boolean,
     @SerialName("created_at") val createdAt: String,
-    @SerialName("updated_at") val updatedAt: String
+    @SerialName("updated_at") val updatedAt: String,
 )

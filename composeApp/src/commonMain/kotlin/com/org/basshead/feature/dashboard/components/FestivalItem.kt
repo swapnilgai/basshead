@@ -1,45 +1,42 @@
 package com.org.basshead.feature.dashboard.components
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.Image
 import androidx.compose.material.Button
 import androidx.compose.material.Card
 import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import basshead.composeapp.generated.resources.Res
+import basshead.composeapp.generated.resources.error_unknown
 import coil3.compose.AsyncImage
 import com.org.basshead.feature.dashboard.model.FestivalSuggestionState
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.sp
-import basshead.composeapp.generated.resources.Res
-import basshead.composeapp.generated.resources.dog
-import basshead.composeapp.generated.resources.error_unknown
-import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
-import kotlinx.datetime.LocalDateTime
-import kotlinx.datetime.toLocalDateTime
 
 @Composable
 fun FestivalItem(
     festival: FestivalSuggestionState,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Card(
         modifier = modifier
             .fillMaxWidth()
             .padding(horizontal = 4.dp, vertical = 4.dp),
-        elevation = 4.dp
+        elevation = 4.dp,
     ) {
         Column {
             // Festival Image
@@ -62,60 +59,17 @@ fun FestivalItem(
                 modifier = Modifier.padding(horizontal = 16.dp),
                 text = festival.name,
                 style = MaterialTheme.typography.subtitle2,
-                fontWeight = FontWeight.Bold
+                fontWeight = FontWeight.Bold,
             )
 
             Spacer(modifier = Modifier.height(1.dp))
-
-//            // Festival Description
-//            Text(
-//                text = festival.description?:"",
-//                style = MaterialTheme.typography.body2,
-//                maxLines = 1,
-//                overflow = TextOverflow.Ellipsis
-//            )
 
             Text(
                 modifier = Modifier.padding(horizontal = 16.dp),
                 text = festival.location,
                 style = MaterialTheme.typography.body2,
-                color = MaterialTheme.colors.onSurface
+                color = MaterialTheme.colors.onSurface,
             )
-
-            // Location and Status Row
-//            Row(
-//                modifier = Modifier.fillMaxWidth(),
-//                horizontalArrangement = Arrangement.SpaceBetween,
-//                verticalAlignment = Alignment.CenterVertically
-//            ) {
-//                Text(
-//                    modifier = Modifier.padding(16.dp),
-//                    text = festival.location,
-//                    style = MaterialTheme.typography.body2,
-//                    color = MaterialTheme.colors.onSurface
-//                )
-//
-//                Surface(
-//                    color = when (festival.status) {
-//                        "ongoing" -> Color.Green.copy(alpha = 0.4f)
-//                        "upcoming" -> Color.Blue.copy(alpha = 0.4f)
-//                        else -> Color.Gray.copy(alpha = 0.4f)
-//                    },
-//                    shape = RoundedCornerShape(12.dp)
-//                ) {
-//                    Text(
-//                        text = festival.status.capitalize(),
-//                        modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp),
-//                        fontSize = 6.sp,
-//                        style = MaterialTheme.typography.subtitle2,
-//                        color = when (festival.status) {
-//                            "ongoing" -> Color.Green
-//                            "upcoming" -> Color.Blue
-//                            else -> Color.Gray
-//                        }
-//                    )
-//                }
-//            }
 
             Spacer(modifier = Modifier.height(2.dp))
 
@@ -123,7 +77,7 @@ fun FestivalItem(
                 modifier = Modifier.padding(horizontal = 16.dp),
                 text = festival.dateString,
                 style = MaterialTheme.typography.body2,
-                color = MaterialTheme.colors.onSurface
+                color = MaterialTheme.colors.onSurface,
             )
         }
     }
@@ -133,19 +87,19 @@ fun FestivalItem(
 fun ErrorScreen(
     errorMessage: String,
     onDismiss: () -> Unit,
-    onRetry: (() -> Unit)? = null
+    onRetry: (() -> Unit)? = null,
 ) {
     Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
+        verticalArrangement = Arrangement.Center,
     ) {
         Text(
             text = stringResource(Res.string.error_unknown),
             style = MaterialTheme.typography.h3,
-            color = MaterialTheme.colors.error
+            color = MaterialTheme.colors.error,
         )
 
         Spacer(modifier = Modifier.height(8.dp))
@@ -153,13 +107,13 @@ fun ErrorScreen(
         Text(
             text = errorMessage,
             style = MaterialTheme.typography.body2,
-            textAlign = TextAlign.Center
+            textAlign = TextAlign.Center,
         )
 
         Spacer(modifier = Modifier.height(16.dp))
 
         Row(
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             Button(onClick = onDismiss) {
                 Text("Dismiss")

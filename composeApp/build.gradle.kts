@@ -146,5 +146,3 @@ buildkonfig {
 dependencies {
     debugImplementation(compose.uiTooling)
 }
-
-

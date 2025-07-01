@@ -2,7 +2,6 @@ package com.org.basshead.feature.dashboard.model
 
 import androidx.compose.runtime.Immutable
 import kotlinx.datetime.Instant
-import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 
@@ -41,7 +40,7 @@ data class FestivalSuggestionState(
     val createdAt: String,
     val status: String,
     val totalParticipants: Int,
-    val dateString: String // Added precomputed date string
+    val dateString: String, // Added precomputed date string
 )
 
 @Immutable
@@ -51,7 +50,7 @@ data class UserProfileState(
     val avatarUrl: String?,
     val isAdmin: Boolean,
     val createdAt: String,
-    val updatedAt: String
+    val updatedAt: String,
 )
 
 // Mapping extension
@@ -61,7 +60,7 @@ fun UserProfile.toUiModel() = UserProfileState(
     avatarUrl = avatarUrl,
     isAdmin = isAdmin,
     createdAt = createdAt,
-    updatedAt = updatedAt
+    updatedAt = updatedAt,
 )
 
 // Mapping extensions
@@ -97,7 +96,7 @@ fun FestivalSuggestion.toUiModel() = FestivalSuggestionState(
     createdAt = createdAt,
     status = status,
     totalParticipants = totalParticipants,
-    dateString = formatFestivalDateRange(startTime, endTime) // Compute date string here
+    dateString = formatFestivalDateRange(startTime, endTime), // Compute date string here
 )
 
 val EmptyDailyHeadbangState = DailyHeadbangState(
@@ -132,7 +131,7 @@ val EmptyFestivalSuggestionState = FestivalSuggestionState(
     createdAt = "",
     status = "",
     totalParticipants = 0,
-    dateString = ""
+    dateString = "",
 )
 
 fun formatFestivalDateRange(start: String, end: String): String {
