@@ -35,26 +35,26 @@ jobs:
       - name: Run KtLint
         run: ./gradlew ktlintCheck --info --stacktrace
 
-      - name: Build iOS app (archive)
+      - name: Build iOS app for Simulator
         run: |
           cd iosApp
           xcodebuild -project iosApp.xcodeproj \
             -scheme iosApp \
-            -configuration Release \
-            -sdk iphoneos \
-            -archivePath $PWD/build/iosApp.xcarchive \
-            archive
+            -configuration Debug \
+            -sdk iphonesimulator \
+            -derivedDataPath build/sim
 
-      - name: Export IPA
-        run: |
-          cd iosApp
-          xcodebuild -exportArchive \
-            -archivePath build/iosApp.xcarchive \
-            -exportPath build/ipa \
-            -exportOptionsPlist ExportOptions.plist
-
-      - name: Upload IPA
-        uses: actions/upload-artifact@v4
-        with:
-          name: ios-ipa
-          path: iosApp/build/ipa/*.ipa
+      # The following steps are skipped as IPA generation requires signing configs
+      # - name: Export IPA
+      #   run: |
+      #     cd iosApp
+      #     xcodebuild -exportArchive \
+      #       -archivePath build/iosApp.xcarchive \
+      #       -exportPath build/ipa \
+      #       -exportOptionsPlist ExportOptions.plist
+      #
+      # - name: Upload IPA
+      #   uses: actions/upload-artifact@v4
+      #   with:
+      #     name: ios-ipa
+      #     path: iosApp/build/ipa/*.ipa
