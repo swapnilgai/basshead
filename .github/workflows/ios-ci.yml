@@ -35,11 +35,14 @@ jobs:
       - name: Run KtLint
         run: ./gradlew ktlintCheck --info --stacktrace
 
-      - name: Build iOS framework (fat framework)
-        run: ./gradlew :composeApp:assembleReleaseFatFramework --stacktrace
+      - name: Build iOS frameworks (device and simulator)
+        run: |
+          ./gradlew :composeApp:linkReleaseFrameworkIosArm64 :composeApp:linkReleaseFrameworkIosSimulatorArm64 --stacktrace
 
-      - name: Archive iOS framework
+      - name: Archive iOS frameworks
         uses: actions/upload-artifact@v4
         with:
-          name: ios-fat-framework
-          path: composeApp/build/fat-framework/release/
+          name: ios-frameworks
+          path: |
+            composeApp/build/bin/iosArm64/releaseFramework/
+            composeApp/build/bin/iosSimulatorArm64/releaseFramework/
