@@ -2,7 +2,6 @@ package com.org.basshead.feature.profile.presentation
 
 import com.org.basshead.feature.dashboard.interactor.DashBoardInteractor
 import com.org.basshead.feature.profile.model.ProfileUiState
-import com.org.basshead.utils.core.UiText
 import com.org.basshead.utils.ui.BaseViewModel
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
@@ -40,36 +39,28 @@ class ProfileViewModel(
     private fun performDataLoad() {
         setLoading()
         baseViewModelScope.launch {
-            try {
-                val profileAsync = async { dashboardInteractor.getUserProfile() }
-                val userFestivalsAsync = async { dashboardInteractor.getUserFestivals() }
-                val dailyHeadbangsAsync = async { dashboardInteractor.getDailyHeadbangs() }
+            val profileAsync = async { dashboardInteractor.getUserProfile() }
+            val userFestivalsAsync = async { dashboardInteractor.getUserFestivals() }
+            val dailyHeadbangsAsync = async { dashboardInteractor.getDailyHeadbangs() }
 
-                val profile = profileAsync.await()
-                val userFestivals = userFestivalsAsync.await()
-                val dailyHeadbangs = dailyHeadbangsAsync.await()
+            val profile = profileAsync.await()
+            val userFestivals = userFestivalsAsync.await()
+            val dailyHeadbangs = dailyHeadbangsAsync.await()
 
-                setContent(
-                    ProfileUiState(
-                        profile = profile,
-                        userFestivals = userFestivals,
-                        dailyHeadbangs = dailyHeadbangs,
-                    ),
-                )
-            } catch (e: Exception) {
-                setError(UiText.DynamicString(e.message ?: "Failed to load profile"))
-            }
+            setContent(
+                ProfileUiState(
+                    profile = profile,
+                    userFestivals = userFestivals,
+                    dailyHeadbangs = dailyHeadbangs,
+                ),
+            )
         }
     }
 
     private fun logout() {
         baseViewModelScope.launch {
-            try {
-                // Implement logout logic here if needed
-                navigate("login")
-            } catch (e: Exception) {
-                setError(UiText.DynamicString(e.message ?: "Logout failed"))
-            }
+            // Implement logout logic here if needed
+            navigate("login")
         }
     }
 

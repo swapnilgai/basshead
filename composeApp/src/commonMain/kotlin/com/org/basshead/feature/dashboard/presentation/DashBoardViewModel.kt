@@ -3,7 +3,6 @@ package com.org.basshead.feature.dashboard.presentation
 import com.org.basshead.feature.dashboard.interactor.DashBoardInteractor
 import com.org.basshead.feature.dashboard.model.DashBoardUiState
 import com.org.basshead.feature.dashboard.model.FestivalItemState
-import com.org.basshead.utils.core.UiText
 import com.org.basshead.utils.ui.BaseViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
@@ -161,15 +160,11 @@ class DashBoardViewModel(
 
     private fun joinFestival(festivalId: String) {
         baseViewModelScope.launch {
-            try {
-                // TODO: Implement festival joining logic via interactor
-                // dashBoardInteractor.joinFestival(festivalId)
+            // TODO: Implement festival joining logic via interactor
+            // dashBoardInteractor.joinFestival(festivalId)
 
-                // Refresh the data to update the UI
-                refresh()
-            } catch (e: Exception) {
-                setError(UiText.DynamicString(e.message ?: "Failed to join festival"))
-            }
+            // Refresh the data to update the UI
+            refresh()
         }
     }
 

@@ -2,7 +2,6 @@ package com.org.basshead.feature.search.presentation
 
 import com.org.basshead.feature.dashboard.interactor.DashBoardInteractor
 import com.org.basshead.feature.search.model.SearchUiState
-import com.org.basshead.utils.core.UiText
 import com.org.basshead.utils.ui.BaseViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -61,20 +60,16 @@ class SearchViewModel(
 
         setContent(currentState.copy(isSearching = true))
         baseViewModelScope.launch {
-            try {
-                // Use festival suggestions as search results for now
-                // You can modify this to implement actual search logic
-                val results = dashboardInteractor.getFestivalSuggestions()
+            // Use festival suggestions as search results for now
+            // You can modify this to implement actual search logic
+            val results = dashboardInteractor.getFestivalSuggestions()
 
-                setContent(
-                    currentState.copy(
-                        searchResults = results,
-                        isSearching = false,
-                    ),
-                )
-            } catch (e: Exception) {
-                setError(UiText.DynamicString(e.message ?: "Search failed"))
-            }
+            setContent(
+                currentState.copy(
+                    searchResults = results,
+                    isSearching = false,
+                ),
+            )
         }
     }
 
