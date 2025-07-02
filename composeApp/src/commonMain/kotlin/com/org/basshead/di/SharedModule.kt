@@ -6,6 +6,8 @@ import com.org.basshead.feature.auth.presentation.AuthViewModel
 import com.org.basshead.feature.dashboard.interactor.DashBoardInteractor
 import com.org.basshead.feature.dashboard.interactor.DashBoardInteractorImpl
 import com.org.basshead.feature.dashboard.presentation.DashBoardViewModel
+import com.org.basshead.feature.profile.presentation.ProfileViewModel
+import com.org.basshead.feature.search.presentation.SearchViewModel
 import com.org.basshead.feature.splash.presentation.SplashViewModel
 import com.org.basshead.utils.httpclient.HttpClient
 import io.github.jan.supabase.SupabaseClient
@@ -28,4 +30,6 @@ val splashModule = module {
 val dashboardModule = module {
     single<DashBoardInteractor> { DashBoardInteractorImpl(get()) }
     viewModel { DashBoardViewModel(get()) }
+    viewModel { SearchViewModel(get()) }
+    viewModel { ProfileViewModel(get()) }
 }

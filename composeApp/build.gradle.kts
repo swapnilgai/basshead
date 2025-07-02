@@ -61,6 +61,9 @@ kotlin {
             api(libs.koin.core)
             implementation(libs.coil.compose)
             implementation(libs.coil.network.ktor)
+
+            implementation(compose.material3)
+            implementation(compose.materialIconsExtended)
         }
     }
 }
