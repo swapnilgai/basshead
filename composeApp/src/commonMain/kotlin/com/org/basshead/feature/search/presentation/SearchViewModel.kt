@@ -71,8 +71,11 @@ class SearchViewModel(
     private fun loadMore() {
         val currentState = getContent()
         
-        // Early return if no more data available
-        if (!currentState.hasMoreSuggestions) return
+        // Early return if no more data available or already loading
+        if (!currentState.hasMoreSuggestions || currentState.isLoadingMore) return
+        
+        // Set loading state in UI
+        setContent(currentState.copy(isLoadingMore = true))
 
         baseViewModelScope.launch {
             val newSuggestions = dashboardInteractor.getFestivalSuggestions(
@@ -89,6 +92,7 @@ class SearchViewModel(
                 suggestionFestivals = currentState.suggestionFestivals + filteredNewSuggestions,
                 hasMoreSuggestions = newSuggestions.size >= pageSize,
                 lastSeenId = filteredNewSuggestions.lastOrNull()?.id ?: currentState.lastSeenId,
+                isLoadingMore = false,
             )
             setContent(updatedState)
         }

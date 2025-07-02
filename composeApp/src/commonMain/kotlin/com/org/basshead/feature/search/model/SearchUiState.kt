@@ -10,4 +10,5 @@ data class SearchUiState(
     val isSearching: Boolean = false,
     val hasMoreSuggestions: Boolean = true,
     val lastSeenId: String? = null,
+    val isLoadingMore: Boolean = false,
 )

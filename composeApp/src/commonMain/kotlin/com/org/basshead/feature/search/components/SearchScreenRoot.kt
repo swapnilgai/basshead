@@ -66,6 +66,7 @@ fun SearchScreenRoot(
                 suggestionFestivals = searchUiState.suggestionFestivals,
                 isSearching = searchUiState.isSearching,
                 hasMoreSuggestions = searchUiState.hasMoreSuggestions,
+                isLoadingMore = searchUiState.isLoadingMore,
                 onSearchQueryChange = onSearchQueryChange,
                 onSearch = onSearch,
                 onLoadMore = onLoadMore,
