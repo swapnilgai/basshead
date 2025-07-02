@@ -1,6 +1,7 @@
 package com.org.basshead.feature.dashboard.model
 
 import androidx.compose.runtime.Immutable
+import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
@@ -77,6 +78,8 @@ data class DashBoardUiState(
     val suggestionFestivals: List<FestivalItemState> = emptyList(),
     val profile: UserProfileState? = null,
     val dailyHeadbangs: List<DailyHeadbangState> = emptyList(),
+    val hasMoreSuggestions: Boolean = true,
+    val lastSeenId: String? = null,
 )
 
 // Mapping extension
@@ -230,5 +233,15 @@ fun formatFestivalDateRange(start: String, end: String): String {
         "$startStr – $endStr"
     } catch (e: Exception) {
         "$start - $end"
+    }
+}
+
+fun isFestivalStarted(startTime: String): Boolean {
+    return try {
+        val now = Clock.System.now()
+        val festivalStart = Instant.parse(startTime)
+        now >= festivalStart
+    } catch (e: Exception) {
+        false // If we can't parse the date, assume not started for safety
     }
 }

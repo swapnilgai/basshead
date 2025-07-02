@@ -51,7 +51,7 @@ fun ProfileScreen(
     LazyColumn(
         modifier = modifier
             .fillMaxSize()
-            .padding(16.dp),
+            .padding(horizontal = 12.dp, vertical = 16.dp),
     ) {
         item(key = "profile_header") {
             Text(

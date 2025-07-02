@@ -46,8 +46,8 @@
     <string name="no_festivals_available">No festivals available at the moment. Check back later!</string>
     
     <!-- Festival Actions -->
-    <string name="join_for_fun">Join for Fun</string>
-    <string name="view_leaderboard">View Leaderboard</string>
+    <string name="join">Join</string>
+    <string name="leaderboard">Leaderboard</string>
     
     <!-- Search -->
     <string name="search_festivals">Search Festivals</string>

@@ -6,6 +6,8 @@ import com.org.basshead.feature.dashboard.model.FestivalItemState
 @Immutable
 data class SearchUiState(
     val searchQuery: String = "",
-    val searchResults: List<FestivalItemState> = emptyList(),
+    val suggestionFestivals: List<FestivalItemState> = emptyList(),
     val isSearching: Boolean = false,
+    val hasMoreSuggestions: Boolean = true,
+    val lastSeenId: String? = null,
 )

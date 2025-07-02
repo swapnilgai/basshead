@@ -12,6 +12,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
@@ -26,10 +27,12 @@ import org.jetbrains.compose.resources.stringResource
 @Composable
 fun SearchScreen(
     searchQuery: String,
-    searchResults: List<FestivalItemState>,
+    suggestionFestivals: List<FestivalItemState>,
     isSearching: Boolean,
+    hasMoreSuggestions: Boolean,
     onSearchQueryChange: (String) -> Unit,
     onSearch: () -> Unit,
+    onLoadMore: () -> Unit,
     onJoinFestival: (String) -> Unit = {},
     onViewLeaderboard: (String) -> Unit = {},
     modifier: Modifier = Modifier,
@@ -37,7 +40,7 @@ fun SearchScreen(
     Column(
         modifier = modifier
             .fillMaxSize()
-            .padding(16.dp),
+            .padding(horizontal = 12.dp, vertical = 16.dp),
     ) {
         Text(
             text = stringResource(Res.string.search_festivals),
@@ -53,7 +56,7 @@ fun SearchScreen(
             modifier = Modifier.fillMaxWidth(),
         )
 
-        if (isSearching) {
+        if (isSearching && suggestionFestivals.isEmpty()) {
             Box(
                 modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.Center,
@@ -65,7 +68,7 @@ fun SearchScreen(
                 modifier = Modifier.fillMaxSize(),
             ) {
                 items(
-                    items = searchResults,
+                    items = suggestionFestivals,
                     key = { festival -> festival.id },
                 ) { festival ->
                     FestivalItem(
@@ -74,6 +77,23 @@ fun SearchScreen(
                         onViewLeaderboard = onViewLeaderboard,
                         modifier = Modifier.padding(vertical = 4.dp),
                     )
+                }
+                
+                // Load more item at the bottom
+                if (hasMoreSuggestions) {
+                    item(key = "load_more") {
+                        LaunchedEffect(Unit) {
+                            onLoadMore()
+                        }
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(16.dp),
+                            contentAlignment = Alignment.Center,
+                        ) {
+                            CircularProgressIndicator()
+                        }
+                    }
                 }
             }
         }

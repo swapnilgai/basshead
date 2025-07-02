@@ -47,9 +47,14 @@ fun SearchScreenRoot(
     }
 
     val onViewLeaderboard = remember<(String) -> Unit> {
-        {
-                festivalId ->
+        { festivalId ->
             navigate("leaderboard/$festivalId", null, null)
+        }
+    }
+    
+    val onLoadMore = remember<() -> Unit> {
+        {
+            viewModel.onAction(SearchActions.LoadMore)
         }
     }
 
@@ -58,10 +63,12 @@ fun SearchScreenRoot(
             val searchUiState = currentState.data as SearchUiState
             SearchScreen(
                 searchQuery = searchUiState.searchQuery,
-                searchResults = searchUiState.searchResults,
+                suggestionFestivals = searchUiState.suggestionFestivals,
                 isSearching = searchUiState.isSearching,
+                hasMoreSuggestions = searchUiState.hasMoreSuggestions,
                 onSearchQueryChange = onSearchQueryChange,
                 onSearch = onSearch,
+                onLoadMore = onLoadMore,
                 onJoinFestival = onJoinFestival,
                 onViewLeaderboard = onViewLeaderboard,
                 modifier = modifier,

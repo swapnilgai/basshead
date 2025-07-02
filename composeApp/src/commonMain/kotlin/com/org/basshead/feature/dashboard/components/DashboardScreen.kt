@@ -138,7 +138,7 @@ fun DashboardScreen(
     LazyColumn(
         modifier = modifier
             .fillMaxSize()
-            .padding(16.dp),
+            .padding(horizontal = 12.dp, vertical = 16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
         // Welcome message
@@ -194,7 +194,7 @@ fun DashboardScreen(
                     text = stringResource(Res.string.no_festivals_available),
                     style = MaterialTheme.typography.body1,
                     color = MaterialTheme.colors.onSurface.copy(alpha = 0.7f),
-                    modifier = Modifier.padding(32.dp),
+                    modifier = Modifier.padding(16.dp),
                 )
             }
         }

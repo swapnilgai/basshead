@@ -11,74 +11,96 @@ sealed interface SearchActions {
     data class SearchQueryChanged(val query: String) : SearchActions
     data object Search : SearchActions
     data object Refresh : SearchActions
+    data object LoadMore : SearchActions
 }
 
 class SearchViewModel(
     private val dashboardInteractor: DashBoardInteractor,
 ) : BaseViewModel<SearchUiState>(SearchUiState()) {
 
-    // Debouncing for search
-    private var searchJob: Job? = null
-    private val searchDebounceTime = 500L // 500ms debounce
+    private val pageSize = 3
+    private var loadMoreJob: Job? = null
+
+    init {
+        loadInitialData()
+    }
 
     fun onAction(action: SearchActions) {
         when (action) {
             is SearchActions.SearchQueryChanged -> updateSearchQuery(action.query)
-            SearchActions.Search -> searchFestivals()
-            SearchActions.Refresh -> loadInitialData()
+            SearchActions.Search -> { /* Keep for future search implementation */ }
+            SearchActions.Refresh -> refresh()
+            SearchActions.LoadMore -> loadMoreWithDebounce()
         }
     }
 
     private fun updateSearchQuery(query: String) {
         val currentState = getContent()
         setContent(currentState.copy(searchQuery = query))
-
-        // Auto-search with debouncing
-        searchJob?.cancel()
-        searchJob = baseViewModelScope.launch {
-            delay(searchDebounceTime)
-            if (query.length >= 2) { // Only search if query is at least 2 characters
-                searchFestivals()
-            } else if (query.isEmpty()) {
-                // Clear results if query is empty
-                setContent(
-                    currentState.copy(
-                        searchQuery = query,
-                        searchResults = emptyList(),
-                        isSearching = false,
-                    ),
-                )
-            }
-        }
+        // For now, we just update the query but don't search
+        // Pagination will show suggestionFestivals regardless
     }
 
-    private fun searchFestivals() {
-        val currentState = getContent()
-        val query = currentState.searchQuery.trim()
-
-        if (query.isBlank()) return
-
-        setContent(currentState.copy(isSearching = true))
+    private fun loadInitialData() {
+        setLoading()
         baseViewModelScope.launch {
-            // Use festival suggestions as search results for now
-            // You can modify this to implement actual search logic
-            val results = dashboardInteractor.getFestivalSuggestions()
+            val suggestionFestivals = dashboardInteractor.getFestivalSuggestions(
+                limit = pageSize, 
+                lastSeenId = null
+            )
 
             setContent(
-                currentState.copy(
-                    searchResults = results,
-                    isSearching = false,
-                ),
+                SearchUiState(
+                    suggestionFestivals = suggestionFestivals,
+                    hasMoreSuggestions = suggestionFestivals.size >= pageSize,
+                    lastSeenId = suggestionFestivals.lastOrNull()?.id,
+                )
             )
         }
     }
 
-    private fun loadInitialData() {
-        setContent(SearchUiState())
+    private fun loadMoreWithDebounce() {
+        // Cancel previous job if still running
+        loadMoreJob?.cancel()
+        loadMoreJob = baseViewModelScope.launch {
+            delay(300) // 300ms debounce
+            loadMore()
+        }
+    }
+
+    private fun loadMore() {
+        val currentState = getContent()
+        
+        // Early return if no more data available
+        if (!currentState.hasMoreSuggestions) return
+
+        baseViewModelScope.launch {
+            val newSuggestions = dashboardInteractor.getFestivalSuggestions(
+                limit = pageSize,
+                lastSeenId = currentState.lastSeenId
+            )
+
+            // Filter out duplicates
+            val filteredNewSuggestions = newSuggestions.filter { newItem ->
+                currentState.suggestionFestivals.none { it.id == newItem.id }
+            }
+
+            val updatedState = currentState.copy(
+                suggestionFestivals = currentState.suggestionFestivals + filteredNewSuggestions,
+                hasMoreSuggestions = newSuggestions.size >= pageSize,
+                lastSeenId = filteredNewSuggestions.lastOrNull()?.id ?: currentState.lastSeenId,
+            )
+            setContent(updatedState)
+        }
+    }
+
+    private fun refresh() {
+        loadMoreJob?.cancel()
+        loadInitialData()
     }
 
     override fun onCleared() {
         super.onCleared()
-        searchJob?.cancel()
+        loadMoreJob?.cancel()
     }
 }

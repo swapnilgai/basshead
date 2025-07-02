@@ -25,11 +25,12 @@ import androidx.compose.ui.unit.dp
 import basshead.composeapp.generated.resources.Res
 import basshead.composeapp.generated.resources.dismiss
 import basshead.composeapp.generated.resources.error_unknown
-import basshead.composeapp.generated.resources.join_for_fun
+import basshead.composeapp.generated.resources.join
 import basshead.composeapp.generated.resources.retry
-import basshead.composeapp.generated.resources.view_leaderboard
+import basshead.composeapp.generated.resources.leaderboard
 import coil3.compose.AsyncImage
 import com.org.basshead.feature.dashboard.model.FestivalItemState
+import com.org.basshead.feature.dashboard.model.isFestivalStarted
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
@@ -57,15 +58,22 @@ fun FestivalItem(
         festival.dateString ?: festival.startTime
     }
 
+    // Remember if festival has started
+    val festivalHasStarted = remember(festival.startTime) {
+        isFestivalStarted(festival.startTime)
+    }
+
     // Remember button arrangement calculation
-    val buttonArrangement = remember(festival.userJoined) {
-        if (festival.userJoined) Arrangement.Center else Arrangement.spacedBy(8.dp)
+    val buttonArrangement = remember(festival.userJoined, festivalHasStarted) {
+        // Show center if only one button, otherwise space evenly
+        val shouldShowOnlyLeaderboard = festival.userJoined || !festivalHasStarted
+        if (shouldShowOnlyLeaderboard) Arrangement.Center else Arrangement.spacedBy(8.dp)
     }
 
     Card(
         modifier = modifier
             .fillMaxWidth()
-            .padding(horizontal = 4.dp, vertical = 4.dp),
+            .padding(vertical = 4.dp),
         elevation = 4.dp,
     ) {
         Column {
@@ -75,7 +83,6 @@ fun FestivalItem(
                 contentDescription = "Festival Image",
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 4.dp)
                     .height(180.dp)
                     .clip(RoundedCornerShape(8.dp)),
                 contentScale = ContentScale.Crop,
@@ -85,7 +92,7 @@ fun FestivalItem(
 
             // Festival Name
             Text(
-                modifier = Modifier.padding(horizontal = 16.dp),
+                modifier = Modifier.padding(horizontal = 12.dp),
                 text = festival.name,
                 style = MaterialTheme.typography.subtitle1,
                 fontWeight = FontWeight.Bold,
@@ -95,7 +102,7 @@ fun FestivalItem(
 
             // Location
             Text(
-                modifier = Modifier.padding(horizontal = 16.dp),
+                modifier = Modifier.padding(horizontal = 12.dp),
                 text = festival.location,
                 style = MaterialTheme.typography.body2,
                 color = MaterialTheme.colors.onSurface.copy(alpha = 0.7f),
@@ -105,7 +112,7 @@ fun FestivalItem(
 
             // Date
             Text(
-                modifier = Modifier.padding(horizontal = 16.dp),
+                modifier = Modifier.padding(horizontal = 12.dp),
                 text = dateText,
                 style = MaterialTheme.typography.body2,
                 color = MaterialTheme.colors.onSurface.copy(alpha = 0.7f),
@@ -117,31 +124,35 @@ fun FestivalItem(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 8.dp),
+                    .padding(horizontal = 12.dp, vertical = 8.dp),
                 horizontalArrangement = buttonArrangement,
             ) {
                 if (festival.userJoined) {
-                    // Show only "View Leaderboard" for joined festivals
-                    Button(
-                        onClick = onLeaderboardClick,
-                        modifier = Modifier.weight(1f),
-                    ) {
-                        Text(stringResource(Res.string.view_leaderboard))
+                    // Show only "Leaderboard" for joined festivals (but only if started)
+                    if (festivalHasStarted) {
+                        Button(
+                            onClick = onLeaderboardClick,
+                            modifier = Modifier.weight(1f),
+                        ) {
+                            Text(stringResource(Res.string.leaderboard))
+                        }
                     }
                 } else {
-                    // Show both buttons for suggestion festivals
+                    // For suggestion festivals: show "Join" and "Leaderboard" (only if started)
                     Button(
                         onClick = onJoinClick,
                         modifier = Modifier.weight(1f),
                     ) {
-                        Text(stringResource(Res.string.join_for_fun))
+                        Text(stringResource(Res.string.join))
                     }
 
-                    Button(
-                        onClick = onLeaderboardClick,
-                        modifier = Modifier.weight(1f),
-                    ) {
-                        Text(stringResource(Res.string.view_leaderboard))
+                    if (festivalHasStarted) {
+                        Button(
+                            onClick = onLeaderboardClick,
+                            modifier = Modifier.weight(1f),
+                        ) {
+                            Text(stringResource(Res.string.leaderboard))
+                        }
                     }
                 }
             }
