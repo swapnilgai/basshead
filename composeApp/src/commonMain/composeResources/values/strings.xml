@@ -37,4 +37,31 @@
     <string name="upcoming">upcoming</string>
     <string name="participants">participants</string>
 
+    <!-- Dashboard -->
+    <string name="welcome_user">Welcome, %1$s!</string>
+    <string name="welcome_default_user">Welcome, User!</string>
+    <string name="total_headbangs">Total Headbangs: %1$d</string>
+    <string name="your_current_festival">Your Current Festival</string>
+    <string name="featured_festival">Featured Festival</string>
+    <string name="no_festivals_available">No festivals available at the moment. Check back later!</string>
+    
+    <!-- Festival Actions -->
+    <string name="join_for_fun">Join for Fun</string>
+    <string name="view_leaderboard">View Leaderboard</string>
+    
+    <!-- Search -->
+    <string name="search_festivals">Search Festivals</string>
+    <string name="search_festivals_hint">Search festivals...</string>
+    
+    <!-- Profile -->
+    <string name="profile">Profile</string>
+    <string name="user_label">User: %1$s</string>
+    <string name="user_unknown">User: Unknown</string>
+    <string name="joined_festivals">Joined Festivals: %1$d</string>
+    <string name="your_festivals">Your Festivals</string>
+    <string name="logout">Logout</string>
+    
+    <!-- Error Actions -->
+    <string name="retry">Retry</string>
+
 </resources>

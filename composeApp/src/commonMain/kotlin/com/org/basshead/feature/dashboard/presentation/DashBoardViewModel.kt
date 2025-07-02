@@ -3,7 +3,7 @@ package com.org.basshead.feature.dashboard.presentation
 import com.org.basshead.feature.dashboard.interactor.DashBoardInteractor
 import com.org.basshead.feature.dashboard.model.DashBoardUiState
 import com.org.basshead.feature.dashboard.model.FestivalItemState
-import com.org.basshead.feature.dashboard.model.UserProfileState
+import com.org.basshead.utils.core.UiText
 import com.org.basshead.utils.ui.BaseViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
@@ -16,6 +16,8 @@ import kotlinx.coroutines.launch
 sealed interface DashBoardActions {
     object LoadMore : DashBoardActions
     object Refresh : DashBoardActions
+    data class JoinFestival(val festivalId: String) : DashBoardActions
+    data class ViewLeaderboard(val festivalId: String) : DashBoardActions
 }
 
 class DashBoardViewModel(
@@ -45,6 +47,8 @@ class DashBoardViewModel(
         when (action) {
             DashBoardActions.LoadMore -> loadMoreWithDebounce()
             DashBoardActions.Refresh -> refresh()
+            is DashBoardActions.JoinFestival -> joinFestival(action.festivalId)
+            is DashBoardActions.ViewLeaderboard -> viewLeaderboard(action.festivalId)
         }
     }
 
@@ -55,18 +59,21 @@ class DashBoardViewModel(
             val festivalSuggestionsAsync = async { dashBoardInteractor.getFestivalSuggestions(limit = pageSize, lastSeenId = null) }
             val userFestivalAsync = async { dashBoardInteractor.getUserFestivals() }
             val profileAsync = async { dashBoardInteractor.getUserProfile() }
+            val dailyHeadbangsAsync = async { dashBoardInteractor.getDailyHeadbangs(limit = 7) } // Get last 7 days
 
             val suggestionFestivals = festivalSuggestionsAsync.await()
             val joinedFestivals = userFestivalAsync.await()
             val profile = profileAsync.await()
+            val dailyHeadbangs = dailyHeadbangsAsync.await()
 
             updatePaginationState(suggestionFestivals)
             setContent(
                 DashBoardUiState(
                     joinedFestivals = joinedFestivals,
                     suggestionFestivals = suggestionFestivals,
-                    profile = profile
-                )
+                    profile = profile,
+                    dailyHeadbangs = dailyHeadbangs,
+                ),
             )
         }
     }
@@ -88,18 +95,22 @@ class DashBoardViewModel(
         val currentSuggestionList = currentState.suggestionFestivals
         val currentJoinedList = currentState.joinedFestivals
         if (currentSuggestionList.isEmpty() && currentJoinedList.isEmpty()) return
+
         setLoading()
         isLoadingMoreInternal = true
         _isLoadingMore.value = true
 
         baseViewModelScope.launch {
+            // Only fetch festival suggestions for pagination - user festivals don't change as frequently
             val festivalSuggestionsAsync = async { dashBoardInteractor.getFestivalSuggestions(limit = pageSize, lastSeenId = lastSeenId) }
             val userFestivalAsync = async { dashBoardInteractor.getUserFestivals() }
             val profileAsync = async { dashBoardInteractor.getUserProfile() }
+            val dailyHeadbangsAsync = async { dashBoardInteractor.getDailyHeadbangs(limit = 7) }
 
             val suggestionFestivals = festivalSuggestionsAsync.await()
             val joinedFestivals = userFestivalAsync.await()
             val profile = profileAsync.await()
+            val dailyHeadbangs = dailyHeadbangsAsync.await()
 
             // Only add truly new items (double-check for duplicates)
             val newSuggestions = suggestionFestivals.filter { newItem ->
@@ -113,7 +124,8 @@ class DashBoardViewModel(
                 val updatedState = DashBoardUiState(
                     joinedFestivals = currentJoinedList + newJoined,
                     suggestionFestivals = currentSuggestionList + newSuggestions,
-                    profile = profile
+                    profile = profile,
+                    dailyHeadbangs = dailyHeadbangs,
                 )
                 setContent(updatedState)
 
@@ -145,6 +157,24 @@ class DashBoardViewModel(
     private fun updatePaginationState(result: List<FestivalItemState>) {
         lastSeenId = result.lastOrNull()?.id
         _hasMore.value = result.size == pageSize
+    }
+
+    private fun joinFestival(festivalId: String) {
+        baseViewModelScope.launch {
+            try {
+                // TODO: Implement festival joining logic via interactor
+                // dashBoardInteractor.joinFestival(festivalId)
+
+                // Refresh the data to update the UI
+                refresh()
+            } catch (e: Exception) {
+                setError(UiText.DynamicString(e.message ?: "Failed to join festival"))
+            }
+        }
+    }
+
+    private fun viewLeaderboard(festivalId: String) {
+        navigate("leaderboard/$festivalId")
     }
 
     override fun onCleared() {

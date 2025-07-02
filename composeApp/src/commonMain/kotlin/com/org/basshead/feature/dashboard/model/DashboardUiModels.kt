@@ -76,6 +76,7 @@ data class DashBoardUiState(
     val joinedFestivals: List<FestivalItemState> = emptyList(),
     val suggestionFestivals: List<FestivalItemState> = emptyList(),
     val profile: UserProfileState? = null,
+    val dailyHeadbangs: List<DailyHeadbangState> = emptyList(),
 )
 
 // Mapping extension

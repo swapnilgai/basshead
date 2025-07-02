@@ -4,15 +4,15 @@ import com.org.basshead.feature.dashboard.model.DailyHeadbang
 import com.org.basshead.feature.dashboard.model.DailyHeadbangState
 import com.org.basshead.feature.dashboard.model.FestivalItemState
 import com.org.basshead.feature.dashboard.model.FestivalSuggestion
-import com.org.basshead.feature.dashboard.model.FestivalSuggestionState
 import com.org.basshead.feature.dashboard.model.UserFestival
-import com.org.basshead.feature.dashboard.model.UserFestivalState
 import com.org.basshead.feature.dashboard.model.UserProfile
 import com.org.basshead.feature.dashboard.model.UserProfileState
 import com.org.basshead.feature.dashboard.model.toFestivalItemState
 import com.org.basshead.feature.dashboard.model.toUiModel
 import com.org.basshead.utils.cache.CacheKey
 import com.org.basshead.utils.cache.CacheOptions
+import com.org.basshead.utils.cache.longCacheExpiration
+import com.org.basshead.utils.cache.shortCacheExpiration
 import com.org.basshead.utils.interactor.Interactor
 import com.org.basshead.utils.interactor.RetryOption
 import com.org.basshead.utils.interactor.withInteractorContext
@@ -30,6 +30,8 @@ data class UserFestivalsPrimaryKey(val statuses: String) : CacheKey
 data class UserFestivalsSecondaryKey(val lastSeenId: String? = null) : CacheKey
 data class FestivalSuggestionsPrimaryKey(val statuses: String, val location: String?) : CacheKey
 data class FestivalSuggestionsSecondaryKey(val lastSeenId: String?) : CacheKey
+data class DailyHeadbangsPrimaryKey(val startDate: String?, val endDate: String?) : CacheKey
+data class DailyHeadbangsSecondaryKey(val limit: Int) : CacheKey
 
 // Object-based CacheKey for user profile
 object UserProfileKey : CacheKey {
@@ -71,7 +73,14 @@ class DashBoardInteractorImpl(
         startDate: String?,
         endDate: String?,
         limit: Int,
-    ): List<DailyHeadbangState> = withInteractorContext(retryOption = RetryOption(retryCount = 2)) {
+    ): List<DailyHeadbangState> = withInteractorContext(
+        cacheOption = CacheOptions(
+            key = DailyHeadbangsPrimaryKey(startDate = startDate, endDate = endDate),
+            secondaryKey = DailyHeadbangsSecondaryKey(limit = limit),
+            expirationPolicy = shortCacheExpiration, // 5 minutes - updates frequently
+        ),
+        retryOption = RetryOption(retryCount = 2),
+    ) {
         val currentUser = supabaseClient.auth.currentUserOrNull()
             ?: throw Exception("Not authenticated")
 
@@ -157,6 +166,7 @@ class DashBoardInteractorImpl(
     override suspend fun getUserProfile(): UserProfileState? = withInteractorContext(
         cacheOption = CacheOptions(
             key = UserProfileKey,
+            expirationPolicy = longCacheExpiration, // 30 minutes - changes infrequently
         ),
         retryOption = RetryOption(retryCount = 1),
     ) {
