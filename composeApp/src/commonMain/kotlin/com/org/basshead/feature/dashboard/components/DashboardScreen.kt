@@ -64,6 +64,18 @@ fun DashboardScreenRoot(
         }
     }
 
+    val onSyncDevice = remember<() -> Unit> {
+        {
+            viewModel.onAction(DashBoardActions.SyncDevice)
+        }
+    }
+
+    val onOpenSettings = remember<() -> Unit> {
+        {
+            viewModel.onAction(DashBoardActions.OpenSettings)
+        }
+    }
+
     when (val currentState = state.value) {
         is UiState.Content -> {
             val dashBoardUiState = currentState.data as DashBoardUiState
@@ -72,6 +84,8 @@ fun DashboardScreenRoot(
                 onJoinFestival = onJoinFestival,
                 onViewLeaderboard = onViewLeaderboard,
                 onRefresh = onRefresh,
+                onSyncDevice = onSyncDevice,
+                onOpenSettings = onOpenSettings,
                 modifier = modifier,
             )
 
@@ -112,11 +126,13 @@ fun DashboardScreen(
     onJoinFestival: (String) -> Unit,
     onViewLeaderboard: (String) -> Unit,
     onRefresh: () -> Unit,
+    onSyncDevice: () -> Unit,
+    onOpenSettings: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    // Remember expensive calculations
-    val totalHeadbangs = remember(dashBoardUiState.dailyHeadbangs) {
-        dashBoardUiState.dailyHeadbangs.sumOf { it.totalCount }
+    // Use computed property from DashBoardUiState
+    val totalHeadbangs = remember(dashBoardUiState.totalHeadbangs) {
+        dashBoardUiState.totalHeadbangs.toInt()
     }
 
     val featuredFestival = remember(dashBoardUiState.joinedFestivals, dashBoardUiState.suggestionFestivals) {
@@ -143,24 +159,24 @@ fun DashboardScreen(
     ) {
         // Welcome message
         item(key = "welcome_header") {
-            Column {
-                Text(
-                    text = dashBoardUiState.profile?.name?.let { name ->
-                        stringResource(Res.string.welcome_user, name)
-                    } ?: stringResource(Res.string.welcome_default_user),
-                    style = MaterialTheme.typography.h5,
-                    fontWeight = FontWeight.Bold,
-                )
-
-                Spacer(modifier = Modifier.height(8.dp))
-
-                // Total headbang count
-                Text(
-                    text = stringResource(Res.string.total_headbangs, totalHeadbangs),
-                    style = MaterialTheme.typography.h6,
-                    color = MaterialTheme.colors.primary,
-                )
-            }
+            Text(
+                text = dashBoardUiState.profile?.name?.let { name ->
+                    stringResource(Res.string.welcome_user, name)
+                } ?: stringResource(Res.string.welcome_default_user),
+                style = MaterialTheme.typography.h5,
+                fontWeight = FontWeight.Bold,
+            )
+        }
+        
+        // Device sync card
+        item(key = "device_sync_card") {
+            DeviceSyncCard(
+                totalHeadbangs = totalHeadbangs,
+                isDeviceConnected = dashBoardUiState.isDeviceConnected,
+                isSyncing = dashBoardUiState.isSyncing,
+                onSyncClick = onSyncDevice,
+                onSettingsClick = onOpenSettings
+            )
         }
 
         // Featured Festival (user joined or first suggestion)

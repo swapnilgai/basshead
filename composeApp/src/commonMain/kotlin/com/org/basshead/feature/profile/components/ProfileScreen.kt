@@ -31,15 +31,12 @@ fun ProfileScreen(
     profile: UserProfileState?,
     userFestivals: List<FestivalItemState>,
     dailyHeadbangs: List<DailyHeadbangState>,
+    totalHeadbangs: Long,
     onLogout: () -> Unit,
     onViewLeaderboard: (String) -> Unit = {},
     modifier: Modifier = Modifier,
 ) {
     // Remember expensive calculations
-    val totalHeadbangs = remember(dailyHeadbangs) {
-        dailyHeadbangs.sumOf { it.totalCount }
-    }
-
     val festivalsCount = remember(userFestivals) {
         userFestivals.size
     }

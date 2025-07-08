@@ -42,16 +42,19 @@ class ProfileViewModel(
             val profileAsync = async { dashboardInteractor.getUserProfile() }
             val userFestivalsAsync = async { dashboardInteractor.getUserFestivals() }
             val dailyHeadbangsAsync = async { dashboardInteractor.getDailyHeadbangs() }
+            val totalHeadbangsAsync = async { dashboardInteractor.getTotalHeadbangs() }
 
             val profile = profileAsync.await()
             val userFestivals = userFestivalsAsync.await()
             val dailyHeadbangs = dailyHeadbangsAsync.await()
+            val totalHeadbangs = totalHeadbangsAsync.await()
 
             setContent(
                 ProfileUiState(
                     profile = profile,
                     userFestivals = userFestivals,
                     dailyHeadbangs = dailyHeadbangs,
+                    totalHeadbangs = totalHeadbangs,
                 ),
             )
         }

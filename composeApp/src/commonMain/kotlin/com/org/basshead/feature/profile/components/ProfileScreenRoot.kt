@@ -46,6 +46,7 @@ fun ProfileScreenRoot(
                 profile = profileUiState.profile,
                 userFestivals = profileUiState.userFestivals,
                 dailyHeadbangs = profileUiState.dailyHeadbangs,
+                totalHeadbangs = profileUiState.totalHeadbangs,
                 onLogout = onLogout,
                 onViewLeaderboard = onViewLeaderboard,
                 modifier = modifier,

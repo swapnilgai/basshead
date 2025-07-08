@@ -78,8 +78,12 @@ data class DashBoardUiState(
     val suggestionFestivals: List<FestivalItemState> = emptyList(),
     val profile: UserProfileState? = null,
     val dailyHeadbangs: List<DailyHeadbangState> = emptyList(),
+    val totalHeadbangs: Long = 0L, // Direct value instead of computed
     val hasMoreSuggestions: Boolean = true,
     val lastSeenId: String? = null,
+    // Device sync state
+    val isDeviceConnected: Boolean = false,
+    val isSyncing: Boolean = false,
 )
 
 // Mapping extension

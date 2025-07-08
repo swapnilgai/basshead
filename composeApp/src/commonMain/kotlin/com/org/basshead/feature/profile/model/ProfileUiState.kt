@@ -10,4 +10,5 @@ data class ProfileUiState(
     val profile: UserProfileState? = null,
     val userFestivals: List<FestivalItemState> = emptyList(),
     val dailyHeadbangs: List<DailyHeadbangState> = emptyList(),
+    val totalHeadbangs: Long = 0L, // Direct value instead of computed
 )

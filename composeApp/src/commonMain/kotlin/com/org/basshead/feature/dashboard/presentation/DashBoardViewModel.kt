@@ -9,17 +9,19 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 sealed interface DashBoardActions {
-    object LoadMore : DashBoardActions
-    object Refresh : DashBoardActions
+    data object LoadMore : DashBoardActions
+    data object Refresh : DashBoardActions
     data class JoinFestival(val festivalId: String) : DashBoardActions
     data class ViewLeaderboard(val festivalId: String) : DashBoardActions
+    // Device sync actions
+    data object SyncDevice : DashBoardActions
+    data object OpenSettings : DashBoardActions
 }
 
 class DashBoardViewModel(
     private val dashBoardInteractor: DashBoardInteractor,
 ) : BaseViewModel<DashBoardUiState>(DashBoardUiState()) {
 
-    private val pageSize = 3
     private var loadMoreJob: Job? = null
 
     init {
@@ -28,25 +30,29 @@ class DashBoardViewModel(
 
     fun onAction(action: DashBoardActions) {
         when (action) {
-            DashBoardActions.LoadMore -> loadMoreWithDebounce()
+            DashBoardActions.LoadMore -> { /* Dashboard doesn't support load more */ }
             DashBoardActions.Refresh -> refresh()
             is DashBoardActions.JoinFestival -> joinFestival(action.festivalId)
             is DashBoardActions.ViewLeaderboard -> viewLeaderboard(action.festivalId)
+            DashBoardActions.SyncDevice -> syncDevice()
+            DashBoardActions.OpenSettings -> openSettings()
         }
     }
 
     private fun loadInitialData() {
         setLoading()
         baseViewModelScope.launch {
-            val festivalSuggestionsAsync = async { dashBoardInteractor.getFestivalSuggestions(limit = pageSize, lastSeenId = null) }
-            val userFestivalAsync = async { dashBoardInteractor.getUserFestivals() }
+            val festivalSuggestionsAsync = async { dashBoardInteractor.getFestivalSuggestions(limit = 1, lastSeenId = null) } // Only get 1 for dashboard
+            val userFestivalAsync = async { dashBoardInteractor.getUserFestivals(limit = 1) } // Only get 1 for dashboard
             val profileAsync = async { dashBoardInteractor.getUserProfile() }
             val dailyHeadbangsAsync = async { dashBoardInteractor.getDailyHeadbangs(limit = 7) } // Get last 7 days
+            val totalHeadbangsAsync = async { dashBoardInteractor.getTotalHeadbangs() } // Get total headbangs
 
             val suggestionFestivals = festivalSuggestionsAsync.await()
             val joinedFestivals = userFestivalAsync.await()
             val profile = profileAsync.await()
             val dailyHeadbangs = dailyHeadbangsAsync.await()
+            val totalHeadbangs = totalHeadbangsAsync.await()
 
             setContent(
                 DashBoardUiState(
@@ -54,60 +60,14 @@ class DashBoardViewModel(
                     suggestionFestivals = suggestionFestivals,
                     profile = profile,
                     dailyHeadbangs = dailyHeadbangs,
-                    hasMoreSuggestions = suggestionFestivals.size >= pageSize,
-                    lastSeenId = suggestionFestivals.lastOrNull()?.id,
+                    totalHeadbangs = totalHeadbangs,
+                    hasMoreSuggestions = false, // Dashboard doesn't need pagination
+                    lastSeenId = null, // Not needed for dashboard
+                    // Simulate device connection - in real app this would come from device manager
+                    isDeviceConnected = true,
+                    isSyncing = false,
                 ),
             )
-        }
-    }
-
-    private fun loadMoreWithDebounce() {
-        // Cancel previous job if still running
-        loadMoreJob?.cancel()
-        loadMoreJob = baseViewModelScope.launch {
-            delay(300) // 300ms debounce
-            loadMore()
-        }
-    }
-
-    private fun loadMore() {
-        val currentState = getContent()
-        
-        // Early return conditions to prevent unnecessary calls
-        if (!currentState.hasMoreSuggestions) return
-
-        // Don't set loading here since we want to show loading indicator while keeping content visible
-        baseViewModelScope.launch {
-            // Only fetch festival suggestions for pagination - user festivals don't change as frequently
-            val festivalSuggestionsAsync = async { 
-                dashBoardInteractor.getFestivalSuggestions(limit = pageSize, lastSeenId = currentState.lastSeenId) 
-            }
-            val userFestivalAsync = async { dashBoardInteractor.getUserFestivals() }
-            val profileAsync = async { dashBoardInteractor.getUserProfile() }
-            val dailyHeadbangsAsync = async { dashBoardInteractor.getDailyHeadbangs(limit = 7) }
-
-            val suggestionFestivals = festivalSuggestionsAsync.await()
-            val joinedFestivals = userFestivalAsync.await()
-            val profile = profileAsync.await()
-            val dailyHeadbangs = dailyHeadbangsAsync.await()
-
-            // Only add truly new items (double-check for duplicates)
-            val newSuggestions = suggestionFestivals.filter { newItem ->
-                currentState.suggestionFestivals.none { it.id == newItem.id }
-            }
-            val newJoined = joinedFestivals.filter { newItem ->
-                currentState.joinedFestivals.none { it.id == newItem.id }
-            }
-
-            val updatedState = DashBoardUiState(
-                joinedFestivals = currentState.joinedFestivals + newJoined,
-                suggestionFestivals = currentState.suggestionFestivals + newSuggestions,
-                profile = profile,
-                dailyHeadbangs = dailyHeadbangs,
-                hasMoreSuggestions = suggestionFestivals.size >= pageSize,
-                lastSeenId = newSuggestions.lastOrNull()?.id ?: currentState.lastSeenId,
-            )
-            setContent(updatedState)
         }
     }
 
@@ -128,6 +88,25 @@ class DashBoardViewModel(
 
     private fun viewLeaderboard(festivalId: String) {
         navigate("leaderboard/$festivalId")
+    }
+
+    private fun syncDevice() {
+        val currentState = getContent()
+        if (!currentState.isDeviceConnected || currentState.isSyncing) return
+        
+        setContent(currentState.copy(isSyncing = true))
+        
+        baseViewModelScope.launch {
+            // Simulate device sync - replace with actual device sync logic
+            delay(3000)
+            
+            // After sync, refresh the data
+            loadInitialData()
+        }
+    }
+
+    private fun openSettings() {
+        navigate("settings")
     }
 
     override fun onCleared() {

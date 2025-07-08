@@ -62,6 +62,8 @@ interface DashBoardInteractor : Interactor {
     ): List<FestivalItemState>
 
     suspend fun getUserProfile(): UserProfileState?
+    
+    suspend fun getTotalHeadbangs(): Long
 }
 
 // Implementation
@@ -181,5 +183,30 @@ class DashBoardInteractorImpl(
             }
             .decodeSingle<UserProfile>()
             .toUiModel()
+    }
+
+    override suspend fun getTotalHeadbangs(): Long = withInteractorContext(
+        cacheOption = CacheOptions(
+            key = object : CacheKey {
+                override fun toString(): String = "TotalHeadbangsKey"
+            },
+            expirationPolicy = shortCacheExpiration, // 5 minutes - updates frequently
+        ),
+        retryOption = RetryOption(retryCount = 2),
+    ) {
+        val currentUser = supabaseClient.auth.currentUserOrNull()
+            ?: throw Exception("Not authenticated")
+
+        // Temporary fix: Use get_user_daily_headbangs and sum all results
+        // This gets ALL daily headbangs without date limits
+        val result = supabaseClient.postgrest.rpc(
+            "get_user_daily_headbangs",
+            parameters = buildJsonObject {
+                put("_user_id", currentUser.id)
+                put("_limit", 365) // Get up to a year of data
+            }
+        ).decodeList<com.org.basshead.feature.dashboard.model.DailyHeadbang>()
+        
+        result.sumOf { it.totalCount.toLong() }
     }
 }

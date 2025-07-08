@@ -58,3 +58,9 @@ data class UserProfile(
     @SerialName("created_at") val createdAt: String,
     @SerialName("updated_at") val updatedAt: String,
 )
+
+@Serializable
+data class TotalHeadbangs(
+    @SerialName("total_headbangs")
+    val totalHeadbangs: Long
+)

@@ -44,3 +44,5 @@ out
 .kotlin
 keystore.properties
 .vscode/*
+*.sql
+*.sql

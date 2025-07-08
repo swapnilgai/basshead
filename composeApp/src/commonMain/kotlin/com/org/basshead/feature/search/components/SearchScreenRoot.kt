@@ -25,54 +25,13 @@ fun SearchScreenRoot(
     val state = viewModel.state.collectAsStateWithLifecycle()
     var showError by remember { mutableStateOf(true) }
 
-    // Remember callback functions to avoid recomposition
-    val onSearchQueryChange = remember<(String) -> Unit> {
-        {
-                query ->
-            viewModel.onAction(SearchActions.SearchQueryChanged(query))
-        }
-    }
-
-    val onSearch = remember<() -> Unit> {
-        {
-            viewModel.onAction(SearchActions.Search)
-        }
-    }
-
-    val onJoinFestival = remember<(String) -> Unit> {
-        {
-                festivalId ->
-            // TODO: Implement join festival logic
-        }
-    }
-
-    val onViewLeaderboard = remember<(String) -> Unit> {
-        { festivalId ->
-            navigate("leaderboard/$festivalId", null, null)
-        }
-    }
-    
-    val onLoadMore = remember<() -> Unit> {
-        {
-            viewModel.onAction(SearchActions.LoadMore)
-        }
-    }
-
     when (val currentState = state.value) {
         is UiState.Content -> {
             val searchUiState = currentState.data as SearchUiState
             SearchScreen(
-                searchQuery = searchUiState.searchQuery,
-                suggestionFestivals = searchUiState.suggestionFestivals,
-                isSearching = searchUiState.isSearching,
-                hasMoreSuggestions = searchUiState.hasMoreSuggestions,
-                isLoadingMore = searchUiState.isLoadingMore,
-                onSearchQueryChange = onSearchQueryChange,
-                onSearch = onSearch,
-                onLoadMore = onLoadMore,
-                onJoinFestival = onJoinFestival,
-                onViewLeaderboard = onViewLeaderboard,
-                modifier = modifier,
+                uiState = searchUiState,
+                onAction = viewModel::onAction,
+                modifier = modifier
             )
 
             if (currentState.isLoadingUi) {
@@ -94,13 +53,13 @@ fun SearchScreenRoot(
         }
 
         is UiState.Navigate -> {
-            when (currentState.route) {
-                is Route.InternalDirection -> navigate(
-                    currentState.route.destination,
-                    currentState.route.popUpTp,
-                    currentState.route.inclusive,
-                )
-                is Route.Back -> navigate("back", null, null)
+            when (val route = currentState.route) {
+                is Route.Back -> {
+                    // Handle back navigation if needed
+                }
+                is Route.InternalDirection -> {
+                    navigate(route.destination, route.popUpTp, route.inclusive)
+                }
             }
         }
     }

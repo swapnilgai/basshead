@@ -21,6 +21,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import basshead.composeapp.generated.resources.Res
 import basshead.composeapp.generated.resources.dismiss
@@ -53,21 +54,22 @@ fun FestivalItem(
         }
     }
 
-    // Remember the date text calculation
+    // Remember the date text calculation - format for single line
     val dateText = remember(festival.dateString, festival.startTime) {
-        festival.dateString ?: festival.startTime
-    }
-
-    // Remember if festival has started
-    val festivalHasStarted = remember(festival.startTime) {
-        isFestivalStarted(festival.startTime)
-    }
-
-    // Remember button arrangement calculation
-    val buttonArrangement = remember(festival.userJoined, festivalHasStarted) {
-        // Show center if only one button, otherwise space evenly
-        val shouldShowOnlyLeaderboard = festival.userJoined || !festivalHasStarted
-        if (shouldShowOnlyLeaderboard) Arrangement.Center else Arrangement.spacedBy(8.dp)
+        val dateStr = festival.dateString ?: festival.startTime
+        // Format date to be more compact - take only the first part if it's too long
+        when {
+            dateStr.length > 30 -> {
+                // If it's a long date string, try to extract just the date part
+                val parts = dateStr.split(" ")
+                if (parts.size >= 3) {
+                    "${parts[0]} ${parts[1]} ${parts[2]}" // Month Day Year
+                } else {
+                    dateStr.take(30) + "..."
+                }
+            }
+            else -> dateStr
+        }
     }
 
     Card(
@@ -110,12 +112,14 @@ fun FestivalItem(
 
             Spacer(modifier = Modifier.height(4.dp))
 
-            // Date
+            // Date - single line with ellipsis if too long
             Text(
                 modifier = Modifier.padding(horizontal = 12.dp),
                 text = dateText,
                 style = MaterialTheme.typography.body2,
                 color = MaterialTheme.colors.onSurface.copy(alpha = 0.7f),
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
             )
 
             Spacer(modifier = Modifier.height(12.dp))
@@ -125,34 +129,23 @@ fun FestivalItem(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 12.dp, vertical = 8.dp),
-                horizontalArrangement = buttonArrangement,
+                horizontalArrangement = Arrangement.Center,
             ) {
                 if (festival.userJoined) {
-                    // Show only "Leaderboard" for joined festivals (but only if started)
-                    if (festivalHasStarted) {
-                        Button(
-                            onClick = onLeaderboardClick,
-                            modifier = Modifier.weight(1f),
-                        ) {
-                            Text(stringResource(Res.string.leaderboard))
-                        }
+                    // User has joined - show leaderboard button
+                    Button(
+                        onClick = onLeaderboardClick,
+                        modifier = Modifier.fillMaxWidth(),
+                    ) {
+                        Text(stringResource(Res.string.leaderboard))
                     }
                 } else {
-                    // For suggestion festivals: show "Join" and "Leaderboard" (only if started)
+                    // User hasn't joined - show join button
                     Button(
                         onClick = onJoinClick,
-                        modifier = Modifier.weight(1f),
+                        modifier = Modifier.fillMaxWidth(),
                     ) {
                         Text(stringResource(Res.string.join))
-                    }
-
-                    if (festivalHasStarted) {
-                        Button(
-                            onClick = onLeaderboardClick,
-                            modifier = Modifier.weight(1f),
-                        ) {
-                            Text(stringResource(Res.string.leaderboard))
-                        }
                     }
                 }
             }
