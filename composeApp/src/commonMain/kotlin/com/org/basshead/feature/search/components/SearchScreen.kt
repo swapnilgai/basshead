@@ -379,8 +379,8 @@ private fun SearchResultsSection(
             
             FestivalList(
                 festivals = uiState.searchResults,
-                canLoadMore = uiState.canLoadMore,
-                isLoadingMore = uiState.isLoadingMore, // Use the correct loading state for pagination
+                canLoadMore = uiState.hasMoreResults, // Use hasMoreResults directly
+                isLoadingMore = uiState.isLoadingMore,
                 onLoadMore = { onAction(SearchActions.LoadMoreResults) },
                 onFestivalClick = { onAction(SearchActions.OnFestivalClicked(it)) },
                 onJoinFestival = { onAction(SearchActions.JoinFestival(it)) },
@@ -398,7 +398,7 @@ private fun SuggestionsSection(
 ) {
     FestivalList(
         festivals = uiState.suggestionFestivals,
-        canLoadMore = uiState.hasMoreSuggestions && !uiState.isLoadingMore,
+        canLoadMore = uiState.hasMoreSuggestions, // Remove the isLoadingMore check here
         isLoadingMore = uiState.isLoadingMore,
         onLoadMore = { onAction(SearchActions.LoadMoreSuggestions) },
         onFestivalClick = { onAction(SearchActions.OnFestivalClicked(it)) },
@@ -428,11 +428,11 @@ private fun FestivalList(
             val totalItemsNumber = layoutInfo.totalItemsCount
             val lastVisibleItemIndex = (layoutInfo.visibleItemsInfo.lastOrNull()?.index ?: 0) + 1
 
-            // Trigger when last item is visible and we can load more
+            // Trigger when we're close to the end (3 items before the end) and we can load more
             canLoadMore && 
             !isLoadingMore && 
             totalItemsNumber > 0 &&
-            lastVisibleItemIndex >= totalItemsNumber
+            lastVisibleItemIndex >= (totalItemsNumber - 3) // Trigger 3 items before the end for better UX
         }
     }
     
