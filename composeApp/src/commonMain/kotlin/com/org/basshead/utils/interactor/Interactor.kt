@@ -5,10 +5,11 @@ import com.org.basshead.utils.cache.LRUCache
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.withContext
+import kotlin.math.min
+import kotlin.math.pow
 
 object InteractorDispatcherProvider {
     internal val dispatcher: CoroutineDispatcher = Dispatchers.IO
@@ -41,36 +42,35 @@ suspend fun <T>Interactor.withInteractorContext(
         return@withContext if (cacheResult != null) {
             cacheResult
         } else {
-            var attemptIndex = -1
+            var attemptIndex = 0
             var blockResult: T
 
             while (true) {
                 try {
                     if (attemptIndex > 0) {
-                        val duration = retryOption.initialDelay * retryOption.delayIncrementalFactor * attemptIndex
-                        delay(duration.toLong())
+                        val exponentialDelay = retryOption.initialDelay * retryOption.delayIncrementalFactor.pow(attemptIndex - 1)
+                        val cappedDelay = min(exponentialDelay.toLong(), retryOption.maxDelay)
+                        delay(cappedDelay)
                     }
 
-                    blockResult = coroutineScope {
-                        block()
-                    }
+                    blockResult = block()
 
                     cacheOption?.run {
                         if (allowOverwrite) {
                             cache.set(
-                                key = cacheOption.key,
-                                secondaryKey = cacheOption.secondaryKey,
+                                key = key,
+                                secondaryKey = secondaryKey,
                                 value = blockResult,
                             )
                         }
                     }
                     break
                 } catch (e: Exception) {
+                    coroutineContext.ensureActive()
                     if (retryOption.retryCount > attemptIndex) {
                         attemptIndex++
                         continue
                     }
-                    coroutineContext.ensureActive()
                     throw e.toInteractorException()
                 }
             }
