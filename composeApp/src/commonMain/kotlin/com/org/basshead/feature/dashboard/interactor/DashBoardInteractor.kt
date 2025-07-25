@@ -62,7 +62,7 @@ interface DashBoardInteractor : Interactor {
     ): List<FestivalItemState>
 
     suspend fun getUserProfile(): UserProfileState?
-    
+
     suspend fun getTotalHeadbangs(): Long
 }
 
@@ -204,9 +204,9 @@ class DashBoardInteractorImpl(
             parameters = buildJsonObject {
                 put("_user_id", currentUser.id)
                 put("_limit", 365) // Get up to a year of data
-            }
+            },
         ).decodeList<com.org.basshead.feature.dashboard.model.DailyHeadbang>()
-        
+
         result.sumOf { it.totalCount.toLong() }
     }
 }

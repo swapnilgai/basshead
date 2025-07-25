@@ -30,8 +30,6 @@ suspend fun <T>Interactor.withInteractorContext(
     retryOption: RetryOption = RetryOption(retryCount = 0),
     block: suspend () -> T,
 ): T {
-
-
     val context = InteractorDispatcherProvider.dispatcher
     return withContext(context) {
         val cacheResult = if (cacheOption != null && !forceRefresh) {

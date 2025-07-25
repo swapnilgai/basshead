@@ -19,13 +19,13 @@ private fun List<com.org.basshead.feature.dashboard.model.FestivalItemState>.sor
                 // If that fails, just compare as strings
                 return@sortedWith festival1.startTime.compareTo(festival2.startTime)
             }
-            
+
             val time2 = try {
                 Instant.parse(festival2.startTime)
             } catch (e: Exception) {
                 return@sortedWith festival1.startTime.compareTo(festival2.startTime)
             }
-            
+
             time1.compareTo(time2)
         } catch (e: Exception) {
             // If all parsing fails, maintain original order
@@ -87,8 +87,8 @@ class SearchViewModel(
     private fun loadInitialData() {
         baseViewModelScope.launch {
             // Set initial loading state for suggestions
-            setContent(SearchUiState(isLoadingMore = true))
-            
+            setLoading()
+
             val recentSearches = searchInteractor.getRecentSearches()
             val defaultStatusFilters = listOf("upcoming", "ongoing")
             val suggestionFestivals = searchInteractor.searchFestivals(
@@ -96,7 +96,7 @@ class SearchViewModel(
                 statusFilters = defaultStatusFilters,
                 locationFilter = null,
                 limit = pageSize,
-                lastSeenId = null // Start with no cursor
+                lastSeenId = null, // Start with no cursor
             )
 
             setContent(
@@ -108,16 +108,22 @@ class SearchViewModel(
                     selectedStatusFilters = defaultStatusFilters.toSet(),
                     appliedStatusFilters = defaultStatusFilters.toSet(), // Set applied filters
                     suggestionsLastSeenId = suggestionFestivals.lastOrNull()?.id, // Initialize suggestions cursor
-                    isLoadingMore = false
-                )
+                    isLoadingMore = false,
+                ),
             )
         }
     }
 
     private fun onSearchQueryChanged(query: String) {
         val currentState = getContent()
+
+        // Implement distinctUntilChanged behavior - only proceed if query actually changed
+        if (currentState.searchQuery == query) {
+            return
+        }
+
         setContent(currentState.copy(searchQuery = query))
-        
+
         searchJob?.cancel()
         if (query.trim().isNotEmpty()) {
             searchJob = baseViewModelScope.launch {
@@ -125,12 +131,14 @@ class SearchViewModel(
                 performSearch(query.trim(), resetResults = true)
             }
         } else {
-            setContent(currentState.copy(
-                searchResults = emptyList(),
-                hasSearched = false,
-                hasMoreResults = true,
-                lastSeenId = null // Reset search cursor
-            ))
+            setContent(
+                currentState.copy(
+                    searchResults = emptyList(),
+                    hasSearched = false,
+                    hasMoreResults = true,
+                    lastSeenId = null, // Reset search cursor
+                ),
+            )
         }
     }
 
@@ -150,19 +158,19 @@ class SearchViewModel(
                 searchResults = emptyList(),
                 hasSearched = false,
                 hasMoreResults = true,
-                lastSeenId = null // Reset search cursor
-            )
+                lastSeenId = null, // Reset search cursor
+            ),
         )
     }
 
     private fun loadMoreResults() {
         val currentState = getContent()
-        
+
         // Prevent multiple simultaneous requests
         if (currentState.canLoadMore && !currentState.isLoadingMore) {
             performSearch(
                 query = currentState.searchQuery,
-                resetResults = false
+                resetResults = false,
             )
         }
     }
@@ -170,11 +178,11 @@ class SearchViewModel(
     private fun loadMoreSuggestions() {
         // Cancel any existing load more job
         loadMoreJob?.cancel()
-        
+
         val currentState = getContent()
         // Early return if already loading or no more data
         if (!currentState.hasMoreSuggestions || currentState.isLoadingMore) return
-        
+
         // Reduce debounce time and start loading immediately for better responsiveness
         loadMoreJob = baseViewModelScope.launch {
             delay(100) // Reduced debounce for better responsiveness
@@ -186,7 +194,7 @@ class SearchViewModel(
         val currentState = getContent()
         // Double-check state after debounce delay
         if (!currentState.hasMoreSuggestions || currentState.isLoadingMore) return
-        
+
         setContent(currentState.copy(isLoadingMore = true))
 
         baseViewModelScope.launch {
@@ -196,7 +204,7 @@ class SearchViewModel(
                     statusFilters = currentState.appliedStatusFilters.sorted(),
                     locationFilter = currentState.appliedLocationFilter.takeIf { it.isNotBlank() },
                     limit = pageSize,
-                    lastSeenId = currentState.suggestionsLastSeenId
+                    lastSeenId = currentState.suggestionsLastSeenId,
                 )
 
                 // Filter out duplicates
@@ -206,14 +214,16 @@ class SearchViewModel(
 
                 // Get the updated state in case it changed during the API call
                 val latestState = getContent()
-                
-                setContent(latestState.copy(
-                    suggestionFestivals = (latestState.suggestionFestivals + filteredNewSuggestions).sortedByStartDate(),
-                    hasMoreSuggestions = newSuggestions.size == pageSize,
-                    lastSeenId = newSuggestions.lastOrNull()?.id ?: latestState.lastSeenId,
-                    isLoadingMore = false,
-                    suggestionsLastSeenId = newSuggestions.lastOrNull()?.id ?: latestState.suggestionsLastSeenId,
-                ))
+
+                setContent(
+                    latestState.copy(
+                        suggestionFestivals = (latestState.suggestionFestivals + filteredNewSuggestions).sortedByStartDate(),
+                        hasMoreSuggestions = newSuggestions.size == pageSize,
+                        lastSeenId = newSuggestions.lastOrNull()?.id ?: latestState.lastSeenId,
+                        isLoadingMore = false,
+                        suggestionsLastSeenId = newSuggestions.lastOrNull()?.id ?: latestState.suggestionsLastSeenId,
+                    ),
+                )
             } catch (e: Exception) {
                 // Handle error case - stop loading state
                 val latestState = getContent()
@@ -224,14 +234,16 @@ class SearchViewModel(
 
     private fun toggleFilters() {
         val currentState = getContent()
-        
+
         if (currentState.showFilters) {
             // Closing filters - revert any unapplied changes
-            setContent(currentState.copy(
-                showFilters = false,
-                selectedStatusFilters = currentState.appliedStatusFilters,
-                locationFilter = currentState.appliedLocationFilter
-            ))
+            setContent(
+                currentState.copy(
+                    showFilters = false,
+                    selectedStatusFilters = currentState.appliedStatusFilters,
+                    locationFilter = currentState.appliedLocationFilter,
+                ),
+            )
         } else {
             // Opening filters - keep current state
             setContent(currentState.copy(showFilters = true))
@@ -241,7 +253,7 @@ class SearchViewModel(
     private fun onStatusFilterChanged(statusValue: String, isSelected: Boolean) {
         val currentState = getContent()
         val currentFilters = currentState.selectedStatusFilters.toMutableSet()
-        
+
         if (statusValue == "all") {
             if (isSelected) {
                 // Select "all" - backend handles this correctly
@@ -260,13 +272,13 @@ class SearchViewModel(
             } else {
                 currentFilters.remove(statusValue)
             }
-            
+
             // If no statuses selected, default to upcoming and ongoing
             if (currentFilters.isEmpty()) {
                 currentFilters.addAll(setOf("upcoming", "ongoing"))
             }
         }
-        
+
         // Only update the selected filters, don't apply automatically
         setContent(currentState.copy(selectedStatusFilters = currentFilters))
     }
@@ -279,24 +291,26 @@ class SearchViewModel(
 
     private fun applyFilters() {
         val currentState = getContent()
-        
+
         // Cancel any ongoing operations first
         loadMoreJob?.cancel()
         searchJob?.cancel()
-        
+
         // Apply filters and close filter panel
-        setContent(currentState.copy(
-            showFilters = false,
-            appliedStatusFilters = currentState.selectedStatusFilters,
-            appliedLocationFilter = currentState.locationFilter,
-            lastSeenId = null,
-            suggestionsLastSeenId = null,
-            hasMoreResults = true,
-            hasMoreSuggestions = true,
-            isLoadingMore = false,
-            isSearching = false
-        ))
-        
+        setContent(
+            currentState.copy(
+                showFilters = false,
+                appliedStatusFilters = currentState.selectedStatusFilters,
+                appliedLocationFilter = currentState.locationFilter,
+                lastSeenId = null,
+                suggestionsLastSeenId = null,
+                hasMoreResults = true,
+                hasMoreSuggestions = true,
+                isLoadingMore = false,
+                isSearching = false,
+            ),
+        )
+
         // Refresh data with new filters
         if (currentState.searchQuery.isNotEmpty()) {
             performSearch(currentState.searchQuery, resetResults = true)
@@ -313,14 +327,16 @@ class SearchViewModel(
         // Cancel any ongoing operations
         loadMoreJob?.cancel()
         searchJob?.cancel()
-        
+
         baseViewModelScope.launch {
             val currentState = getContent()
-            setContent(currentState.copy(
-                isLoadingMore = true,
-                suggestionFestivals = emptyList(), // Clear existing results
-                suggestionsLastSeenId = null
-            ))
+            setContent(
+                currentState.copy(
+                    isLoadingMore = true,
+                    suggestionFestivals = emptyList(), // Clear existing results
+                    suggestionsLastSeenId = null,
+                ),
+            )
 
             try {
                 val filteredSuggestions = searchInteractor.searchFestivals(
@@ -328,23 +344,27 @@ class SearchViewModel(
                     statusFilters = currentState.appliedStatusFilters.sorted(),
                     locationFilter = currentState.appliedLocationFilter.takeIf { it.isNotBlank() },
                     limit = pageSize,
-                    lastSeenId = null
+                    lastSeenId = null,
                 )
 
-                setContent(currentState.copy(
-                    suggestionFestivals = filteredSuggestions.sortedByStartDate(),
-                    hasMoreSuggestions = filteredSuggestions.size == pageSize,
-                    lastSeenId = filteredSuggestions.lastOrNull()?.id,
-                    isLoadingMore = false,
-                    suggestionsLastSeenId = filteredSuggestions.lastOrNull()?.id,
-                ))
+                setContent(
+                    currentState.copy(
+                        suggestionFestivals = filteredSuggestions.sortedByStartDate(),
+                        hasMoreSuggestions = filteredSuggestions.size == pageSize,
+                        lastSeenId = filteredSuggestions.lastOrNull()?.id,
+                        isLoadingMore = false,
+                        suggestionsLastSeenId = filteredSuggestions.lastOrNull()?.id,
+                    ),
+                )
             } catch (e: Exception) {
                 // Handle error case
-                setContent(currentState.copy(
-                    isLoadingMore = false,
-                    suggestionFestivals = emptyList(),
-                    hasMoreSuggestions = false
-                ))
+                setContent(
+                    currentState.copy(
+                        isLoadingMore = false,
+                        suggestionFestivals = emptyList(),
+                        hasMoreSuggestions = false,
+                    ),
+                )
             }
         }
     }
@@ -383,64 +403,57 @@ class SearchViewModel(
         // Cancel any ongoing search operations
         searchJob?.cancel()
         loadMoreJob?.cancel()
-        
+
         searchJob = baseViewModelScope.launch {
             val currentState = getContent()
-            
+
             val currentLastSeenId = if (resetResults) null else currentState.searchResults.lastOrNull()?.id
-            
-            setContent(currentState.copy(
-                isSearching = if (resetResults) true else false, // Only show main loading for new searches
-                isLoadingMore = if (resetResults) false else true, // Show pagination loading for load more
-                lastSeenId = if (resetResults) null else currentState.lastSeenId
-            ))
 
-            try {
-                val searchResults = searchInteractor.searchFestivals(
-                    query = query,
-                    statusFilters = currentState.appliedStatusFilters.sorted(),
-                    locationFilter = currentState.appliedLocationFilter.takeIf { it.isNotBlank() },
-                    limit = pageSize,
-                    lastSeenId = currentLastSeenId
-                )
+            setContent(
+                currentState.copy(
+                    isSearching = if (resetResults) true else false, // Only show main loading for new searches
+                    isLoadingMore = if (resetResults) false else true, // Show pagination loading for load more
+                    lastSeenId = if (resetResults) null else currentState.lastSeenId,
+                ),
+            )
 
-                // Get latest state in case it changed during the API call
-                val latestState = getContent()
-                
-                val newState = if (resetResults) {
-                    latestState.copy(
-                        searchResults = searchResults.sortedByStartDate(),
-                        isSearching = false,
-                        isLoadingMore = false,
-                        hasSearched = true,
-                        hasMoreResults = searchResults.size == pageSize,
-                        lastSeenId = searchResults.lastOrNull()?.id
-                    )
-                } else {
-                    // Filter out duplicates when appending results
-                    val filteredNewResults = searchResults.filter { newItem ->
-                        latestState.searchResults.none { it.id == newItem.id }
-                    }
-                    // Sort the combined results to maintain date order
-                    val combinedResults = (latestState.searchResults + filteredNewResults).sortedByStartDate()
-                    latestState.copy(
-                        searchResults = combinedResults,
-                        isSearching = false,
-                        isLoadingMore = false,
-                        hasMoreResults = searchResults.size == pageSize,
-                        lastSeenId = searchResults.lastOrNull()?.id
-                    )
-                }
-                
-                setContent(newState)
-            } catch (e: Exception) {
-                // Handle error case
-                val latestState = getContent()
-                setContent(latestState.copy(
+            val searchResults = searchInteractor.searchFestivals(
+                query = query,
+                statusFilters = currentState.appliedStatusFilters.sorted(),
+                locationFilter = currentState.appliedLocationFilter.takeIf { it.isNotBlank() },
+                limit = pageSize,
+                lastSeenId = currentLastSeenId,
+            )
+
+            // Get latest state in case it changed during the API call
+            val latestState = getContent()
+
+            val newState = if (resetResults) {
+                latestState.copy(
+                    searchResults = searchResults.sortedByStartDate(),
                     isSearching = false,
-                    isLoadingMore = false
-                ))
+                    isLoadingMore = false,
+                    hasSearched = true,
+                    hasMoreResults = searchResults.size == pageSize,
+                    lastSeenId = searchResults.lastOrNull()?.id,
+                )
+            } else {
+                // Filter out duplicates when appending results
+                val filteredNewResults = searchResults.filter { newItem ->
+                    latestState.searchResults.none { it.id == newItem.id }
+                }
+                // Sort the combined results to maintain date order
+                val combinedResults = (latestState.searchResults + filteredNewResults).sortedByStartDate()
+                latestState.copy(
+                    searchResults = combinedResults,
+                    isSearching = false,
+                    isLoadingMore = false,
+                    hasMoreResults = searchResults.size == pageSize,
+                    lastSeenId = searchResults.lastOrNull()?.id,
+                )
             }
+
+            setContent(newState)
         }
     }
 
@@ -448,18 +461,20 @@ class SearchViewModel(
         // Cancel all ongoing operations
         loadMoreJob?.cancel()
         searchJob?.cancel()
-        
+
         // Reset loading states
         val currentState = getContent()
-        setContent(currentState.copy(
-            isLoadingMore = false,
-            isSearching = false,
-            lastSeenId = null,
-            suggestionsLastSeenId = null,
-            hasMoreResults = true,
-            hasMoreSuggestions = true
-        ))
-        
+        setContent(
+            currentState.copy(
+                isLoadingMore = false,
+                isSearching = false,
+                lastSeenId = null,
+                suggestionsLastSeenId = null,
+                hasMoreResults = true,
+                hasMoreSuggestions = true,
+            ),
+        )
+
         // Reload initial data
         loadInitialData()
     }

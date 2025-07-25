@@ -31,7 +31,7 @@ fun SearchScreenRoot(
             SearchScreen(
                 uiState = searchUiState,
                 onAction = viewModel::onAction,
-                modifier = modifier
+                modifier = modifier,
             )
 
             if (currentState.isLoadingUi) {

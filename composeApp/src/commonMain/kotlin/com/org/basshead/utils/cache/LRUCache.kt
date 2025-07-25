@@ -10,7 +10,7 @@ class LRUCache private constructor(private val maxSize: Int) {
     private val cache = atomic(LinkedHashMap<CacheKey, Any>(maxSize, 0.75f))
 
     // Set a cache entry with optional secondary key and expiration policy
-    suspend fun set(
+    fun set(
         key: CacheKey,
         secondaryKey: CacheKey? = null,
         expirationPolicy: CacheExpirationPolicy = defaultCacheExpiration,

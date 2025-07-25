@@ -2,7 +2,6 @@ package com.org.basshead.feature.search.model
 
 import androidx.compose.runtime.Immutable
 import com.org.basshead.feature.dashboard.model.FestivalItemState
-import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
@@ -16,7 +15,7 @@ data class SearchResult(
     val description: String?,
     val location: String,
     val start_time: String, // ISO string from Supabase
-    val end_time: String,   // ISO string from Supabase
+    val end_time: String, // ISO string from Supabase
     val image_url: String?,
     val status: String,
     val participant_count: Int,
@@ -29,7 +28,7 @@ data class SearchFilters(
         StatusFilter("upcoming", "Upcoming", true),
         StatusFilter("ongoing", "Ongoing", true),
         StatusFilter("completed", "Completed", false),
-        StatusFilter("all", "All", false)
+        StatusFilter("all", "All", false),
     ),
 ) {
     val selectedStatuses: List<String>
@@ -49,7 +48,7 @@ fun SearchResult.toFestivalItemState(): FestivalItemState {
     val startInstant = Instant.parse(start_time)
     val startDateTime = startInstant.toLocalDateTime(TimeZone.currentSystemDefault())
     val dateString = "${startDateTime.month.name.lowercase().replaceFirstChar { it.uppercase() }} ${startDateTime.dayOfMonth}, ${startDateTime.year}"
-    
+
     return FestivalItemState(
         id = id,
         name = name,
@@ -64,6 +63,6 @@ fun SearchResult.toFestivalItemState(): FestivalItemState {
         totalHeadbangs = null, // Search results don't include user-specific data
         userRank = null,
         dateString = dateString,
-        userJoined = false // Would need to be determined separately if needed
+        userJoined = false, // Would need to be determined separately if needed
     )
 }

@@ -46,7 +46,7 @@ fun NavigationGraph(navController: NavHostController) {
             SearchScreenRoot(
                 navigate = { destination, popUpTp, inclusive ->
                     navigate(navController, routes, destination, popUpTp, inclusive)
-                }
+                },
             )
         }
     }

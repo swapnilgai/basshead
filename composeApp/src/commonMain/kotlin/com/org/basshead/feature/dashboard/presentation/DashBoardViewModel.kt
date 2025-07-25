@@ -13,6 +13,7 @@ sealed interface DashBoardActions {
     data object Refresh : DashBoardActions
     data class JoinFestival(val festivalId: String) : DashBoardActions
     data class ViewLeaderboard(val festivalId: String) : DashBoardActions
+
     // Device sync actions
     data object SyncDevice : DashBoardActions
     data object OpenSettings : DashBoardActions
@@ -93,13 +94,13 @@ class DashBoardViewModel(
     private fun syncDevice() {
         val currentState = getContent()
         if (!currentState.isDeviceConnected || currentState.isSyncing) return
-        
+
         setContent(currentState.copy(isSyncing = true))
-        
+
         baseViewModelScope.launch {
             // Simulate device sync - replace with actual device sync logic
             delay(3000)
-            
+
             // After sync, refresh the data
             loadInitialData()
         }

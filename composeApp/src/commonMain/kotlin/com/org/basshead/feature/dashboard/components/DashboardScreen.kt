@@ -2,9 +2,7 @@ package com.org.basshead.feature.dashboard.components
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.MaterialTheme
@@ -21,7 +19,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import basshead.composeapp.generated.resources.Res
 import basshead.composeapp.generated.resources.featured_festival
 import basshead.composeapp.generated.resources.no_festivals_available
-import basshead.composeapp.generated.resources.total_headbangs
 import basshead.composeapp.generated.resources.welcome_default_user
 import basshead.composeapp.generated.resources.welcome_user
 import basshead.composeapp.generated.resources.your_current_festival
@@ -167,7 +164,7 @@ fun DashboardScreen(
                 fontWeight = FontWeight.Bold,
             )
         }
-        
+
         // Device sync card
         item(key = "device_sync_card") {
             DeviceSyncCard(
@@ -175,7 +172,7 @@ fun DashboardScreen(
                 isDeviceConnected = dashBoardUiState.isDeviceConnected,
                 isSyncing = dashBoardUiState.isSyncing,
                 onSyncClick = onSyncDevice,
-                onSettingsClick = onOpenSettings
+                onSettingsClick = onOpenSettings,
             )
         }
 

@@ -27,11 +27,10 @@ import basshead.composeapp.generated.resources.Res
 import basshead.composeapp.generated.resources.dismiss
 import basshead.composeapp.generated.resources.error_unknown
 import basshead.composeapp.generated.resources.join
-import basshead.composeapp.generated.resources.retry
 import basshead.composeapp.generated.resources.leaderboard
+import basshead.composeapp.generated.resources.retry
 import coil3.compose.AsyncImage
 import com.org.basshead.feature.dashboard.model.FestivalItemState
-import com.org.basshead.feature.dashboard.model.isFestivalStarted
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
@@ -119,7 +118,7 @@ fun FestivalItem(
                 style = MaterialTheme.typography.body2,
                 color = MaterialTheme.colors.onSurface.copy(alpha = 0.7f),
                 maxLines = 1,
-                overflow = TextOverflow.Ellipsis
+                overflow = TextOverflow.Ellipsis,
             )
 
             Spacer(modifier = Modifier.height(12.dp))

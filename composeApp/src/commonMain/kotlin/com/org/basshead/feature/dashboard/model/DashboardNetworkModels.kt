@@ -62,5 +62,5 @@ data class UserProfile(
 @Serializable
 data class TotalHeadbangs(
     @SerialName("total_headbangs")
-    val totalHeadbangs: Long
+    val totalHeadbangs: Long,
 )
