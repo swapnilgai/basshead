@@ -2,15 +2,17 @@ package com.org.basshead.feature.dashboard.interactor
 
 import com.org.basshead.feature.dashboard.model.DailyHeadbang
 import com.org.basshead.feature.dashboard.model.DailyHeadbangState
+import com.org.basshead.feature.dashboard.model.FestivalItemState
 import com.org.basshead.feature.dashboard.model.FestivalSuggestion
-import com.org.basshead.feature.dashboard.model.FestivalSuggestionState
 import com.org.basshead.feature.dashboard.model.UserFestival
-import com.org.basshead.feature.dashboard.model.UserFestivalState
 import com.org.basshead.feature.dashboard.model.UserProfile
 import com.org.basshead.feature.dashboard.model.UserProfileState
+import com.org.basshead.feature.dashboard.model.toFestivalItemState
 import com.org.basshead.feature.dashboard.model.toUiModel
 import com.org.basshead.utils.cache.CacheKey
 import com.org.basshead.utils.cache.CacheOptions
+import com.org.basshead.utils.cache.longCacheExpiration
+import com.org.basshead.utils.cache.shortCacheExpiration
 import com.org.basshead.utils.interactor.Interactor
 import com.org.basshead.utils.interactor.RetryOption
 import com.org.basshead.utils.interactor.withInteractorContext
@@ -28,6 +30,8 @@ data class UserFestivalsPrimaryKey(val statuses: String) : CacheKey
 data class UserFestivalsSecondaryKey(val lastSeenId: String? = null) : CacheKey
 data class FestivalSuggestionsPrimaryKey(val statuses: String, val location: String?) : CacheKey
 data class FestivalSuggestionsSecondaryKey(val lastSeenId: String?) : CacheKey
+data class DailyHeadbangsPrimaryKey(val startDate: String?, val endDate: String?) : CacheKey
+data class DailyHeadbangsSecondaryKey(val limit: Int) : CacheKey
 
 // Object-based CacheKey for user profile
 object UserProfileKey : CacheKey {
@@ -44,20 +48,22 @@ interface DashBoardInteractor : Interactor {
 
     suspend fun getUserFestivals(
         statuses: List<String> = listOf("all"),
-        limit: Int = 2,
+        limit: Int = 10,
         lastSeenId: String? = null,
         lastSeenStatus: String? = null,
         lastSeenTime: String? = null,
-    ): List<UserFestivalState>
+    ): List<FestivalItemState>
 
     suspend fun getFestivalSuggestions(
         statuses: List<String> = listOf("upcoming", "ongoing"),
         limit: Int = 3,
         lastSeenId: String? = null,
         location: String? = null,
-    ): List<FestivalSuggestionState>
+    ): List<FestivalItemState>
 
     suspend fun getUserProfile(): UserProfileState?
+
+    suspend fun getTotalHeadbangs(): Long
 }
 
 // Implementation
@@ -69,7 +75,14 @@ class DashBoardInteractorImpl(
         startDate: String?,
         endDate: String?,
         limit: Int,
-    ): List<DailyHeadbangState> = withInteractorContext(retryOption = RetryOption(retryCount = 2)) {
+    ): List<DailyHeadbangState> = withInteractorContext(
+        cacheOption = CacheOptions(
+            key = DailyHeadbangsPrimaryKey(startDate = startDate, endDate = endDate),
+            secondaryKey = DailyHeadbangsSecondaryKey(limit = limit),
+            expirationPolicy = shortCacheExpiration, // 5 minutes - updates frequently
+        ),
+        retryOption = RetryOption(retryCount = 2),
+    ) {
         val currentUser = supabaseClient.auth.currentUserOrNull()
             ?: throw Exception("Not authenticated")
 
@@ -97,7 +110,7 @@ class DashBoardInteractorImpl(
         lastSeenId: String?,
         lastSeenStatus: String?,
         lastSeenTime: String?,
-    ): List<UserFestivalState> = withInteractorContext(
+    ): List<FestivalItemState> = withInteractorContext(
         cacheOption = CacheOptions(
             key = UserFestivalsPrimaryKey(statuses = statuses.toString()),
             secondaryKey = UserFestivalsSecondaryKey(lastSeenId = lastSeenId),
@@ -107,7 +120,6 @@ class DashBoardInteractorImpl(
         val currentUser = supabaseClient.auth.currentUserOrNull()
             ?: throw Exception("Not authenticated")
 
-        // Pass parameters directly without conversion
         supabaseClient.postgrest.rpc(
             "get_user_festivals",
             parameters = buildJsonObject {
@@ -119,22 +131,7 @@ class DashBoardInteractorImpl(
                 lastSeenTime?.let { put("_last_seen_time", it) }
             },
         ).decodeList<UserFestival>()
-            .map { networkModel ->
-                UserFestivalState(
-                    id = networkModel.id,
-                    name = networkModel.name,
-                    description = networkModel.description,
-                    location = networkModel.location,
-                    startTime = networkModel.startTime,
-                    endTime = networkModel.endTime,
-                    imageUrl = networkModel.imageUrl,
-                    createdAt = networkModel.createdAt,
-                    status = networkModel.status,
-                    totalHeadbangs = networkModel.totalHeadbangs,
-                    userRank = networkModel.userRank,
-                    totalParticipants = networkModel.totalParticipants,
-                )
-            }
+            .map { it.toFestivalItemState() }
     }
 
     override suspend fun getFestivalSuggestions(
@@ -142,7 +139,7 @@ class DashBoardInteractorImpl(
         limit: Int,
         lastSeenId: String?,
         location: String?,
-    ): List<FestivalSuggestionState> = withInteractorContext(
+    ): List<FestivalItemState> = withInteractorContext(
         cacheOption = CacheOptions(
             key = FestivalSuggestionsPrimaryKey(
                 statuses = statuses.toString(),
@@ -165,12 +162,13 @@ class DashBoardInteractorImpl(
                 location?.let { put("_location", it) }
             },
         ).decodeList<FestivalSuggestion>()
-            .map { networkModel -> networkModel.toUiModel() }
+            .map { it.toFestivalItemState() }
     }
 
     override suspend fun getUserProfile(): UserProfileState? = withInteractorContext(
         cacheOption = CacheOptions(
             key = UserProfileKey,
+            expirationPolicy = longCacheExpiration, // 30 minutes - changes infrequently
         ),
         retryOption = RetryOption(retryCount = 1),
     ) {
@@ -185,5 +183,30 @@ class DashBoardInteractorImpl(
             }
             .decodeSingle<UserProfile>()
             .toUiModel()
+    }
+
+    override suspend fun getTotalHeadbangs(): Long = withInteractorContext(
+        cacheOption = CacheOptions(
+            key = object : CacheKey {
+                override fun toString(): String = "TotalHeadbangsKey"
+            },
+            expirationPolicy = shortCacheExpiration, // 5 minutes - updates frequently
+        ),
+        retryOption = RetryOption(retryCount = 2),
+    ) {
+        val currentUser = supabaseClient.auth.currentUserOrNull()
+            ?: throw Exception("Not authenticated")
+
+        // Temporary fix: Use get_user_daily_headbangs and sum all results
+        // This gets ALL daily headbangs without date limits
+        val result = supabaseClient.postgrest.rpc(
+            "get_user_daily_headbangs",
+            parameters = buildJsonObject {
+                put("_user_id", currentUser.id)
+                put("_limit", 365) // Get up to a year of data
+            },
+        ).decodeList<com.org.basshead.feature.dashboard.model.DailyHeadbang>()
+
+        result.sumOf { it.totalCount.toLong() }
     }
 }

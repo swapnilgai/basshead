@@ -17,6 +17,9 @@ sealed interface Route {
     data object Profile
 
     @Serializable
+    data object Search
+
+    @Serializable
     data class FestivalDetails(val festivalID: String)
 
     @Serializable

@@ -6,7 +6,8 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.org.basshead.feature.auth.components.LoginScreenRoot
-import com.org.basshead.feature.dashboard.components.DashboardScreenRoot
+import com.org.basshead.feature.main.components.MainScreen
+import com.org.basshead.feature.search.components.SearchScreenRoot
 import com.org.basshead.feature.splash.components.SplashScreenRoot
 
 @Composable
@@ -15,8 +16,9 @@ fun NavigationGraph(navController: NavHostController) {
         mapOf(
             Route.Splash::class.simpleName to "splash",
             Route.Auth::class.simpleName to "auth",
-            Route.Dashboard::class.simpleName to "dashboard",
+            Route.Dashboard::class.simpleName to "main",
             Route.Profile::class.simpleName to "profile",
+            Route.Search::class.simpleName to "search",
             Route.FestivalDetails::class.simpleName to "festival_detail",
             Route.FestivalLeaderBoard::class.simpleName to "festival_leaderboard",
         )
@@ -34,9 +36,18 @@ fun NavigationGraph(navController: NavHostController) {
             }
         }
         composable(routes[Route.Dashboard::class.simpleName]!!) {
-            DashboardScreenRoot { destination, popUpTp, inclusive ->
-                navigate(navController, routes, destination, popUpTp, inclusive)
-            }
+            MainScreen(
+                navigate = { destination, popUpTp, inclusive ->
+                    navigate(navController, routes, destination, popUpTp, inclusive)
+                },
+            )
+        }
+        composable(routes[Route.Search::class.simpleName]!!) {
+            SearchScreenRoot(
+                navigate = { destination, popUpTp, inclusive ->
+                    navigate(navController, routes, destination, popUpTp, inclusive)
+                },
+            )
         }
     }
 }
