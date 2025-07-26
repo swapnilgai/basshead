@@ -35,6 +35,7 @@ data class SearchFestivalsSearchKey(
 data class SaveSearchCacheResult(
     val query: String,
     val locationFilter: String?,
+    val statusFilters: List<String>?,
     val limit: Int,
 )
 
@@ -50,7 +51,7 @@ interface SearchInteractor : Interactor {
 
     suspend fun getRecentSearches(): List<SaveSearchCacheResult>
 
-    suspend fun saveSearchQuery(query: String, locationFilter: String, limit: Int)
+    suspend fun saveSearchQuery(query: String, locationFilter: String, limit: Int, statusFilters: List<String> = emptyList())
 
     suspend fun clearSearchHistory()
 }
@@ -135,7 +136,7 @@ class SearchInteractorImpl(
         emptyList()
     }
 
-    override suspend fun saveSearchQuery(query: String, locationFilter: String, limit: Int) {
+    override suspend fun saveSearchQuery(query: String, locationFilter: String, limit: Int, statusFilters: List<String>) {
         withInteractorContext(
             cacheOption = CacheOptions(
                 key = SearchFestivalsSearchKey(),
@@ -146,7 +147,7 @@ class SearchInteractorImpl(
             getRecentSearches().let {
                 it.toMutableList().add(
                     SaveSearchCacheResult(
-                        query = query, locationFilter = locationFilter, limit = limit
+                        query = query, locationFilter = locationFilter, limit = limit, statusFilters = statusFilters
                     )
                 )
             }
