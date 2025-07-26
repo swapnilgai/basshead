@@ -21,14 +21,22 @@ import kotlinx.serialization.json.put
 // Cache Keys
 data class SearchFestivalsPrimaryKey(
     val query: String,
-    val statusFilters: List<String>,
     val locationFilter: String?,
 ) : CacheKey
 
 data class SearchFestivalsSecondaryKey(
-    val limit: Int,
-    val lastSeenId: String?, // Changed from offset to lastSeenId
+    val limit: Int
 ) : CacheKey
+
+data class SearchFestivalsSearchKey(
+    val key: String = "SearchFestivalsSearchKey"
+) : CacheKey
+
+data class SaveSearchCacheResult(
+    val query: String,
+    val locationFilter: String?,
+    val limit: Int,
+)
 
 // Interface
 interface SearchInteractor : Interactor {
@@ -40,9 +48,9 @@ interface SearchInteractor : Interactor {
         lastSeenId: String? = null, // Changed from offset to lastSeenId
     ): List<FestivalItemState>
 
-    suspend fun getRecentSearches(): List<String>
+    suspend fun getRecentSearches(): List<SaveSearchCacheResult>
 
-    suspend fun saveSearchQuery(query: String)
+    suspend fun saveSearchQuery(query: String, locationFilter: String, limit: Int)
 
     suspend fun clearSearchHistory()
 }
@@ -62,16 +70,14 @@ class SearchInteractorImpl(
         cacheOption = CacheOptions(
             key = SearchFestivalsPrimaryKey(
                 query = query.trim().lowercase(),
-                statusFilters = statusFilters.sorted(),
                 locationFilter = locationFilter?.trim()?.lowercase(),
             ),
             secondaryKey = SearchFestivalsSecondaryKey(
-                limit = limit,
-                lastSeenId = lastSeenId,
+                limit = limit
             ),
             expirationPolicy = shortCacheExpiration, // 5 minutes - search results change frequently
         ),
-        retryOption = RetryOption(retryCount = 2),
+        retryOption = RetryOption(retryCount = 1),
     ) {
         val currentUser = supabaseClient.auth.currentUserOrNull()
             ?: throw Exception("Not authenticated")
@@ -108,40 +114,54 @@ class SearchInteractorImpl(
                 put("_search_query", effectiveQuery)
                 effectiveLocationFilter?.let { put("_location", it) }
                 put("_limit", effectiveLimit)
-                lastSeenId?.let { put("_last_seen_id", it) } // Use lastSeenId for cursor-based pagination
+                lastSeenId?.let {
+                    put(
+                        "_last_seen_id",
+                        it
+                    )
+                } // Use lastSeenId for cursor-based pagination
             },
         ).decodeList<FestivalSuggestion>()
 
         results.map { it.toFestivalItemState() }
     }
 
-    override suspend fun getRecentSearches(): List<String> = withInteractorContext(
+    override suspend fun getRecentSearches(): List<SaveSearchCacheResult> = withInteractorContext(
         cacheOption = CacheOptions(
-            key = object : CacheKey {
-                override fun toString(): String = "recent_searches"
-            },
+            key = SearchFestivalsSearchKey(),
             expirationPolicy = shortCacheExpiration,
-        ),
-        retryOption = RetryOption(retryCount = 0),
+        )
     ) {
-        // For now, return empty list. In a real app, this would query local storage
-        // or a user preferences table in Supabase
         emptyList()
     }
 
-    override suspend fun saveSearchQuery(query: String) = withInteractorContext(
-        retryOption = RetryOption(retryCount = 0),
-    ) {
-        // For now, no-op. In a real app, this would save to local storage
-        // or a user preferences table in Supabase
-        Unit
+    override suspend fun saveSearchQuery(query: String, locationFilter: String, limit: Int) {
+        withInteractorContext(
+            cacheOption = CacheOptions(
+                key = SearchFestivalsSearchKey(),
+                expirationPolicy = shortCacheExpiration,
+            ),
+            forceRefresh = true
+        ) {
+            getRecentSearches().let {
+                it.toMutableList().add(
+                    SaveSearchCacheResult(
+                        query = query, locationFilter = locationFilter, limit = limit
+                    )
+                )
+            }
+        }
     }
 
-    override suspend fun clearSearchHistory() = withInteractorContext(
-        retryOption = RetryOption(retryCount = 0),
-    ) {
-        // For now, no-op. In a real app, this would clear local storage
-        // or user preferences table in Supabase
-        Unit
+    override suspend fun clearSearchHistory() {
+        withInteractorContext(
+            cacheOption = CacheOptions(
+                key = SearchFestivalsSearchKey(),
+                expirationPolicy = shortCacheExpiration,
+            ),
+            forceRefresh = true
+        ) {
+            emptyList<SaveSearchCacheResult>()
+        }
     }
 }
