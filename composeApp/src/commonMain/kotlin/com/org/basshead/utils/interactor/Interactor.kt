@@ -23,7 +23,7 @@ data class RetryOption(
 )
 
 interface Interactor
-val cache = LRUCache.create(1000)
+private val cache = LRUCache.create(1000)
 
 suspend fun <T>Interactor.withInteractorContext(
     cacheOption: CacheOptions? = null,

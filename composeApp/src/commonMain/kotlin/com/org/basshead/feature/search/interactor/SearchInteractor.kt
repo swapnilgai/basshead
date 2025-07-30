@@ -49,11 +49,11 @@ interface SearchInteractor : Interactor {
         lastSeenId: String? = null, // Changed from offset to lastSeenId
     ): List<FestivalItemState>
 
-    suspend fun getRecentSearches(): List<SaveSearchCacheResult>
+    suspend fun getRecentSearchesCacheKey(): List<SaveSearchCacheResult>
 
-    suspend fun saveSearchQuery(query: String, locationFilter: String, limit: Int, statusFilters: List<String> = emptyList())
+    suspend fun saveSearchQueryCacheKey(query: String, locationFilter: String?, limit: Int, statusFilters: List<String> = emptyList())
 
-    suspend fun clearSearchHistory()
+    suspend fun clearSearchHistoryCacheKey()
 }
 
 // Implementation
@@ -124,10 +124,12 @@ class SearchInteractorImpl(
             },
         ).decodeList<FestivalSuggestion>()
 
+        saveSearchQueryCacheKey(query = query, locationFilter = locationFilter, limit = limit, statusFilters = statusFilters)
+
         results.map { it.toFestivalItemState() }
     }
 
-    override suspend fun getRecentSearches(): List<SaveSearchCacheResult> = withInteractorContext(
+    override suspend fun getRecentSearchesCacheKey(): List<SaveSearchCacheResult> = withInteractorContext(
         cacheOption = CacheOptions(
             key = SearchFestivalsSearchKey(),
             expirationPolicy = shortCacheExpiration,
@@ -136,7 +138,7 @@ class SearchInteractorImpl(
         emptyList()
     }
 
-    override suspend fun saveSearchQuery(query: String, locationFilter: String, limit: Int, statusFilters: List<String>) {
+    override suspend fun saveSearchQueryCacheKey(query: String, locationFilter: String?, limit: Int, statusFilters: List<String>) {
         withInteractorContext(
             cacheOption = CacheOptions(
                 key = SearchFestivalsSearchKey(),
@@ -144,7 +146,7 @@ class SearchInteractorImpl(
             ),
             forceRefresh = true
         ) {
-            getRecentSearches().let {
+            getRecentSearchesCacheKey().let {
                 it.toMutableList().add(
                     SaveSearchCacheResult(
                         query = query, locationFilter = locationFilter, limit = limit, statusFilters = statusFilters
@@ -154,7 +156,7 @@ class SearchInteractorImpl(
         }
     }
 
-    override suspend fun clearSearchHistory() {
+    override suspend fun clearSearchHistoryCacheKey() {
         withInteractorContext(
             cacheOption = CacheOptions(
                 key = SearchFestivalsSearchKey(),
