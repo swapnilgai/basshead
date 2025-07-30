@@ -11,6 +11,7 @@ import kotlinx.coroutines.launch
 sealed interface DashBoardActions {
     data object LoadMore : DashBoardActions
     data object Refresh : DashBoardActions
+    data class OnFestivalClicked(val festivalId: String) : DashBoardActions
     data class JoinFestival(val festivalId: String) : DashBoardActions
     data class ViewLeaderboard(val festivalId: String) : DashBoardActions
 
@@ -33,6 +34,7 @@ class DashBoardViewModel(
         when (action) {
             DashBoardActions.LoadMore -> { /* Dashboard doesn't support load more */ }
             DashBoardActions.Refresh -> refresh()
+            is DashBoardActions.OnFestivalClicked -> onFestivalClicked(action.festivalId)
             is DashBoardActions.JoinFestival -> joinFestival(action.festivalId)
             is DashBoardActions.ViewLeaderboard -> viewLeaderboard(action.festivalId)
             DashBoardActions.SyncDevice -> syncDevice()
@@ -72,9 +74,14 @@ class DashBoardViewModel(
         }
     }
 
-    fun refresh() {
+    private fun refresh() {
         loadMoreJob?.cancel()
         loadInitialData()
+    }
+
+    private fun onFestivalClicked(festivalId: String) {
+        // Navigate to festival details
+        navigate("FestivalDetails/$festivalId")
     }
 
     private fun joinFestival(festivalId: String) {
@@ -93,7 +100,7 @@ class DashBoardViewModel(
 
     private fun syncDevice() {
         val currentState = getContent()
-        if (!currentState.isDeviceConnected || currentState.isSyncing) return
+        if (currentState == null || !currentState.isDeviceConnected || currentState.isSyncing) return
 
         setContent(currentState.copy(isSyncing = true))
 

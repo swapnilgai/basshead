@@ -365,7 +365,10 @@ class SearchViewModel(
     }
 
     private fun onFestivalClicked(festivalId: String) {
-        navigate("festival/$festivalId")
+        // Navigate to festival details
+        navigate(
+            destination = "FestivalDetails/$festivalId",
+        )
     }
 
     private fun joinFestival(festivalId: String) {

@@ -41,6 +41,13 @@ fun DashboardScreenRoot(
     var showError by remember { mutableStateOf(true) }
 
     // Remember callback functions to avoid recomposition
+    val onFestivalClick = remember<(String) -> Unit> {
+        {
+                festivalId ->
+            viewModel.onAction(DashBoardActions.OnFestivalClicked(festivalId))
+        }
+    }
+
     val onJoinFestival = remember<(String) -> Unit> {
         {
                 festivalId ->
@@ -78,6 +85,7 @@ fun DashboardScreenRoot(
             val dashBoardUiState = currentState.data as DashBoardUiState
             DashboardScreen(
                 dashBoardUiState = dashBoardUiState,
+                onFestivalClick = onFestivalClick,
                 onJoinFestival = onJoinFestival,
                 onViewLeaderboard = onViewLeaderboard,
                 onRefresh = onRefresh,
@@ -120,6 +128,7 @@ fun DashboardScreenRoot(
 @Composable
 fun DashboardScreen(
     dashBoardUiState: DashBoardUiState,
+    onFestivalClick: (String) -> Unit,
     onJoinFestival: (String) -> Unit,
     onViewLeaderboard: (String) -> Unit,
     onRefresh: () -> Unit,
@@ -193,6 +202,7 @@ fun DashboardScreen(
 
                     FestivalItem(
                         festival = festival,
+                        onFestivalClick = onFestivalClick,
                         onJoinFestival = onJoinFestival,
                         onViewLeaderboard = onViewLeaderboard,
                     )

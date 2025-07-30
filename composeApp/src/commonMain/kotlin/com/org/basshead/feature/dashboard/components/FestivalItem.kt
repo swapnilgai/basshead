@@ -1,5 +1,6 @@
 package com.org.basshead.feature.dashboard.components
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -36,11 +37,18 @@ import org.jetbrains.compose.resources.stringResource
 @Composable
 fun FestivalItem(
     festival: FestivalItemState,
+    onFestivalClick: (String) -> Unit = {},
     onJoinFestival: (String) -> Unit = {},
     onViewLeaderboard: (String) -> Unit = {},
     modifier: Modifier = Modifier,
 ) {
     // Remember callback functions to avoid recomposition
+    val onFestivalClickHandler = remember(festival.id) {
+        {
+            onFestivalClick(festival.id)
+        }
+    }
+    
     val onJoinClick = remember(festival.id) {
         {
             onJoinFestival(festival.id)
@@ -74,7 +82,8 @@ fun FestivalItem(
     Card(
         modifier = modifier
             .fillMaxWidth()
-            .padding(vertical = 4.dp),
+            .padding(vertical = 4.dp)
+            .clickable { onFestivalClickHandler() },
         elevation = 4.dp,
     ) {
         Column {

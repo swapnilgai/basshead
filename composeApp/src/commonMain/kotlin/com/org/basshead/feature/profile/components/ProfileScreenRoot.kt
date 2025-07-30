@@ -32,6 +32,13 @@ fun ProfileScreenRoot(
         }
     }
 
+    val onFestivalClick = remember<(String) -> Unit> {
+        {
+                festivalId ->
+            viewModel.onAction(ProfileActions.OnFestivalClicked(festivalId))
+        }
+    }
+
     val onViewLeaderboard = remember<(String) -> Unit> {
         {
                 festivalId ->
@@ -48,6 +55,7 @@ fun ProfileScreenRoot(
                 dailyHeadbangs = profileUiState.dailyHeadbangs,
                 totalHeadbangs = profileUiState.totalHeadbangs,
                 onLogout = onLogout,
+                onFestivalClick = onFestivalClick,
                 onViewLeaderboard = onViewLeaderboard,
                 modifier = modifier,
             )

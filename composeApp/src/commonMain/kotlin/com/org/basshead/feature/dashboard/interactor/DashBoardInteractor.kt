@@ -115,7 +115,7 @@ class DashBoardInteractorImpl(
             key = UserFestivalsPrimaryKey(statuses = statuses.toString()),
             secondaryKey = UserFestivalsSecondaryKey(lastSeenId = lastSeenId),
         ),
-        retryOption = RetryOption(retryCount = 2),
+        retryOption = RetryOption(retryCount = 1),
     ) {
         val currentUser = supabaseClient.auth.currentUserOrNull()
             ?: throw Exception("Not authenticated")

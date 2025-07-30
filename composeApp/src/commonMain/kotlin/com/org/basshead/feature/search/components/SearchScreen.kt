@@ -481,11 +481,10 @@ private fun FestivalList(
         ) { festival ->
             FestivalItem(
                 festival = festival,
+                onFestivalClick = { onFestivalClick(festival.id) },
                 onJoinFestival = { onJoinFestival(festival.id) },
                 onViewLeaderboard = { onViewLeaderboard(festival.id) },
-                modifier = Modifier
-                    .padding(vertical = 4.dp)
-                    .clickable { onFestivalClick(festival.id) },
+                modifier = Modifier.padding(vertical = 4.dp),
             )
         }
 

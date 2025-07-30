@@ -47,7 +47,10 @@
     
     <!-- Festival Actions -->
     <string name="join">Join</string>
+    <string name="joining">Joining...</string>
     <string name="leaderboard">Leaderboard</string>
+    <string name="festival_participants">Participants</string>
+    <string name="your_rank">Your Rank</string>
     
     <!-- Search -->
     <string name="search_festivals">Find Events</string>

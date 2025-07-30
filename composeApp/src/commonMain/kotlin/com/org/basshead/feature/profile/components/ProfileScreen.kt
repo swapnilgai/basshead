@@ -33,6 +33,7 @@ fun ProfileScreen(
     dailyHeadbangs: List<DailyHeadbangState>,
     totalHeadbangs: Long,
     onLogout: () -> Unit,
+    onFestivalClick: (String) -> Unit = {},
     onViewLeaderboard: (String) -> Unit = {},
     modifier: Modifier = Modifier,
 ) {
@@ -94,6 +95,7 @@ fun ProfileScreen(
         ) { festival ->
             FestivalItem(
                 festival = festival.copy(userJoined = true),
+                onFestivalClick = onFestivalClick,
                 onViewLeaderboard = onViewLeaderboard,
                 modifier = Modifier.padding(vertical = 4.dp),
             )

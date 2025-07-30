@@ -1,4 +1,4 @@
-package com.org.basshead.feature.search.components
+package com.org.basshead.feature.festivaldetail.components
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -7,18 +7,20 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.org.basshead.feature.dashboard.components.ErrorScreen
-import com.org.basshead.feature.search.model.SearchUiState
-import com.org.basshead.feature.search.presentation.SearchActions
-import com.org.basshead.feature.search.presentation.SearchViewModel
+import com.org.basshead.feature.festivaldetail.model.FestivalDetailUiState
+import com.org.basshead.feature.festivaldetail.presentation.FestivalDetailActions
+import com.org.basshead.feature.festivaldetail.presentation.FestivalDetailViewModel
+import com.org.basshead.utils.components.ErrorScreen
 import com.org.basshead.utils.components.LoadingScreen
-import com.org.basshead.utils.ui.Route as BaseRoute
+import com.org.basshead.utils.ui.Route
 import com.org.basshead.utils.ui.UiState
 import org.koin.compose.viewmodel.koinViewModel
+import org.koin.core.parameter.parametersOf
 
 @Composable
-fun SearchScreenRoot(
-    viewModel: SearchViewModel = koinViewModel(),
+fun FestivalDetailScreenRoot(
+    festivalId: String,
+    viewModel: FestivalDetailViewModel = koinViewModel { parametersOf(festivalId) },
     navigate: (destination: String, popUpTp: String?, inclusive: Boolean?) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -27,9 +29,9 @@ fun SearchScreenRoot(
 
     when (val currentState = state.value) {
         is UiState.Content -> {
-            val searchUiState = currentState.data as SearchUiState
-            SearchScreen(
-                uiState = searchUiState,
+            val festivalDetailUiState = currentState.data as FestivalDetailUiState
+            FestivalDetailScreen(
+                uiState = festivalDetailUiState,
                 onAction = viewModel::onAction,
                 modifier = modifier,
             )
@@ -43,10 +45,9 @@ fun SearchScreenRoot(
             if (showError) {
                 ErrorScreen(
                     errorMessage = currentState.message.asString(),
-                    onDismiss = { showError = false },
-                    onRetry = {
+                    onDismiss = { 
                         showError = false
-                        viewModel.onAction(SearchActions.Refresh)
+                        viewModel.onAction(FestivalDetailActions.Refresh)
                     },
                 )
             }
@@ -54,10 +55,11 @@ fun SearchScreenRoot(
 
         is UiState.Navigate -> {
             when (val route = currentState.route) {
-                is BaseRoute.Back -> {
-                    // Handle back navigation if needed
+                is Route.Back -> {
+                    // Handle back navigation
+                    navigate("Dashboard", null, false)
                 }
-                is BaseRoute.InternalDirection -> {
+                is Route.InternalDirection -> {
                     navigate(route.destination, route.popUpTp, route.inclusive)
                 }
             }
