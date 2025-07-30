@@ -20,13 +20,14 @@ import kotlinx.serialization.json.put
 
 // Cache Keys
 data class SearchFestivalsPrimaryKey(
-    val query: String,
-    val locationFilter: String?,
-    val lastSeenId: String?
+    val query: String
 ) : CacheKey
 
 data class SearchFestivalsSecondaryKey(
-    val limit: Int
+    val limit: Int,
+    val statusFilters: List<String>,
+    val locationFilter: String?,
+    val lastSeenId: String?
 ) : CacheKey
 
 data class SearchFestivalsSearchKey(
@@ -73,10 +74,11 @@ class SearchInteractorImpl(
         cacheOption = CacheOptions(
             key = SearchFestivalsPrimaryKey(
                 query = query.trim().lowercase(),
-                locationFilter = locationFilter?.trim()?.lowercase(),
-                lastSeenId = lastSeenId
             ),
             secondaryKey = SearchFestivalsSecondaryKey(
+                locationFilter = locationFilter?.trim()?.lowercase(),
+                lastSeenId = lastSeenId,
+                statusFilters = statusFilters,
                 limit = limit
             ),
             expirationPolicy = shortCacheExpiration, // 5 minutes - search results change frequently

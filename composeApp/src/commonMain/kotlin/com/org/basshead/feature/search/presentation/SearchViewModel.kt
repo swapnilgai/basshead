@@ -258,9 +258,10 @@ class SearchViewModel(
             currentFilters.remove(statusValue)
         }
 
-        // If no statuses selected, default to upcoming and ongoing
+        // Ensure at least one filter is always selected
         if (currentFilters.isEmpty()) {
-            currentFilters.addAll(setOf("upcoming", "ongoing"))
+            // If user tries to deselect all, keep the current one selected
+            currentFilters.add(statusValue)
         }
 
         // Only update the selected filters, don't apply automatically
