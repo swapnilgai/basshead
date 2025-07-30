@@ -22,6 +22,7 @@ import kotlinx.serialization.json.put
 data class SearchFestivalsPrimaryKey(
     val query: String,
     val locationFilter: String?,
+    val lastSeenId: String?
 ) : CacheKey
 
 data class SearchFestivalsSecondaryKey(
@@ -37,6 +38,7 @@ data class SaveSearchCacheResult(
     val locationFilter: String?,
     val statusFilters: List<String>?,
     val limit: Int,
+    val lastSeenId: String?
 )
 
 // Interface
@@ -51,7 +53,7 @@ interface SearchInteractor : Interactor {
 
     suspend fun getRecentSearchesCacheKey(): List<SaveSearchCacheResult>
 
-    suspend fun saveSearchQueryCacheKey(query: String, locationFilter: String?, limit: Int, statusFilters: List<String> = emptyList())
+    suspend fun saveSearchQueryCacheKey(query: String, locationFilter: String?, limit: Int, statusFilters: List<String> = emptyList(), lastSeenId: String?) :  List<SaveSearchCacheResult>
 
     suspend fun clearSearchHistoryCacheKey()
 }
@@ -72,6 +74,7 @@ class SearchInteractorImpl(
             key = SearchFestivalsPrimaryKey(
                 query = query.trim().lowercase(),
                 locationFilter = locationFilter?.trim()?.lowercase(),
+                lastSeenId = lastSeenId
             ),
             secondaryKey = SearchFestivalsSecondaryKey(
                 limit = limit
@@ -124,7 +127,7 @@ class SearchInteractorImpl(
             },
         ).decodeList<FestivalSuggestion>()
 
-        saveSearchQueryCacheKey(query = query, locationFilter = locationFilter, limit = limit, statusFilters = statusFilters)
+        saveSearchQueryCacheKey(query = query, locationFilter = locationFilter, limit = limit, statusFilters = statusFilters, lastSeenId = lastSeenId)
 
         results.map { it.toFestivalItemState() }
     }
@@ -135,25 +138,25 @@ class SearchInteractorImpl(
             expirationPolicy = shortCacheExpiration,
         )
     ) {
-        emptyList()
+        emptyList<SaveSearchCacheResult>()
     }
 
-    override suspend fun saveSearchQueryCacheKey(query: String, locationFilter: String?, limit: Int, statusFilters: List<String>) {
-        withInteractorContext(
+    override suspend fun saveSearchQueryCacheKey(query: String, locationFilter: String?, limit: Int, statusFilters: List<String>, lastSeenId: String?): List<SaveSearchCacheResult> {
+       return withInteractorContext(
             cacheOption = CacheOptions(
                 key = SearchFestivalsSearchKey(),
                 expirationPolicy = shortCacheExpiration,
             ),
             forceRefresh = true
         ) {
-            getRecentSearchesCacheKey().let {
-                it.toMutableList().add(
-                    SaveSearchCacheResult(
-                        query = query, locationFilter = locationFilter, limit = limit, statusFilters = statusFilters
-                    )
+           val savedSearch : MutableList<SaveSearchCacheResult> = getRecentSearchesCacheKey().toMutableList()
+           savedSearch.add(
+                SaveSearchCacheResult(
+                    query = query, locationFilter = locationFilter, limit = limit, statusFilters = statusFilters, lastSeenId = lastSeenId
                 )
-            }
-        }
+            )
+            savedSearch
+       }
     }
 
     override suspend fun clearSearchHistoryCacheKey() {

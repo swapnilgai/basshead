@@ -89,7 +89,6 @@ class SearchViewModel(
             // Set initial loading state for suggestions
             setLoading()
 
-            val recentSearches = searchInteractor.getRecentSearches()
             val defaultStatusFilters = listOf("upcoming", "ongoing")
             val suggestionFestivals = searchInteractor.searchFestivals(
                 query = "",
@@ -102,7 +101,7 @@ class SearchViewModel(
             setContent(
                 SearchUiState(
                     suggestionFestivals = suggestionFestivals.sortedByStartDate(),
-                    recentSearches = recentSearches,
+                    recentSearches = emptyList(), // Remove recent searches functionality
                     hasMoreSuggestions = suggestionFestivals.size == pageSize, // Exactly pageSize means there might be more
                     lastSeenId = suggestionFestivals.lastOrNull()?.id,
                     selectedStatusFilters = defaultStatusFilters.toSet(),
@@ -146,7 +145,6 @@ class SearchViewModel(
         if (query.trim().isNotEmpty()) {
             searchJob?.cancel()
             performSearch(query.trim(), resetResults = true)
-            saveSearchQuery(query.trim())
         }
     }
 
@@ -254,29 +252,15 @@ class SearchViewModel(
         val currentState = getContent()
         val currentFilters = currentState.selectedStatusFilters.toMutableSet()
 
-        if (statusValue == "all") {
-            if (isSelected) {
-                // Select "all" - backend handles this correctly
-                currentFilters.clear()
-                currentFilters.add("all")
-            } else {
-                // Deselect "all" - default to upcoming and ongoing
-                currentFilters.clear()
-                currentFilters.addAll(setOf("upcoming", "ongoing"))
-            }
+        if (isSelected) {
+            currentFilters.add(statusValue)
         } else {
-            // Remove "all" if selecting specific statuses
-            currentFilters.remove("all")
-            if (isSelected) {
-                currentFilters.add(statusValue)
-            } else {
-                currentFilters.remove(statusValue)
-            }
+            currentFilters.remove(statusValue)
+        }
 
-            // If no statuses selected, default to upcoming and ongoing
-            if (currentFilters.isEmpty()) {
-                currentFilters.addAll(setOf("upcoming", "ongoing"))
-            }
+        // If no statuses selected, default to upcoming and ongoing
+        if (currentFilters.isEmpty()) {
+            currentFilters.addAll(setOf("upcoming", "ongoing"))
         }
 
         // Only update the selected filters, don't apply automatically
@@ -375,10 +359,8 @@ class SearchViewModel(
     }
 
     private fun clearSearchHistory() {
-        baseViewModelScope.launch {
-            searchInteractor.clearSearchHistory()
-            setContent(getContent().copy(recentSearches = emptyList()))
-        }
+        // Recent searches functionality removed - this method now does nothing
+        setContent(getContent().copy(recentSearches = emptyList()))
     }
 
     private fun onFestivalClicked(festivalId: String) {
@@ -477,15 +459,6 @@ class SearchViewModel(
 
         // Reload initial data
         loadInitialData()
-    }
-
-    private fun saveSearchQuery(query: String) {
-        baseViewModelScope.launch {
-            searchInteractor.saveSearchQuery(query)
-            // Refresh recent searches
-            val recentSearches = searchInteractor.getRecentSearches()
-            setContent(getContent().copy(recentSearches = recentSearches))
-        }
     }
 
     override fun onCleared() {

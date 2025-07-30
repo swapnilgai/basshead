@@ -226,8 +226,6 @@ private fun FilterPanel(
                 val statusOptions = listOf(
                     "upcoming" to "Upcoming",
                     "ongoing" to "Ongoing",
-                    "completed" to "Completed",
-                    "all" to "All",
                 )
 
                 items(statusOptions) { (value, label) ->
