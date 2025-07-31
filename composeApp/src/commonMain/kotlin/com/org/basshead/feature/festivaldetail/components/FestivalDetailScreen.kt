@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBars
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBars
@@ -48,6 +49,9 @@ import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -98,6 +102,11 @@ fun FestivalDetailScreen(
     val scrollState = rememberScrollState()
     val hapticFeedback = LocalHapticFeedback.current
     
+    // Memoize scroll offset calculation for performance
+    val parallaxOffset by remember {
+        derivedStateOf { (scrollState.value * 0.5f).coerceAtMost(200f) }
+    }
+    
     // Pull to refresh state
     val pullRefreshState = rememberPullRefreshState(
         refreshing = uiState.isRefreshing,
@@ -129,7 +138,7 @@ fun FestivalDetailScreen(
                 // Hero Section with Parallax Effect
                 HeroSection(
                     festival = festival,
-                    scrollOffset = scrollState.value,
+                    parallaxOffset = parallaxOffset,
                     onBack = { onAction(FestivalDetailActions.NavigateBack) }
                 )
 
@@ -146,42 +155,16 @@ fun FestivalDetailScreen(
             }
 
             // Floating Action Button for primary action
-            FloatingActionButton(
-                onClick = {
-                    hapticFeedback.performHapticFeedback(HapticFeedbackType.LongPress)
-                    if (festival.userJoined) {
-                        onAction(FestivalDetailActions.ViewLeaderboard)
-                    } else {
-                        onAction(FestivalDetailActions.JoinFestival)
-                    }
-                },
+            FestivalFloatingActionButton(
+                festival = festival,
+                isJoining = uiState.isJoining,
+                hapticFeedback = hapticFeedback,
+                onAction = onAction,
                 modifier = Modifier
                     .align(Alignment.BottomEnd)
                     .padding(20.dp)
                     .windowInsetsPadding(WindowInsets.navigationBars)
-                    .semantics {
-                        contentDescription = if (festival.userJoined) {
-                            "View leaderboard for ${festival.name}"
-                        } else {
-                            "Join ${festival.name}"
-                        }
-                    },
-                backgroundColor = PrimaryOrange,
-                contentColor = Color.White
-            ) {
-                if (uiState.isJoining) {
-                    CircularProgressIndicator(
-                        modifier = Modifier.size(24.dp),
-                        color = Color.White,
-                        strokeWidth = 2.dp
-                    )
-                } else {
-                    Icon(
-                        imageVector = if (festival.userJoined) Icons.Default.Star else Icons.Default.MusicNote,
-                        contentDescription = null
-                    )
-                }
-            }
+            )
         }
 
         // Pull to refresh indicator
@@ -217,7 +200,7 @@ private fun HeroSection(
             contentDescription = "Festival Image",
             modifier = Modifier
                 .fillMaxSize()
-                .padding(top = -parallaxOffset.dp),
+                .offset(y = -parallaxOffset.dp),
             contentScale = ContentScale.Crop,
         )
         
