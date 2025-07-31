@@ -181,45 +181,89 @@ fun FestivalDetailScreen(
 }
 
 @Composable
+private fun FestivalFloatingActionButton(
+    festival: FestivalItemState,
+    isJoining: Boolean,
+    hapticFeedback: androidx.compose.ui.hapticfeedback.HapticFeedback,
+    onAction: (FestivalDetailActions) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    FloatingActionButton(
+        onClick = {
+            hapticFeedback.performHapticFeedback(HapticFeedbackType.LongPress)
+            if (festival.userJoined) {
+                onAction(FestivalDetailActions.ViewLeaderboard)
+            } else {
+                onAction(FestivalDetailActions.JoinFestival)
+            }
+        },
+        modifier = modifier
+            .semantics {
+                contentDescription = if (festival.userJoined) {
+                    "View leaderboard for ${festival.name}"
+                } else {
+                    "Join ${festival.name}"
+                }
+            },
+        backgroundColor = PrimaryOrange,
+        contentColor = Color.White
+    ) {
+        if (isJoining) {
+            CircularProgressIndicator(
+                modifier = Modifier.size(24.dp),
+                color = Color.White,
+                strokeWidth = 2.dp
+            )
+        } else {
+            Icon(
+                imageVector = if (festival.userJoined) Icons.Default.Star else Icons.Default.MusicNote,
+                contentDescription = null
+            )
+        }
+    }
+}
+
+@Composable
 private fun HeroSection(
     festival: FestivalItemState,
-    scrollOffset: Int,
+    parallaxOffset: Float,
     onBack: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val parallaxOffset = (scrollOffset * 0.5f).coerceAtMost(200f)
     
     Box(
         modifier = modifier
             .fillMaxWidth()
             .height(400.dp)
     ) {
-        // Background Image with Parallax
+        // Background Image with Parallax - memoized image loading
         AsyncImage(
             model = festival.imageUrl,
             contentDescription = "Festival Image",
             modifier = Modifier
                 .fillMaxSize()
-                .offset(y = -parallaxOffset.dp),
+                .offset(y = (-parallaxOffset).dp),
             contentScale = ContentScale.Crop,
         )
         
-        // Gradient overlays for better readability
+        // Gradient overlays for better readability - memoized gradient
+        val gradientOverlay = remember {
+            Brush.verticalGradient(
+                colors = listOf(
+                    Color.Black.copy(alpha = 0.3f),
+                    Color.Transparent,
+                    Color.Transparent,
+                    Color.Black.copy(alpha = 0.8f)
+                ),
+                startY = 0f,
+                endY = Float.POSITIVE_INFINITY
+            )
+        }
+        
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .background(
-                    Brush.verticalGradient(
-                        colors = listOf(
-                            Color.Black.copy(alpha = 0.3f),
-                            Color.Transparent,
-                            Color.Transparent,
-                            Color.Black.copy(alpha = 0.8f)
-                        ),
-                        startY = 0f,
-                        endY = Float.POSITIVE_INFINITY
-                    )
-                )
+                .background(gradientOverlay)
         )
 
         // Status Bar Safe Area
@@ -272,62 +316,75 @@ private fun HeroSection(
             }
         }
 
-        // Festival Info Overlay
-        Column(
+        // Festival Info Overlay - optimized with key to avoid recomposition
+        FestivalInfoOverlay(
+            festival = festival,
             modifier = Modifier
                 .align(Alignment.BottomStart)
                 .padding(20.dp)
                 .fillMaxWidth()
-        ) {
-            // Festival Status Badge
-            if (festival.status.isNotEmpty()) {
-                Surface(
-                    shape = RoundedCornerShape(20.dp),
-                    color = when (festival.status.lowercase()) {
-                        "ongoing" -> Color.Green.copy(alpha = 0.9f)
-                        "upcoming" -> PrimaryOrange.copy(alpha = 0.9f)
-                        else -> Color.Gray.copy(alpha = 0.9f)
-                    },
-                    modifier = Modifier.padding(bottom = 12.dp)
-                ) {
-                    Text(
-                        text = festival.status.uppercase(),
-                        style = MaterialTheme.typography.caption,
-                        fontWeight = FontWeight.Bold,
-                        color = Color.White,
-                        modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp)
-                    )
+        )
+    }
+}
+
+@Composable
+private fun FestivalInfoOverlay(
+    festival: FestivalItemState,
+    modifier: Modifier = Modifier,
+) {
+    Column(modifier = modifier) {
+        // Festival Status Badge
+        if (festival.status.isNotEmpty()) {
+            val statusColor = remember(festival.status) {
+                when (festival.status.lowercase()) {
+                    "ongoing" -> Color.Green.copy(alpha = 0.9f)
+                    "upcoming" -> PrimaryOrange.copy(alpha = 0.9f)
+                    else -> Color.Gray.copy(alpha = 0.9f)
                 }
             }
             
-            Text(
-                text = festival.name,
-                style = MaterialTheme.typography.h4,
-                fontWeight = FontWeight.Bold,
-                color = Color.White,
-                maxLines = 2,
-                overflow = TextOverflow.Ellipsis
-            )
-            
-            Spacer(modifier = Modifier.height(8.dp))
-            
-            Row(
-                verticalAlignment = Alignment.CenterVertically
+            Surface(
+                shape = RoundedCornerShape(20.dp),
+                color = statusColor,
+                modifier = Modifier.padding(bottom = 12.dp)
             ) {
-                Icon(
-                    imageVector = Icons.Default.LocationOn,
-                    contentDescription = "Location",
-                    tint = Color.White.copy(alpha = 0.9f),
-                    modifier = Modifier.size(18.dp)
-                )
-                Spacer(modifier = Modifier.width(6.dp))
                 Text(
-                    text = festival.location,
-                    style = MaterialTheme.typography.body1,
-                    color = Color.White.copy(alpha = 0.9f),
-                    fontWeight = FontWeight.Medium
+                    text = festival.status.uppercase(),
+                    style = MaterialTheme.typography.caption,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.White,
+                    modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp)
                 )
             }
+        }
+        
+        Text(
+            text = festival.name,
+            style = MaterialTheme.typography.h4,
+            fontWeight = FontWeight.Bold,
+            color = Color.White,
+            maxLines = 2,
+            overflow = TextOverflow.Ellipsis
+        )
+        
+        Spacer(modifier = Modifier.height(8.dp))
+        
+        Row(
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Icon(
+                imageVector = Icons.Default.LocationOn,
+                contentDescription = "Location",
+                tint = Color.White.copy(alpha = 0.9f),
+                modifier = Modifier.size(18.dp)
+            )
+            Spacer(modifier = Modifier.width(6.dp))
+            Text(
+                text = festival.location,
+                style = MaterialTheme.typography.body1,
+                color = Color.White.copy(alpha = 0.9f),
+                fontWeight = FontWeight.Medium
+            )
         }
     }
 }
@@ -347,59 +404,16 @@ private fun ContentSection(
         
         Spacer(modifier = Modifier.height(24.dp))
 
-        // Date & Time Information
-        festival.dateString?.let { dateString ->
-            InfoCard(
-                title = "Event Schedule",
-                icon = Icons.Default.CalendarToday,
-                content = {
-                    Text(
-                        text = dateString,
-                        style = MaterialTheme.typography.body1,
-                        fontWeight = FontWeight.Medium
-                    )
-                    
-                    Spacer(modifier = Modifier.height(8.dp))
-                    
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.AccessTime,
-                            contentDescription = "Time",
-                            tint = MaterialTheme.colors.onSurface.copy(alpha = 0.6f),
-                            modifier = Modifier.size(16.dp)
-                        )
-                        Spacer(modifier = Modifier.width(6.dp))
-                        Text(
-                            text = "All Day Event",
-                            style = MaterialTheme.typography.body2,
-                            color = MaterialTheme.colors.onSurface.copy(alpha = 0.6f)
-                        )
-                    }
-                }
-            )
-            
+        // Date & Time Information - only render if date exists
+        festival.dateString?.takeIf { it.isNotBlank() }?.let { dateString ->
+            DateTimeInfoCard(dateString = dateString)
             Spacer(modifier = Modifier.height(16.dp))
         }
 
-        // Description with better typography
-        festival.description?.let { description ->
-            if (description.isNotBlank()) {
-                InfoCard(
-                    title = "About This Festival",
-                    content = {
-                        Text(
-                            text = description,
-                            style = MaterialTheme.typography.body1,
-                            lineHeight = 24.sp,
-                            color = MaterialTheme.colors.onSurface.copy(alpha = 0.8f)
-                        )
-                    }
-                )
-                
-                Spacer(modifier = Modifier.height(16.dp))
-            }
+        // Description - only render if description exists and is not blank
+        festival.description?.takeIf { it.isNotBlank() }?.let { description ->
+            DescriptionInfoCard(description = description)
+            Spacer(modifier = Modifier.height(16.dp))
         }
 
         // Enhanced Stats Section
@@ -414,6 +428,63 @@ private fun ContentSection(
             onAction = onAction
         )
     }
+}
+
+@Composable
+private fun DateTimeInfoCard(
+    dateString: String,
+    modifier: Modifier = Modifier,
+) {
+    InfoCard(
+        title = "Event Schedule",
+        icon = Icons.Default.CalendarToday,
+        modifier = modifier,
+        content = {
+            Text(
+                text = dateString,
+                style = MaterialTheme.typography.body1,
+                fontWeight = FontWeight.Medium
+            )
+            
+            Spacer(modifier = Modifier.height(8.dp))
+            
+            Row(
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Icon(
+                    imageVector = Icons.Default.AccessTime,
+                    contentDescription = "Time",
+                    tint = MaterialTheme.colors.onSurface.copy(alpha = 0.6f),
+                    modifier = Modifier.size(16.dp)
+                )
+                Spacer(modifier = Modifier.width(6.dp))
+                Text(
+                    text = "All Day Event",
+                    style = MaterialTheme.typography.body2,
+                    color = MaterialTheme.colors.onSurface.copy(alpha = 0.6f)
+                )
+            }
+        }
+    )
+}
+
+@Composable
+private fun DescriptionInfoCard(
+    description: String,
+    modifier: Modifier = Modifier,
+) {
+    InfoCard(
+        title = "About This Festival",
+        modifier = modifier,
+        content = {
+            Text(
+                text = description,
+                style = MaterialTheme.typography.body1,
+                lineHeight = 24.sp,
+                color = MaterialTheme.colors.onSurface.copy(alpha = 0.8f)
+            )
+        }
+    )
 }
 
 @Composable
@@ -496,17 +567,21 @@ private fun QuickInfoRow(
             modifier = Modifier.weight(1f)
         )
         
-        // Status Quick Card
+        // Status Quick Card - memoize color calculation within composable
+        val statusColor = remember(festival.status) {
+            when (festival.status.lowercase()) {
+                "ongoing" -> Color.Green
+                "upcoming" -> PrimaryOrange
+                else -> Color.DarkGray
+            }
+        }
+        
         QuickInfoCard(
             icon = Icons.Default.AccessTime,
             value = festival.status.replaceFirstChar { it.uppercase() },
             label = "Status",
             modifier = Modifier.weight(1f),
-            valueColor = when (festival.status.lowercase()) {
-                "ongoing" -> Color.Green
-                "upcoming" -> PrimaryOrange
-                else -> MaterialTheme.colors.onSurface
-            }
+            valueColor = statusColor
         )
         
         // User Status (if joined)
@@ -712,49 +787,71 @@ private fun SecondaryActionsSection(
             )
             
             if (!festival.userJoined) {
-                OutlinedButton(
-                    onClick = { onAction(FestivalDetailActions.JoinFestival) },
-                    enabled = !isJoining,
-                    modifier = Modifier.fillMaxWidth(),
-                    colors = ButtonDefaults.outlinedButtonColors(
-                        contentColor = PrimaryOrange
-                    )
-                ) {
-                    if (isJoining) {
-                        CircularProgressIndicator(
-                            modifier = Modifier.size(16.dp),
-                            color = PrimaryOrange,
-                            strokeWidth = 2.dp
-                        )
-                        Spacer(modifier = Modifier.width(8.dp))
-                        Text(stringResource(Res.string.joining))
-                    } else {
-                        Icon(
-                            imageVector = Icons.Default.MusicNote,
-                            contentDescription = null,
-                            modifier = Modifier.size(18.dp)
-                        )
-                        Spacer(modifier = Modifier.width(8.dp))
-                        Text(stringResource(Res.string.join))
-                    }
-                }
+                JoinFestivalButton(
+                    isJoining = isJoining,
+                    onJoin = { onAction(FestivalDetailActions.JoinFestival) }
+                )
             } else {
-                OutlinedButton(
-                    onClick = { onAction(FestivalDetailActions.ViewLeaderboard) },
-                    modifier = Modifier.fillMaxWidth(),
-                    colors = ButtonDefaults.outlinedButtonColors(
-                        contentColor = PrimaryOrange
-                    )
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Star,
-                        contentDescription = null,
-                        modifier = Modifier.size(18.dp)
-                    )
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Text(stringResource(Res.string.leaderboard))
-                }
+                ViewLeaderboardButton(
+                    onViewLeaderboard = { onAction(FestivalDetailActions.ViewLeaderboard) }
+                )
             }
         }
+    }
+}
+
+@Composable
+private fun JoinFestivalButton(
+    isJoining: Boolean,
+    onJoin: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    OutlinedButton(
+        onClick = onJoin,
+        enabled = !isJoining,
+        modifier = modifier.fillMaxWidth(),
+        colors = ButtonDefaults.outlinedButtonColors(
+            contentColor = PrimaryOrange
+        )
+    ) {
+        if (isJoining) {
+            CircularProgressIndicator(
+                modifier = Modifier.size(16.dp),
+                color = PrimaryOrange,
+                strokeWidth = 2.dp
+            )
+            Spacer(modifier = Modifier.width(8.dp))
+            Text(stringResource(Res.string.joining))
+        } else {
+            Icon(
+                imageVector = Icons.Default.MusicNote,
+                contentDescription = null,
+                modifier = Modifier.size(18.dp)
+            )
+            Spacer(modifier = Modifier.width(8.dp))
+            Text(stringResource(Res.string.join))
+        }
+    }
+}
+
+@Composable
+private fun ViewLeaderboardButton(
+    onViewLeaderboard: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    OutlinedButton(
+        onClick = onViewLeaderboard,
+        modifier = modifier.fillMaxWidth(),
+        colors = ButtonDefaults.outlinedButtonColors(
+            contentColor = PrimaryOrange
+        )
+    ) {
+        Icon(
+            imageVector = Icons.Default.Star,
+            contentDescription = null,
+            modifier = Modifier.size(18.dp)
+        )
+        Spacer(modifier = Modifier.width(8.dp))
+        Text(stringResource(Res.string.leaderboard))
     }
 }

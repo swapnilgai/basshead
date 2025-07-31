@@ -49,7 +49,7 @@ import com.org.basshead.utils.components.LoadingScreen
 import com.org.basshead.utils.core.DesertWhite
 import com.org.basshead.utils.core.LightOrange
 import com.org.basshead.utils.core.PrimaryOrange
-import com.org.basshead.utils.ui.Route
+import com.org.basshead.utils.ui.Route as BaseRoute
 import com.org.basshead.utils.ui.UiState
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
@@ -114,8 +114,14 @@ fun LoginScreenRoot(
         }
         is UiState.Navigate -> {
             when (currentState.route) {
-                is Route.InternalDirection -> navigate(currentState.route.destination, currentState.route.popUpTp, currentState.route.inclusive)
-                is Route.Back -> navigate("back", null, null)
+                is BaseRoute.InternalDirection -> {
+                    navigate(currentState.route.destination, currentState.route.popUpTp, currentState.route.inclusive)
+                    viewModel.clearNavigation()
+                }
+                is BaseRoute.Back -> {
+                    navigate("back", null, null)
+                    viewModel.clearNavigation()
+                }
             }
         }
 

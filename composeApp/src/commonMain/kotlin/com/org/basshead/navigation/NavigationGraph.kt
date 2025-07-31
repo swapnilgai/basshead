@@ -8,7 +8,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
 import com.org.basshead.feature.auth.components.LoginScreenRoot
 import com.org.basshead.feature.festivaldetail.components.FestivalDetailScreenRoot
-import com.org.basshead.feature.main.components.MainScreen
+import com.org.basshead.feature.main.components.MainScreenRoot
 import com.org.basshead.feature.search.components.SearchScreenRoot
 import com.org.basshead.feature.splash.components.SplashScreenRoot
 
@@ -38,7 +38,7 @@ fun NavigationGraph(navController: NavHostController) {
             }
         }
         composable(routes[Route.Dashboard::class.simpleName]!!) {
-            MainScreen(
+            MainScreenRoot(
                 navigate = { destination, popUpTp, inclusive ->
                     navigate(navController, routes, destination, popUpTp, inclusive)
                 },
@@ -58,11 +58,11 @@ fun NavigationGraph(navController: NavHostController) {
                 navigate = { destination, popUpTp, inclusive ->
                     if (destination == "Dashboard") {
                         navController.navigate(routes[Route.Dashboard::class.simpleName]!!) {
-                            popUpTp?.let {
-                                this.popUpTo(routes[popUpTp]!!) {
-                                    this.inclusive = inclusive ?: false
-                                }
+                            // Clear the back stack to prevent getting stuck
+                            popUpTo(routes[Route.Dashboard::class.simpleName]!!) {
+                                this.inclusive = true
                             }
+                            launchSingleTop = true
                         }
                     } else {
                         navigate(navController, routes, destination, popUpTp, inclusive)
@@ -81,6 +81,15 @@ private fun navigate(
     inclusive: Boolean?,
 ) {
     when (destination) {
+        "Dashboard" -> {
+            navController.navigate(routes[Route.Dashboard::class.simpleName]!!) {
+                // Clear the back stack to prevent getting stuck
+                popUpTo(routes[Route.Dashboard::class.simpleName]!!) {
+                    this.inclusive = true
+                }
+                launchSingleTop = true
+            }
+        }
         "FestivalDetails" -> {
             // This is a special case - will be handled differently
             // For now, navigate to a placeholder

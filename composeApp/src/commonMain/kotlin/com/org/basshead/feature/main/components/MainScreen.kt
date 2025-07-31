@@ -12,10 +12,6 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import com.org.basshead.feature.dashboard.components.DashboardScreenRoot
 import com.org.basshead.feature.profile.components.ProfileScreenRoot
@@ -23,11 +19,11 @@ import com.org.basshead.feature.search.components.SearchScreenRoot
 
 @Composable
 fun MainScreen(
+    selectedTab: Int,
+    onTabSelected: (Int) -> Unit,
     navigate: (destination: String, popUpTp: String?, inclusive: Boolean?) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    var selectedTab by remember { mutableIntStateOf(0) }
-
     Scaffold(
         modifier = modifier.fillMaxSize(),
         bottomBar = {
@@ -41,7 +37,7 @@ fun MainScreen(
                     },
                     label = { Text("Home") },
                     selected = selectedTab == 0,
-                    onClick = { selectedTab = 0 },
+                    onClick = { onTabSelected(0) },
                 )
                 NavigationBarItem(
                     icon = {
@@ -52,7 +48,7 @@ fun MainScreen(
                     },
                     label = { Text("Search") },
                     selected = selectedTab == 1,
-                    onClick = { selectedTab = 1 },
+                    onClick = { onTabSelected(1) },
                 )
                 NavigationBarItem(
                     icon = {
@@ -63,7 +59,7 @@ fun MainScreen(
                     },
                     label = { Text("Profile") },
                     selected = selectedTab == 2,
-                    onClick = { selectedTab = 2 },
+                    onClick = { onTabSelected(2) },
                 )
             }
         },

@@ -4,6 +4,7 @@ import com.org.basshead.feature.dashboard.interactor.DashBoardInteractor
 import com.org.basshead.feature.dashboard.model.toFestivalItemState
 import com.org.basshead.feature.festivaldetail.interactor.FestivalCacheInteractor
 import com.org.basshead.feature.festivaldetail.model.FestivalDetailUiState
+import com.org.basshead.feature.main.presentation.MainViewModel
 import com.org.basshead.utils.ui.BaseViewModel
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
@@ -19,6 +20,7 @@ sealed interface FestivalDetailActions {
 class FestivalDetailViewModel(
     private val dashboardInteractor: DashBoardInteractor,
     private val festivalCacheInteractor: FestivalCacheInteractor,
+    private val mainViewModel: MainViewModel,
     private val festivalId: String,
 ) : BaseViewModel<FestivalDetailUiState>(FestivalDetailUiState()) {
 
@@ -109,6 +111,7 @@ class FestivalDetailViewModel(
     }
 
     private fun navigateBack() {
+        // Always navigate to Dashboard, as MainViewModel will handle showing the correct tab
         navigate(
             destination = "Dashboard",
         )

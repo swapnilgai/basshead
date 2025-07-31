@@ -16,7 +16,7 @@ import basshead.composeapp.generated.resources.dog
 import com.org.basshead.feature.splash.presentation.SplashViewModel
 import com.org.basshead.utils.core.LightOrange
 import com.org.basshead.utils.core.PrimaryOrange
-import com.org.basshead.utils.ui.Route
+import com.org.basshead.utils.ui.Route as BaseRoute
 import com.org.basshead.utils.ui.UiState
 import org.jetbrains.compose.resources.painterResource
 import org.koin.compose.viewmodel.koinViewModel
@@ -32,8 +32,13 @@ fun SplashScreenRoot(
         is UiState.Content -> { SplashScreen() }
         is UiState.Navigate -> {
             when (currentState.route) {
-                is Route.InternalDirection -> navigate(currentState.route.destination, currentState.route.popUpTp, currentState.route.inclusive)
-                is Route.Back -> {}
+                is BaseRoute.InternalDirection -> {
+                    navigate(currentState.route.destination, currentState.route.popUpTp, currentState.route.inclusive)
+                    viewModel.clearNavigation()
+                }
+                is BaseRoute.Back -> {
+                    viewModel.clearNavigation()
+                }
             }
         }
         else -> { }
