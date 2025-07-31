@@ -34,10 +34,10 @@ fun SplashScreenRoot(
             when (currentState.route) {
                 is BaseRoute.InternalDirection -> {
                     navigate(currentState.route.destination, currentState.route.popUpTp, currentState.route.inclusive)
-                    viewModel.clearNavigation()
+                   // viewModel.clearNavigation()
                 }
                 is BaseRoute.Back -> {
-                    viewModel.clearNavigation()
+                   // viewModel.clearNavigation()
                 }
             }
         }

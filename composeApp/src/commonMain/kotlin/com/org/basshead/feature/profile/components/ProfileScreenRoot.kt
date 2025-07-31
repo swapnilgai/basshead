@@ -86,11 +86,11 @@ fun ProfileScreenRoot(
                         currentState.route.popUpTp,
                         currentState.route.inclusive,
                     )
-                    viewModel.clearNavigation()
+                    //viewModel.clearNavigation()
                 }
                 is BaseRoute.Back -> {
                     navigate("back", null, null)
-                    viewModel.clearNavigation()
+                   // viewModel.clearNavigation()
                 }
             }
         }

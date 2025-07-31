@@ -56,11 +56,11 @@ fun SearchScreenRoot(
             when (val route = currentState.route) {
                 is BaseRoute.Back -> {
                     // Handle back navigation if needed
-                    viewModel.clearNavigation()
+                   // viewModel.clearNavigation()
                 }
                 is BaseRoute.InternalDirection -> {
                     navigate(route.destination, route.popUpTp, route.inclusive)
-                    viewModel.clearNavigation()
+                   //viewModel.clearNavigation()
                 }
             }
         }
