@@ -10,6 +10,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.org.basshead.feature.festivaldetail.model.FestivalDetailUiState
 import com.org.basshead.feature.festivaldetail.presentation.FestivalDetailActions
 import com.org.basshead.feature.festivaldetail.presentation.FestivalDetailViewModel
+import com.org.basshead.navigation.Route as NavRoute
 import com.org.basshead.utils.components.ErrorScreen
 import com.org.basshead.utils.components.LoadingScreen
 import com.org.basshead.utils.ui.Route
@@ -57,7 +58,7 @@ fun FestivalDetailScreenRoot(
             when (val route = currentState.route) {
                 is Route.Back -> {
                     // Handle back navigation
-                    navigate("Dashboard", null, false)
+                    navigate(NavRoute.Dashboard::class.simpleName!!, null, false)
                 }
                 is Route.InternalDirection -> {
                     navigate(route.destination, route.popUpTp, route.inclusive)

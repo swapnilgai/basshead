@@ -71,7 +71,7 @@ private fun navigate(
     inclusive: Boolean?,
 ) {
     when (destination) {
-        "Dashboard" -> {
+        Route.Dashboard::class.simpleName -> {
             navController.navigate(routes[Route.Dashboard::class.simpleName]!!) {
                 popUpTp?.let { popUpTo ->
                     this.popUpTo(routes[popUpTo]!!) {
@@ -81,10 +81,10 @@ private fun navigate(
                 launchSingleTop = true
             }
         }
-        "FestivalDetails" -> {
+        Route.FestivalDetails::class.simpleName -> {
             // This is a special case - will be handled differently
             // For now, navigate to a placeholder
-            navController.navigate("festival_detail") {
+            navController.navigate(routes[Route.FestivalDetails::class.simpleName]!!) {
                 popUpTp?.let {
                     this.popUpTo(routes[popUpTp]!!) {
                         this.inclusive = inclusive ?: false
@@ -94,8 +94,8 @@ private fun navigate(
         }
         else -> {
             // Check if destination contains festival ID parameter
-            if (destination.startsWith("FestivalDetails/")) {
-                val festivalId = destination.substringAfter("FestivalDetails/")
+            if (destination.startsWith("${Route.FestivalDetails::class.simpleName}/")) {
+                val festivalId = destination.substringAfter("${Route.FestivalDetails::class.simpleName}/")
                 navController.navigate(Route.FestivalDetails(festivalId)) {
                     popUpTp?.let {
                         this.popUpTo(routes[popUpTp]!!) {

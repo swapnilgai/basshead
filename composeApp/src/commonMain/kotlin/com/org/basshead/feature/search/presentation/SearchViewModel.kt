@@ -2,6 +2,7 @@ package com.org.basshead.feature.search.presentation
 
 import com.org.basshead.feature.search.interactor.SearchInteractor
 import com.org.basshead.feature.search.model.SearchUiState
+import com.org.basshead.navigation.Route
 import com.org.basshead.utils.ui.BaseViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -367,7 +368,7 @@ class SearchViewModel(
     private fun onFestivalClicked(festivalId: String) {
         // Navigate to festival details
         navigate(
-            destination = "FestivalDetails/$festivalId",
+            destination = "${Route.FestivalDetails::class.simpleName}/$festivalId",
         )
     }
 
@@ -382,7 +383,7 @@ class SearchViewModel(
     }
 
     private fun viewLeaderboard(festivalId: String) {
-        navigate("leaderboard/$festivalId")
+        navigate("${Route.FestivalLeaderBoard::class.simpleName}/$festivalId")
     }
 
     private fun performSearch(query: String, resetResults: Boolean) {

@@ -2,6 +2,7 @@ package com.org.basshead.feature.dashboard.presentation
 
 import com.org.basshead.feature.dashboard.interactor.DashBoardInteractor
 import com.org.basshead.feature.dashboard.model.DashBoardUiState
+import com.org.basshead.navigation.Route
 import com.org.basshead.utils.ui.BaseViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
@@ -81,7 +82,7 @@ class DashBoardViewModel(
 
     private fun onFestivalClicked(festivalId: String) {
         // Navigate to festival details
-        navigate("FestivalDetails/$festivalId")
+        navigate("${Route.FestivalDetails::class.simpleName}/$festivalId")
     }
 
     private fun joinFestival(festivalId: String) {
@@ -95,7 +96,7 @@ class DashBoardViewModel(
     }
 
     private fun viewLeaderboard(festivalId: String) {
-        navigate("leaderboard/$festivalId")
+        navigate("${Route.FestivalLeaderBoard::class.simpleName}/$festivalId")
     }
 
     private fun syncDevice() {

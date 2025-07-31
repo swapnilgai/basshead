@@ -2,6 +2,7 @@ package com.org.basshead.feature.profile.presentation
 
 import com.org.basshead.feature.dashboard.interactor.DashBoardInteractor
 import com.org.basshead.feature.profile.model.ProfileUiState
+import com.org.basshead.navigation.Route
 import com.org.basshead.utils.ui.BaseViewModel
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
@@ -65,18 +66,18 @@ class ProfileViewModel(
     private fun logout() {
         baseViewModelScope.launch {
             // Implement logout logic here if needed
-            navigate("login")
+            navigate(Route.Auth::class.simpleName!!)
         }
     }
 
     private fun onFestivalClicked(festivalId: String) {
         // Navigate to festival details
         navigate(
-            destination = "FestivalDetails/$festivalId",
+            destination = "${Route.FestivalDetails::class.simpleName}/$festivalId",
         )
     }
 
     private fun viewLeaderboard(festivalId: String) {
-        navigate("leaderboard/$festivalId")
+        navigate("${Route.FestivalLeaderBoard::class.simpleName}/$festivalId")
     }
 }

@@ -5,6 +5,7 @@ import com.org.basshead.feature.dashboard.model.toFestivalItemState
 import com.org.basshead.feature.festivaldetail.interactor.FestivalCacheInteractor
 import com.org.basshead.feature.festivaldetail.model.FestivalDetailUiState
 import com.org.basshead.feature.main.presentation.MainViewModel
+import com.org.basshead.navigation.Route
 import com.org.basshead.utils.ui.BaseViewModel
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
@@ -107,13 +108,13 @@ class FestivalDetailViewModel(
     }
 
     private fun viewLeaderboard() {
-        navigate("leaderboard/$festivalId")
+        navigate("${Route.FestivalLeaderBoard::class.simpleName}/$festivalId")
     }
 
     private fun navigateBack() {
         // Always navigate to Dashboard, as MainViewModel will handle showing the correct tab
         navigate(
-            destination = "Dashboard",
+            destination = Route.Dashboard::class.simpleName!!,
         )
     }
 }
