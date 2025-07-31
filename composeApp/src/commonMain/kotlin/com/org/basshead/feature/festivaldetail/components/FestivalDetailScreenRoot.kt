@@ -10,13 +10,13 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.org.basshead.feature.festivaldetail.model.FestivalDetailUiState
 import com.org.basshead.feature.festivaldetail.presentation.FestivalDetailActions
 import com.org.basshead.feature.festivaldetail.presentation.FestivalDetailViewModel
-import com.org.basshead.navigation.Route as NavRoute
 import com.org.basshead.utils.components.ErrorScreen
 import com.org.basshead.utils.components.LoadingScreen
 import com.org.basshead.utils.ui.Route
 import com.org.basshead.utils.ui.UiState
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
+import com.org.basshead.navigation.Route as NavRoute
 
 @Composable
 fun FestivalDetailScreenRoot(
@@ -46,7 +46,7 @@ fun FestivalDetailScreenRoot(
             if (showError) {
                 ErrorScreen(
                     errorMessage = currentState.message.asString(),
-                    onDismiss = { 
+                    onDismiss = {
                         showError = false
                         viewModel.onAction(FestivalDetailActions.Refresh)
                     },

@@ -31,7 +31,7 @@ class FestivalCacheInteractorImpl(
                 statusFilters = searchCache.statusFilters ?: emptyList(),
                 locationFilter = searchCache.locationFilter,
                 limit = searchCache.limit,
-                lastSeenId = searchCache.lastSeenId
+                lastSeenId = searchCache.lastSeenId,
             )
 
             // Look for the festival with matching ID
@@ -44,11 +44,11 @@ class FestivalCacheInteractorImpl(
         // If not found in recent searches cache, try a direct search
         // This will perform a fresh search which might find the festival
 
-        //TODO add get festival call here
+        // TODO add get festival call here
         val allFestivals = searchInteractor.searchFestivals(
             query = "",
             statusFilters = listOf("upcoming", "ongoing", "completed"),
-            limit = 100
+            limit = 100,
         )
 
         return allFestivals.find { it.id == festivalId }

@@ -20,18 +20,18 @@ import kotlinx.serialization.json.put
 
 // Cache Keys
 data class SearchFestivalsPrimaryKey(
-    val query: String
+    val query: String,
 ) : CacheKey
 
 data class SearchFestivalsSecondaryKey(
     val limit: Int,
     val statusFilters: List<String>,
     val locationFilter: String?,
-    val lastSeenId: String?
+    val lastSeenId: String?,
 ) : CacheKey
 
 data class SearchFestivalsSearchKey(
-    val key: String = "SearchFestivalsSearchKey"
+    val key: String = "SearchFestivalsSearchKey",
 ) : CacheKey
 
 data class SaveSearchCacheResult(
@@ -39,7 +39,7 @@ data class SaveSearchCacheResult(
     val locationFilter: String?,
     val statusFilters: List<String>?,
     val limit: Int,
-    val lastSeenId: String?
+    val lastSeenId: String?,
 )
 
 // Interface
@@ -54,7 +54,7 @@ interface SearchInteractor : Interactor {
 
     suspend fun getRecentSearchesCacheKey(): List<SaveSearchCacheResult>
 
-    suspend fun saveSearchQueryCacheKey(query: String, locationFilter: String?, limit: Int, statusFilters: List<String> = emptyList(), lastSeenId: String?) :  List<SaveSearchCacheResult>
+    suspend fun saveSearchQueryCacheKey(query: String, locationFilter: String?, limit: Int, statusFilters: List<String> = emptyList(), lastSeenId: String?): List<SaveSearchCacheResult>
 
     suspend fun clearSearchHistoryCacheKey()
 }
@@ -79,7 +79,7 @@ class SearchInteractorImpl(
                 locationFilter = locationFilter?.trim()?.lowercase(),
                 lastSeenId = lastSeenId,
                 statusFilters = statusFilters,
-                limit = limit
+                limit = limit,
             ),
             expirationPolicy = shortCacheExpiration, // 5 minutes - search results change frequently
         ),
@@ -123,7 +123,7 @@ class SearchInteractorImpl(
                 lastSeenId?.let {
                     put(
                         "_last_seen_id",
-                        it
+                        it,
                     )
                 } // Use lastSeenId for cursor-based pagination
             },
@@ -138,27 +138,31 @@ class SearchInteractorImpl(
         cacheOption = CacheOptions(
             key = SearchFestivalsSearchKey(),
             expirationPolicy = shortCacheExpiration,
-        )
+        ),
     ) {
         emptyList<SaveSearchCacheResult>()
     }
 
     override suspend fun saveSearchQueryCacheKey(query: String, locationFilter: String?, limit: Int, statusFilters: List<String>, lastSeenId: String?): List<SaveSearchCacheResult> {
-       return withInteractorContext(
+        return withInteractorContext(
             cacheOption = CacheOptions(
                 key = SearchFestivalsSearchKey(),
                 expirationPolicy = shortCacheExpiration,
             ),
-            forceRefresh = true
+            forceRefresh = true,
         ) {
-           val savedSearch : MutableList<SaveSearchCacheResult> = getRecentSearchesCacheKey().toMutableList()
-           savedSearch.add(
+            val savedSearch: MutableList<SaveSearchCacheResult> = getRecentSearchesCacheKey().toMutableList()
+            savedSearch.add(
                 SaveSearchCacheResult(
-                    query = query, locationFilter = locationFilter, limit = limit, statusFilters = statusFilters, lastSeenId = lastSeenId
-                )
+                    query = query,
+                    locationFilter = locationFilter,
+                    limit = limit,
+                    statusFilters = statusFilters,
+                    lastSeenId = lastSeenId,
+                ),
             )
             savedSearch
-       }
+        }
     }
 
     override suspend fun clearSearchHistoryCacheKey() {
@@ -167,7 +171,7 @@ class SearchInteractorImpl(
                 key = SearchFestivalsSearchKey(),
                 expirationPolicy = shortCacheExpiration,
             ),
-            forceRefresh = true
+            forceRefresh = true,
         ) {
             emptyList<SaveSearchCacheResult>()
         }

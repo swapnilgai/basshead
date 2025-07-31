@@ -20,7 +20,8 @@ fun MainScreenRoot(
 
     // Remember callback functions to avoid recomposition
     val onTabSelected = remember<(Int) -> Unit> {
-        { tabIndex ->
+        {
+                tabIndex ->
             viewModel.onAction(MainActions.SelectTab(tabIndex))
         }
     }

@@ -49,11 +49,11 @@ import com.org.basshead.utils.components.LoadingScreen
 import com.org.basshead.utils.core.DesertWhite
 import com.org.basshead.utils.core.LightOrange
 import com.org.basshead.utils.core.PrimaryOrange
-import com.org.basshead.utils.ui.Route as BaseRoute
 import com.org.basshead.utils.ui.UiState
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
+import com.org.basshead.utils.ui.Route as BaseRoute
 
 @Composable
 fun LoginScreenRoot(
@@ -116,11 +116,9 @@ fun LoginScreenRoot(
             when (currentState.route) {
                 is BaseRoute.InternalDirection -> {
                     navigate(currentState.route.destination, currentState.route.popUpTp, currentState.route.inclusive)
-                    //viewModel.clearNavigation()
                 }
                 is BaseRoute.Back -> {
                     navigate("back", null, null)
-                    //viewModel.clearNavigation()
                 }
             }
         }

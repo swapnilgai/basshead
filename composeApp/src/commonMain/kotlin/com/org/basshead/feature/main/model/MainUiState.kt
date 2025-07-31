@@ -1,5 +1,5 @@
 package com.org.basshead.feature.main.model
 
 data class MainUiState(
-    val selectedTab: Int = 0
+    val selectedTab: Int = 0,
 )

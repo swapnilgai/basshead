@@ -48,7 +48,7 @@ fun FestivalItem(
             onFestivalClick(festival.id)
         }
     }
-    
+
     val onJoinClick = remember(festival.id) {
         {
             onJoinFestival(festival.id)

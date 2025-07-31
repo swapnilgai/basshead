@@ -30,15 +30,14 @@ import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Card
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Divider
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.OutlinedButton
-import androidx.compose.material.Scaffold
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
-import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.AccessTime
@@ -48,36 +47,28 @@ import androidx.compose.material.icons.filled.MusicNote
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.pullrefresh.PullRefreshIndicator
+import androidx.compose.material.pullrefresh.pullRefresh
+import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.pullrefresh.PullRefreshIndicator
-import androidx.compose.material.pullrefresh.pullRefresh
-import androidx.compose.material.pullrefresh.rememberPullRefreshState
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.ui.hapticfeedback.HapticFeedbackType
-import androidx.compose.ui.platform.LocalHapticFeedback
-import androidx.compose.ui.semantics.contentDescription
-import androidx.compose.ui.semantics.semantics
 import basshead.composeapp.generated.resources.Res
-import basshead.composeapp.generated.resources.festival_participants
 import basshead.composeapp.generated.resources.join
 import basshead.composeapp.generated.resources.joining
 import basshead.composeapp.generated.resources.leaderboard
@@ -87,7 +78,6 @@ import coil3.compose.AsyncImage
 import com.org.basshead.feature.dashboard.model.FestivalItemState
 import com.org.basshead.feature.festivaldetail.model.FestivalDetailUiState
 import com.org.basshead.feature.festivaldetail.presentation.FestivalDetailActions
-import com.org.basshead.utils.core.LightOrange
 import com.org.basshead.utils.core.PrimaryOrange
 import org.jetbrains.compose.resources.stringResource
 
@@ -101,16 +91,16 @@ fun FestivalDetailScreen(
     val festival = uiState.festival
     val scrollState = rememberScrollState()
     val hapticFeedback = LocalHapticFeedback.current
-    
+
     // Memoize scroll offset calculation for performance
     val parallaxOffset by remember {
         derivedStateOf { (scrollState.value * 0.5f).coerceAtMost(200f) }
     }
-    
+
     // Pull to refresh state
     val pullRefreshState = rememberPullRefreshState(
         refreshing = uiState.isRefreshing,
-        onRefresh = { onAction(FestivalDetailActions.Refresh) }
+        onRefresh = { onAction(FestivalDetailActions.Refresh) },
     )
 
     // Enhanced error handling
@@ -118,7 +108,7 @@ fun FestivalDetailScreen(
         ErrorStateScreen(
             error = uiState.joinError ?: "Festival not found",
             onRetry = { onAction(FestivalDetailActions.Refresh) },
-            onBack = { onAction(FestivalDetailActions.NavigateBack) }
+            onBack = { onAction(FestivalDetailActions.NavigateBack) },
         )
         return
     }
@@ -126,20 +116,20 @@ fun FestivalDetailScreen(
     Box(
         modifier = modifier
             .fillMaxSize()
-            .pullRefresh(pullRefreshState)
+            .pullRefresh(pullRefreshState),
     ) {
         festival?.let {
             // Main Content
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .verticalScroll(scrollState)
+                    .verticalScroll(scrollState),
             ) {
                 // Hero Section with Parallax Effect
                 HeroSection(
                     festival = festival,
                     parallaxOffset = parallaxOffset,
-                    onBack = { onAction(FestivalDetailActions.NavigateBack) }
+                    onBack = { onAction(FestivalDetailActions.NavigateBack) },
                 )
 
                 // Content Section with better spacing and visual hierarchy
@@ -147,7 +137,7 @@ fun FestivalDetailScreen(
                     festival = festival,
                     isJoining = uiState.isJoining,
                     onAction = onAction,
-                    modifier = Modifier.padding(horizontal = 20.dp)
+                    modifier = Modifier.padding(horizontal = 20.dp),
                 )
 
                 // Bottom spacing for navigation
@@ -163,7 +153,7 @@ fun FestivalDetailScreen(
                 modifier = Modifier
                     .align(Alignment.BottomEnd)
                     .padding(20.dp)
-                    .windowInsetsPadding(WindowInsets.navigationBars)
+                    .windowInsetsPadding(WindowInsets.navigationBars),
             )
         }
 
@@ -175,7 +165,7 @@ fun FestivalDetailScreen(
                 .align(Alignment.TopCenter)
                 .windowInsetsPadding(WindowInsets.statusBars),
             backgroundColor = MaterialTheme.colors.surface,
-            contentColor = PrimaryOrange
+            contentColor = PrimaryOrange,
         )
     }
 }
@@ -206,18 +196,18 @@ private fun FestivalFloatingActionButton(
                 }
             },
         backgroundColor = PrimaryOrange,
-        contentColor = Color.White
+        contentColor = Color.White,
     ) {
         if (isJoining) {
             CircularProgressIndicator(
                 modifier = Modifier.size(24.dp),
                 color = Color.White,
-                strokeWidth = 2.dp
+                strokeWidth = 2.dp,
             )
         } else {
             Icon(
                 imageVector = if (festival.userJoined) Icons.Default.Star else Icons.Default.MusicNote,
-                contentDescription = null
+                contentDescription = null,
             )
         }
     }
@@ -230,11 +220,10 @@ private fun HeroSection(
     onBack: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    
     Box(
         modifier = modifier
             .fillMaxWidth()
-            .height(400.dp)
+            .height(400.dp),
     ) {
         // Background Image with Parallax - memoized image loading
         AsyncImage(
@@ -245,7 +234,7 @@ private fun HeroSection(
                 .offset(y = (-parallaxOffset).dp),
             contentScale = ContentScale.Crop,
         )
-        
+
         // Gradient overlays for better readability - memoized gradient
         val gradientOverlay = remember {
             Brush.verticalGradient(
@@ -253,24 +242,24 @@ private fun HeroSection(
                     Color.Black.copy(alpha = 0.3f),
                     Color.Transparent,
                     Color.Transparent,
-                    Color.Black.copy(alpha = 0.8f)
+                    Color.Black.copy(alpha = 0.8f),
                 ),
                 startY = 0f,
-                endY = Float.POSITIVE_INFINITY
+                endY = Float.POSITIVE_INFINITY,
             )
         }
-        
+
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .background(gradientOverlay)
+                .background(gradientOverlay),
         )
 
         // Status Bar Safe Area
         Spacer(
             modifier = Modifier
                 .fillMaxWidth()
-                .windowInsetsPadding(WindowInsets.statusBars)
+                .windowInsetsPadding(WindowInsets.statusBars),
         )
 
         // Back Button with circular background
@@ -280,16 +269,16 @@ private fun HeroSection(
                 .size(48.dp),
             shape = CircleShape,
             color = Color.Black.copy(alpha = 0.5f),
-            elevation = 2.dp
+            elevation = 2.dp,
         ) {
             IconButton(
                 onClick = onBack,
-                modifier = Modifier.fillMaxSize()
+                modifier = Modifier.fillMaxSize(),
             ) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                     contentDescription = "Back",
-                    tint = Color.White
+                    tint = Color.White,
                 )
             }
         }
@@ -302,16 +291,16 @@ private fun HeroSection(
                 .size(48.dp),
             shape = CircleShape,
             color = Color.Black.copy(alpha = 0.5f),
-            elevation = 2.dp
+            elevation = 2.dp,
         ) {
             IconButton(
                 onClick = { /* TODO: Implement share */ },
-                modifier = Modifier.fillMaxSize()
+                modifier = Modifier.fillMaxSize(),
             ) {
                 Icon(
                     imageVector = Icons.Default.Share,
                     contentDescription = "Share",
-                    tint = Color.White
+                    tint = Color.White,
                 )
             }
         }
@@ -322,7 +311,7 @@ private fun HeroSection(
             modifier = Modifier
                 .align(Alignment.BottomStart)
                 .padding(20.dp)
-                .fillMaxWidth()
+                .fillMaxWidth(),
         )
     }
 }
@@ -342,48 +331,48 @@ private fun FestivalInfoOverlay(
                     else -> Color.Gray.copy(alpha = 0.9f)
                 }
             }
-            
+
             Surface(
                 shape = RoundedCornerShape(20.dp),
                 color = statusColor,
-                modifier = Modifier.padding(bottom = 12.dp)
+                modifier = Modifier.padding(bottom = 12.dp),
             ) {
                 Text(
                     text = festival.status.uppercase(),
                     style = MaterialTheme.typography.caption,
                     fontWeight = FontWeight.Bold,
                     color = Color.White,
-                    modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp)
+                    modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
                 )
             }
         }
-        
+
         Text(
             text = festival.name,
             style = MaterialTheme.typography.h4,
             fontWeight = FontWeight.Bold,
             color = Color.White,
             maxLines = 2,
-            overflow = TextOverflow.Ellipsis
+            overflow = TextOverflow.Ellipsis,
         )
-        
+
         Spacer(modifier = Modifier.height(8.dp))
-        
+
         Row(
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             Icon(
                 imageVector = Icons.Default.LocationOn,
                 contentDescription = "Location",
                 tint = Color.White.copy(alpha = 0.9f),
-                modifier = Modifier.size(18.dp)
+                modifier = Modifier.size(18.dp),
             )
             Spacer(modifier = Modifier.width(6.dp))
             Text(
                 text = festival.location,
                 style = MaterialTheme.typography.body1,
                 color = Color.White.copy(alpha = 0.9f),
-                fontWeight = FontWeight.Medium
+                fontWeight = FontWeight.Medium,
             )
         }
     }
@@ -401,7 +390,7 @@ private fun ContentSection(
 
         // Quick Info Cards Row
         QuickInfoRow(festival = festival)
-        
+
         Spacer(modifier = Modifier.height(24.dp))
 
         // Date & Time Information - only render if date exists
@@ -418,14 +407,14 @@ private fun ContentSection(
 
         // Enhanced Stats Section
         StatsSection(festival = festival)
-        
+
         Spacer(modifier = Modifier.height(24.dp))
 
         // Secondary Actions
         SecondaryActionsSection(
             festival = festival,
             isJoining = isJoining,
-            onAction = onAction
+            onAction = onAction,
         )
     }
 }
@@ -443,28 +432,28 @@ private fun DateTimeInfoCard(
             Text(
                 text = dateString,
                 style = MaterialTheme.typography.body1,
-                fontWeight = FontWeight.Medium
+                fontWeight = FontWeight.Medium,
             )
-            
+
             Spacer(modifier = Modifier.height(8.dp))
-            
+
             Row(
-                verticalAlignment = Alignment.CenterVertically
+                verticalAlignment = Alignment.CenterVertically,
             ) {
                 Icon(
                     imageVector = Icons.Default.AccessTime,
                     contentDescription = "Time",
                     tint = MaterialTheme.colors.onSurface.copy(alpha = 0.6f),
-                    modifier = Modifier.size(16.dp)
+                    modifier = Modifier.size(16.dp),
                 )
                 Spacer(modifier = Modifier.width(6.dp))
                 Text(
                     text = "All Day Event",
                     style = MaterialTheme.typography.body2,
-                    color = MaterialTheme.colors.onSurface.copy(alpha = 0.6f)
+                    color = MaterialTheme.colors.onSurface.copy(alpha = 0.6f),
                 )
             }
-        }
+        },
     )
 }
 
@@ -481,9 +470,9 @@ private fun DescriptionInfoCard(
                 text = description,
                 style = MaterialTheme.typography.body1,
                 lineHeight = 24.sp,
-                color = MaterialTheme.colors.onSurface.copy(alpha = 0.8f)
+                color = MaterialTheme.colors.onSurface.copy(alpha = 0.8f),
             )
-        }
+        },
     )
 }
 
@@ -498,50 +487,50 @@ private fun ErrorStateScreen(
         modifier = modifier
             .fillMaxSize()
             .windowInsetsPadding(WindowInsets.statusBars),
-        contentAlignment = Alignment.Center
+        contentAlignment = Alignment.Center,
     ) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center,
-            modifier = Modifier.padding(32.dp)
+            modifier = Modifier.padding(32.dp),
         ) {
             Icon(
                 imageVector = Icons.Default.MusicNote,
                 contentDescription = null,
                 modifier = Modifier.size(64.dp),
-                tint = MaterialTheme.colors.onSurface.copy(alpha = 0.6f)
+                tint = MaterialTheme.colors.onSurface.copy(alpha = 0.6f),
             )
-            
+
             Spacer(modifier = Modifier.height(16.dp))
-            
+
             Text(
                 text = "Oops!",
                 style = MaterialTheme.typography.h5,
                 fontWeight = FontWeight.Bold,
-                textAlign = TextAlign.Center
+                textAlign = TextAlign.Center,
             )
-            
+
             Spacer(modifier = Modifier.height(8.dp))
-            
+
             Text(
                 text = error,
                 style = MaterialTheme.typography.body1,
                 textAlign = TextAlign.Center,
-                color = MaterialTheme.colors.onSurface.copy(alpha = 0.7f)
+                color = MaterialTheme.colors.onSurface.copy(alpha = 0.7f),
             )
-            
+
             Spacer(modifier = Modifier.height(24.dp))
-            
+
             Row(
-                horizontalArrangement = Arrangement.spacedBy(12.dp)
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
             ) {
                 OutlinedButton(onClick = onBack) {
                     Text("Go Back")
                 }
-                
+
                 Button(
                     onClick = onRetry,
-                    colors = ButtonDefaults.buttonColors(backgroundColor = PrimaryOrange)
+                    colors = ButtonDefaults.buttonColors(backgroundColor = PrimaryOrange),
                 ) {
                     Text("Retry", color = Color.White)
                 }
@@ -557,16 +546,16 @@ private fun QuickInfoRow(
 ) {
     Row(
         modifier = modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(12.dp)
+        horizontalArrangement = Arrangement.spacedBy(12.dp),
     ) {
         // Participants Quick Card
         QuickInfoCard(
             icon = Icons.Default.Person,
             value = festival.totalParticipants.toString(),
             label = "Participants",
-            modifier = Modifier.weight(1f)
+            modifier = Modifier.weight(1f),
         )
-        
+
         // Status Quick Card - memoize color calculation within composable
         val statusColor = remember(festival.status) {
             when (festival.status.lowercase()) {
@@ -575,15 +564,15 @@ private fun QuickInfoRow(
                 else -> Color.DarkGray
             }
         }
-        
+
         QuickInfoCard(
             icon = Icons.Default.AccessTime,
             value = festival.status.replaceFirstChar { it.uppercase() },
             label = "Status",
             modifier = Modifier.weight(1f),
-            valueColor = statusColor
+            valueColor = statusColor,
         )
-        
+
         // User Status (if joined)
         if (festival.userJoined) {
             festival.userRank?.let { rank ->
@@ -592,7 +581,7 @@ private fun QuickInfoRow(
                     value = "#$rank",
                     label = "Your Rank",
                     modifier = Modifier.weight(1f),
-                    valueColor = PrimaryOrange
+                    valueColor = PrimaryOrange,
                 )
             }
         }
@@ -610,33 +599,33 @@ private fun QuickInfoCard(
     Card(
         modifier = modifier,
         elevation = 4.dp,
-        shape = RoundedCornerShape(16.dp)
+        shape = RoundedCornerShape(16.dp),
     ) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier.padding(16.dp)
+            modifier = Modifier.padding(16.dp),
         ) {
             Icon(
                 imageVector = icon,
                 contentDescription = null,
                 tint = PrimaryOrange,
-                modifier = Modifier.size(24.dp)
+                modifier = Modifier.size(24.dp),
             )
-            
+
             Spacer(modifier = Modifier.height(8.dp))
-            
+
             Text(
                 text = value,
                 style = MaterialTheme.typography.h6,
                 fontWeight = FontWeight.Bold,
-                color = valueColor
+                color = valueColor,
             )
-            
+
             Text(
                 text = label,
                 style = MaterialTheme.typography.caption,
                 color = MaterialTheme.colors.onSurface.copy(alpha = 0.6f),
-                textAlign = TextAlign.Center
+                textAlign = TextAlign.Center,
             )
         }
     }
@@ -652,32 +641,32 @@ private fun InfoCard(
     Card(
         modifier = modifier.fillMaxWidth(),
         elevation = 4.dp,
-        shape = RoundedCornerShape(16.dp)
+        shape = RoundedCornerShape(16.dp),
     ) {
         Column(
-            modifier = Modifier.padding(20.dp)
+            modifier = Modifier.padding(20.dp),
         ) {
             Row(
-                verticalAlignment = Alignment.CenterVertically
+                verticalAlignment = Alignment.CenterVertically,
             ) {
                 icon?.let {
                     Icon(
                         imageVector = it,
                         contentDescription = null,
                         tint = PrimaryOrange,
-                        modifier = Modifier.size(20.dp)
+                        modifier = Modifier.size(20.dp),
                     )
                     Spacer(modifier = Modifier.width(8.dp))
                 }
-                
+
                 Text(
                     text = title,
                     style = MaterialTheme.typography.subtitle1,
                     fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colors.onSurface
+                    color = MaterialTheme.colors.onSurface,
                 )
             }
-            
+
             Spacer(modifier = Modifier.height(12.dp))
             content()
         }
@@ -692,7 +681,7 @@ private fun StatsSection(
     AnimatedVisibility(
         visible = festival.userJoined,
         enter = slideInVertically() + fadeIn(),
-        exit = fadeOut()
+        exit = fadeOut(),
     ) {
         InfoCard(
             title = "Your Festival Stats",
@@ -703,25 +692,25 @@ private fun StatsSection(
                         StatRow(
                             label = stringResource(Res.string.total_headbangs),
                             value = totalHeadbangs.toString(),
-                            icon = Icons.Default.MusicNote
+                            icon = Icons.Default.MusicNote,
                         )
-                        
+
                         if (festival.userRank != null) {
                             Spacer(modifier = Modifier.height(12.dp))
                             Divider(color = MaterialTheme.colors.onSurface.copy(alpha = 0.1f))
                             Spacer(modifier = Modifier.height(12.dp))
                         }
                     }
-                    
+
                     festival.userRank?.let { userRank ->
                         StatRow(
                             label = stringResource(Res.string.your_rank),
                             value = "#$userRank",
-                            icon = Icons.Default.Star
+                            icon = Icons.Default.Star,
                         )
                     }
                 }
-            }
+            },
         )
     }
 }
@@ -736,30 +725,30 @@ private fun StatRow(
     Row(
         modifier = modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically
+        verticalAlignment = Alignment.CenterVertically,
     ) {
         Row(
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             Icon(
                 imageVector = icon,
                 contentDescription = null,
                 tint = PrimaryOrange,
-                modifier = Modifier.size(16.dp)
+                modifier = Modifier.size(16.dp),
             )
             Spacer(modifier = Modifier.width(8.dp))
             Text(
                 text = label,
                 style = MaterialTheme.typography.body1,
-                color = MaterialTheme.colors.onSurface.copy(alpha = 0.8f)
+                color = MaterialTheme.colors.onSurface.copy(alpha = 0.8f),
             )
         }
-        
+
         Text(
             text = value,
             style = MaterialTheme.typography.body1,
             fontWeight = FontWeight.Bold,
-            color = PrimaryOrange
+            color = PrimaryOrange,
         )
     }
 }
@@ -774,26 +763,26 @@ private fun SecondaryActionsSection(
     Card(
         modifier = modifier.fillMaxWidth(),
         elevation = 4.dp,
-        shape = RoundedCornerShape(16.dp)
+        shape = RoundedCornerShape(16.dp),
     ) {
         Column(
             modifier = Modifier.padding(20.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp)
+            verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
             Text(
                 text = "Actions",
                 style = MaterialTheme.typography.subtitle1,
-                fontWeight = FontWeight.Bold
+                fontWeight = FontWeight.Bold,
             )
-            
+
             if (!festival.userJoined) {
                 JoinFestivalButton(
                     isJoining = isJoining,
-                    onJoin = { onAction(FestivalDetailActions.JoinFestival) }
+                    onJoin = { onAction(FestivalDetailActions.JoinFestival) },
                 )
             } else {
                 ViewLeaderboardButton(
-                    onViewLeaderboard = { onAction(FestivalDetailActions.ViewLeaderboard) }
+                    onViewLeaderboard = { onAction(FestivalDetailActions.ViewLeaderboard) },
                 )
             }
         }
@@ -811,14 +800,14 @@ private fun JoinFestivalButton(
         enabled = !isJoining,
         modifier = modifier.fillMaxWidth(),
         colors = ButtonDefaults.outlinedButtonColors(
-            contentColor = PrimaryOrange
-        )
+            contentColor = PrimaryOrange,
+        ),
     ) {
         if (isJoining) {
             CircularProgressIndicator(
                 modifier = Modifier.size(16.dp),
                 color = PrimaryOrange,
-                strokeWidth = 2.dp
+                strokeWidth = 2.dp,
             )
             Spacer(modifier = Modifier.width(8.dp))
             Text(stringResource(Res.string.joining))
@@ -826,7 +815,7 @@ private fun JoinFestivalButton(
             Icon(
                 imageVector = Icons.Default.MusicNote,
                 contentDescription = null,
-                modifier = Modifier.size(18.dp)
+                modifier = Modifier.size(18.dp),
             )
             Spacer(modifier = Modifier.width(8.dp))
             Text(stringResource(Res.string.join))
@@ -843,13 +832,13 @@ private fun ViewLeaderboardButton(
         onClick = onViewLeaderboard,
         modifier = modifier.fillMaxWidth(),
         colors = ButtonDefaults.outlinedButtonColors(
-            contentColor = PrimaryOrange
-        )
+            contentColor = PrimaryOrange,
+        ),
     ) {
         Icon(
             imageVector = Icons.Default.Star,
             contentDescription = null,
-            modifier = Modifier.size(18.dp)
+            modifier = Modifier.size(18.dp),
         )
         Spacer(modifier = Modifier.width(8.dp))
         Text(stringResource(Res.string.leaderboard))

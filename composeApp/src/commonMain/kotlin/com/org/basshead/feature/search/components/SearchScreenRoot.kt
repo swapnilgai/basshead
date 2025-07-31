@@ -13,9 +13,9 @@ import com.org.basshead.feature.search.model.SearchUiState
 import com.org.basshead.feature.search.presentation.SearchActions
 import com.org.basshead.feature.search.presentation.SearchViewModel
 import com.org.basshead.utils.components.LoadingScreen
-import com.org.basshead.utils.ui.Route as BaseRoute
 import com.org.basshead.utils.ui.UiState
 import org.koin.compose.viewmodel.koinViewModel
+import com.org.basshead.utils.ui.Route as BaseRoute
 
 @Composable
 fun SearchScreenRoot(
@@ -25,7 +25,7 @@ fun SearchScreenRoot(
 ) {
     val state = viewModel.state.collectAsStateWithLifecycle()
     var showError by remember { mutableStateOf(true) }
-    
+
     // Hoist the LazyListState here so it survives navigation
     val listState = rememberLazyListState()
 
@@ -61,11 +61,9 @@ fun SearchScreenRoot(
             when (val route = currentState.route) {
                 is BaseRoute.Back -> {
                     // Handle back navigation if needed
-                   // viewModel.clearNavigation()
                 }
                 is BaseRoute.InternalDirection -> {
                     navigate(route.destination, route.popUpTp, route.inclusive)
-                   //viewModel.clearNavigation()
                 }
             }
         }
