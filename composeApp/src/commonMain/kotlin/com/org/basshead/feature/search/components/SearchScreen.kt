@@ -19,6 +19,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.FilterList
@@ -72,6 +73,7 @@ import org.jetbrains.compose.resources.stringResource
 fun SearchScreen(
     uiState: SearchUiState,
     onAction: (SearchActions) -> Unit,
+    listState: LazyListState,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -171,6 +173,7 @@ fun SearchScreen(
                 SearchResultsSection(
                     uiState = uiState,
                     onAction = onAction,
+                    listState = listState,
                 )
             }
 
@@ -178,6 +181,7 @@ fun SearchScreen(
                 SuggestionsSection(
                     uiState = uiState,
                     onAction = onAction,
+                    listState = listState,
                 )
             }
 
@@ -349,6 +353,7 @@ private fun RecentSearchesSection(
 private fun SearchResultsSection(
     uiState: SearchUiState,
     onAction: (SearchActions) -> Unit,
+    listState: LazyListState,
     modifier: Modifier = Modifier,
 ) {
     Column(modifier = modifier) {
@@ -414,6 +419,7 @@ private fun SearchResultsSection(
                 onFestivalClick = { onAction(SearchActions.OnFestivalClicked(it)) },
                 onJoinFestival = { onAction(SearchActions.JoinFestival(it)) },
                 onViewLeaderboard = { onAction(SearchActions.ViewLeaderboard(it)) },
+                listState = listState,
             )
         }
     }
@@ -423,6 +429,7 @@ private fun SearchResultsSection(
 private fun SuggestionsSection(
     uiState: SearchUiState,
     onAction: (SearchActions) -> Unit,
+    listState: LazyListState,
     modifier: Modifier = Modifier,
 ) {
     FestivalList(
@@ -433,6 +440,7 @@ private fun SuggestionsSection(
         onFestivalClick = { onAction(SearchActions.OnFestivalClicked(it)) },
         onJoinFestival = { onAction(SearchActions.JoinFestival(it)) },
         onViewLeaderboard = { onAction(SearchActions.ViewLeaderboard(it)) },
+        listState = listState,
         modifier = modifier,
     )
 }
@@ -446,10 +454,9 @@ private fun FestivalList(
     onFestivalClick: (String) -> Unit,
     onJoinFestival: (String) -> Unit,
     onViewLeaderboard: (String) -> Unit,
+    listState: LazyListState,
     modifier: Modifier = Modifier,
 ) {
-    val listState = rememberLazyListState()
-
     // Trigger load more when approaching the end of the list
     val shouldLoadMore by remember {
         derivedStateOf {

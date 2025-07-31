@@ -1,5 +1,6 @@
 package com.org.basshead.feature.search.components
 
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -24,6 +25,9 @@ fun SearchScreenRoot(
 ) {
     val state = viewModel.state.collectAsStateWithLifecycle()
     var showError by remember { mutableStateOf(true) }
+    
+    // Hoist the LazyListState here so it survives navigation
+    val listState = rememberLazyListState()
 
     when (val currentState = state.value) {
         is UiState.Content -> {
@@ -31,6 +35,7 @@ fun SearchScreenRoot(
             SearchScreen(
                 uiState = searchUiState,
                 onAction = viewModel::onAction,
+                listState = listState,
                 modifier = modifier,
             )
 
