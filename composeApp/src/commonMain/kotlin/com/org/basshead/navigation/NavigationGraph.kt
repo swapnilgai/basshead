@@ -56,17 +56,7 @@ fun NavigationGraph(navController: NavHostController) {
             FestivalDetailScreenRoot(
                 festivalId = festivalDetails.festivalID,
                 navigate = { destination, popUpTp, inclusive ->
-                    if (destination == "Dashboard") {
-                        navController.navigate(routes[Route.Dashboard::class.simpleName]!!) {
-                            // Clear the back stack to prevent getting stuck
-                            popUpTo(routes[Route.Dashboard::class.simpleName]!!) {
-                                this.inclusive = true
-                            }
-                            launchSingleTop = true
-                        }
-                    } else {
-                        navigate(navController, routes, destination, popUpTp, inclusive)
-                    }
+                    navigate(navController, routes, destination, popUpTp, inclusive)
                 },
             )
         }
@@ -83,9 +73,10 @@ private fun navigate(
     when (destination) {
         "Dashboard" -> {
             navController.navigate(routes[Route.Dashboard::class.simpleName]!!) {
-                // Clear the back stack to prevent getting stuck
-                popUpTo(routes[Route.Dashboard::class.simpleName]!!) {
-                    this.inclusive = true
+                popUpTp?.let { popUpTo ->
+                    this.popUpTo(routes[popUpTo]!!) {
+                        this.inclusive = inclusive ?: false
+                    }
                 }
                 launchSingleTop = true
             }
