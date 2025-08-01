@@ -27,8 +27,6 @@ data class SearchFilters(
     val statusOptions: List<StatusFilter> = listOf(
         StatusFilter("upcoming", "Upcoming", true),
         StatusFilter("ongoing", "Ongoing", true),
-        StatusFilter("completed", "Completed", false),
-        StatusFilter("all", "All", false),
     ),
 ) {
     val selectedStatuses: List<String>

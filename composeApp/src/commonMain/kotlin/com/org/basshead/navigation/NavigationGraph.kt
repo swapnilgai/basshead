@@ -5,8 +5,10 @@ import androidx.compose.runtime.remember
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.toRoute
 import com.org.basshead.feature.auth.components.LoginScreenRoot
-import com.org.basshead.feature.main.components.MainScreen
+import com.org.basshead.feature.festivaldetail.components.FestivalDetailScreenRoot
+import com.org.basshead.feature.main.components.MainScreenRoot
 import com.org.basshead.feature.search.components.SearchScreenRoot
 import com.org.basshead.feature.splash.components.SplashScreenRoot
 
@@ -36,7 +38,7 @@ fun NavigationGraph(navController: NavHostController) {
             }
         }
         composable(routes[Route.Dashboard::class.simpleName]!!) {
-            MainScreen(
+            MainScreenRoot(
                 navigate = { destination, popUpTp, inclusive ->
                     navigate(navController, routes, destination, popUpTp, inclusive)
                 },
@@ -44,6 +46,15 @@ fun NavigationGraph(navController: NavHostController) {
         }
         composable(routes[Route.Search::class.simpleName]!!) {
             SearchScreenRoot(
+                navigate = { destination, popUpTp, inclusive ->
+                    navigate(navController, routes, destination, popUpTp, inclusive)
+                },
+            )
+        }
+        composable<Route.FestivalDetails> { backStackEntry ->
+            val festivalDetails = backStackEntry.toRoute<Route.FestivalDetails>()
+            FestivalDetailScreenRoot(
+                festivalId = festivalDetails.festivalID,
                 navigate = { destination, popUpTp, inclusive ->
                     navigate(navController, routes, destination, popUpTp, inclusive)
                 },
@@ -59,10 +70,47 @@ private fun navigate(
     popUpTp: String?,
     inclusive: Boolean?,
 ) {
-    navController.navigate(routes[destination]!!) {
-        popUpTp?.let {
-            this.popUpTo(routes[popUpTp]!!) {
-                this.inclusive = inclusive ?: false
+    when (destination) {
+        Route.Dashboard::class.simpleName -> {
+            navController.navigate(routes[Route.Dashboard::class.simpleName]!!) {
+                popUpTp?.let { popUpTo ->
+                    this.popUpTo(routes[popUpTo]!!) {
+                        this.inclusive = inclusive ?: false
+                    }
+                }
+                launchSingleTop = true
+            }
+        }
+        Route.FestivalDetails::class.simpleName -> {
+            // This is a special case - will be handled differently
+            // For now, navigate to a placeholder
+            navController.navigate(routes[Route.FestivalDetails::class.simpleName]!!) {
+                popUpTp?.let {
+                    this.popUpTo(routes[popUpTp]!!) {
+                        this.inclusive = inclusive ?: false
+                    }
+                }
+            }
+        }
+        else -> {
+            // Check if destination contains festival ID parameter
+            if (destination.startsWith("${Route.FestivalDetails::class.simpleName}/")) {
+                val festivalId = destination.substringAfter("${Route.FestivalDetails::class.simpleName}/")
+                navController.navigate(Route.FestivalDetails(festivalId)) {
+                    popUpTp?.let {
+                        this.popUpTo(routes[popUpTp]!!) {
+                            this.inclusive = inclusive ?: false
+                        }
+                    }
+                }
+            } else {
+                navController.navigate(routes[destination]!!) {
+                    popUpTp?.let {
+                        this.popUpTo(routes[popUpTp]!!) {
+                            this.inclusive = inclusive ?: false
+                        }
+                    }
+                }
             }
         }
     }

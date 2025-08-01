@@ -12,9 +12,9 @@ import com.org.basshead.feature.profile.model.ProfileUiState
 import com.org.basshead.feature.profile.presentation.ProfileActions
 import com.org.basshead.feature.profile.presentation.ProfileViewModel
 import com.org.basshead.utils.components.LoadingScreen
-import com.org.basshead.utils.ui.Route
 import com.org.basshead.utils.ui.UiState
 import org.koin.compose.viewmodel.koinViewModel
+import com.org.basshead.utils.ui.Route as BaseRoute
 
 @Composable
 fun ProfileScreenRoot(
@@ -29,6 +29,13 @@ fun ProfileScreenRoot(
     val onLogout = remember<() -> Unit> {
         {
             viewModel.onAction(ProfileActions.Logout)
+        }
+    }
+
+    val onFestivalClick = remember<(String) -> Unit> {
+        {
+                festivalId ->
+            viewModel.onAction(ProfileActions.OnFestivalClicked(festivalId))
         }
     }
 
@@ -48,6 +55,7 @@ fun ProfileScreenRoot(
                 dailyHeadbangs = profileUiState.dailyHeadbangs,
                 totalHeadbangs = profileUiState.totalHeadbangs,
                 onLogout = onLogout,
+                onFestivalClick = onFestivalClick,
                 onViewLeaderboard = onViewLeaderboard,
                 modifier = modifier,
             )
@@ -72,12 +80,16 @@ fun ProfileScreenRoot(
 
         is UiState.Navigate -> {
             when (currentState.route) {
-                is Route.InternalDirection -> navigate(
-                    currentState.route.destination,
-                    currentState.route.popUpTp,
-                    currentState.route.inclusive,
-                )
-                is Route.Back -> navigate("back", null, null)
+                is BaseRoute.InternalDirection -> {
+                    navigate(
+                        currentState.route.destination,
+                        currentState.route.popUpTp,
+                        currentState.route.inclusive,
+                    )
+                }
+                is BaseRoute.Back -> {
+                    navigate("back", null, null)
+                }
             }
         }
     }

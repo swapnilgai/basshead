@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.org.basshead.utils.core.UiText
 import com.org.basshead.utils.interactor.InteractorException
 import kotlinx.coroutines.CoroutineExceptionHandler
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
@@ -14,6 +15,7 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.plus
 
 @Immutable
@@ -35,6 +37,9 @@ open class BaseViewModel<T>(initialContent: T) : ViewModel() {
         MutableStateFlow(UiState.Content(initialContent))
     private val _navState: MutableStateFlow<UiState.Navigate?> = MutableStateFlow(null)
 
+    // Track navigation consumption to prevent re-navigation
+    private var navigationConsumed = false
+
     val coroutineExceptionHandler = CoroutineExceptionHandler { _, error ->
         (error as? InteractorException)?.let {
             setError(it.msg)
@@ -43,7 +48,20 @@ open class BaseViewModel<T>(initialContent: T) : ViewModel() {
     val baseViewModelScope = viewModelScope + coroutineExceptionHandler
 
     val state = combine(_contentState, _errorState, _navState) { content, error, navigation ->
-        error ?: navigation ?: content
+        when {
+            error != null -> error
+            navigation != null && !navigationConsumed -> {
+                // Mark as consumed and auto-clear after UI has time to read it
+                navigationConsumed = true
+                baseViewModelScope.launch {
+                    delay(50) // Minimal delay for UI consumption
+                    _navState.update { null }
+                    navigationConsumed = false
+                }
+                navigation
+            }
+            else -> content
+        }
     }.distinctUntilChanged().filterNotNull().stateIn(
         baseViewModelScope,
         SharingStarted.WhileSubscribed(5000L),

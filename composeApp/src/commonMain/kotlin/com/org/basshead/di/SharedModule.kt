@@ -6,6 +6,10 @@ import com.org.basshead.feature.auth.presentation.AuthViewModel
 import com.org.basshead.feature.dashboard.interactor.DashBoardInteractor
 import com.org.basshead.feature.dashboard.interactor.DashBoardInteractorImpl
 import com.org.basshead.feature.dashboard.presentation.DashBoardViewModel
+import com.org.basshead.feature.festivaldetail.interactor.FestivalCacheInteractor
+import com.org.basshead.feature.festivaldetail.interactor.FestivalCacheInteractorImpl
+import com.org.basshead.feature.festivaldetail.presentation.FestivalDetailViewModel
+import com.org.basshead.feature.main.presentation.MainViewModel
 import com.org.basshead.feature.profile.presentation.ProfileViewModel
 import com.org.basshead.feature.search.interactor.SearchInteractor
 import com.org.basshead.feature.search.interactor.SearchInteractorImpl
@@ -31,8 +35,14 @@ val splashModule = module {
 
 val dashboardModule = module {
     single<DashBoardInteractor> { DashBoardInteractorImpl(get()) }
+    single<FestivalCacheInteractor> { FestivalCacheInteractorImpl(get()) }
     viewModel { DashBoardViewModel(get()) }
     viewModel { ProfileViewModel(get()) }
+    viewModel { (festivalId: String) -> FestivalDetailViewModel(get(), get(), get(), festivalId) }
+}
+
+val mainModule = module {
+    viewModel { MainViewModel() }
 }
 
 val searchModule = module {
