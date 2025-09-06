@@ -6,7 +6,7 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -117,32 +117,32 @@ fun AvatarSelectionScreen(
     // Create pager state for ViewPager-like functionality
     val pagerState = rememberPagerState(pageCount = { avatarUiState.avatars.size })
 
-    // Track if we've already initialized the pager position to prevent re-scrolling
-    var hasInitializedPosition by remember { mutableStateOf(false) }
-
     // Initialize with current user's avatar if available - only once on first load
-    LaunchedEffect(avatarUiState.avatars, avatarUiState.selectedAvatarUrl) {
-        if (!hasInitializedPosition && avatarUiState.avatars.isNotEmpty()) {
+    LaunchedEffect(pagerState, avatarUiState.avatars) {
+        if (avatarUiState.avatars.isNotEmpty()) {
             val currentIndex = avatarUiState.avatars.indexOfFirst {
                 it.url == avatarUiState.selectedAvatarUrl
             }
-            if (currentIndex >= 0) {
+            if (currentIndex != -1) {
                 pagerState.scrollToPage(currentIndex)
-                hasInitializedPosition = true
             }
         }
     }
 
-    // Only track user gestures for page changes - wait for initialization first and prevent interference during save
-    LaunchedEffect(hasInitializedPosition, avatarUiState.isSaving) {
-        if (hasInitializedPosition && !avatarUiState.isSaving) {
-            snapshotFlow { pagerState.currentPage to pagerState.isScrollInProgress }
-                .collect { (currentPage, isScrolling) ->
-                    // Only update when user stops scrolling and we're not saving
-                    if (!isScrolling && avatarUiState.avatars.isNotEmpty() && currentPage < avatarUiState.avatars.size) {
-                        onAvatarSelected(avatarUiState.avatars[currentPage].url)
-                    }
-                }
+    // Observe the current page and notify the view model when it changes.
+    // derivedStateOf is used to ensure that onAvatarSelected is only called when the settled page changes.
+    val settledPage by remember {
+        derivedStateOf {
+            pagerState.settledPage
+        }
+    }
+
+    LaunchedEffect(settledPage) {
+        if (avatarUiState.avatars.isNotEmpty() && settledPage < avatarUiState.avatars.size) {
+            val selectedAvatarUrl = avatarUiState.avatars[settledPage].url
+            if (selectedAvatarUrl != avatarUiState.selectedAvatarUrl) {
+                onAvatarSelected(selectedAvatarUrl)
+            }
         }
     }
 
@@ -161,7 +161,7 @@ fun AvatarSelectionScreen(
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
                         Icon(
-                            imageVector = Icons.Default.ArrowBack,
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = "Back",
                             tint = MaterialTheme.colorScheme.onSurface
                         )
@@ -183,7 +183,7 @@ fun AvatarSelectionScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(56.dp),
-                    enabled = avatarUiState.selectedAvatarUrl != null && !avatarUiState.isSaving,
+                    enabled = !avatarUiState.isSaving,
                     colors = ButtonDefaults.buttonColors(
                         containerColor = Color(0xFF6B46C1),
                         disabledContainerColor = Color(0xFF6B46C1).copy(alpha = 0.5f)
