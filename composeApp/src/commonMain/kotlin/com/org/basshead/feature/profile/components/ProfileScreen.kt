@@ -1,10 +1,12 @@
 package com.org.basshead.feature.profile.components
 
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -33,6 +35,7 @@ fun ProfileScreen(
     dailyHeadbangs: List<DailyHeadbangState>,
     totalHeadbangs: Long,
     onLogout: () -> Unit,
+    onNavigateToAvatar: () -> Unit,
     onFestivalClick: (String) -> Unit = {},
     onViewLeaderboard: (String) -> Unit = {},
     modifier: Modifier = Modifier,
@@ -78,6 +81,19 @@ fun ProfileScreen(
                 style = MaterialTheme.typography.bodyLarge,
                 modifier = Modifier.padding(bottom = 16.dp),
             )
+
+            // Avatar selection button - enhanced visibility
+            Button(
+                onClick = onNavigateToAvatar,
+                modifier = Modifier
+                    .padding(bottom = 16.dp)
+                    .fillMaxWidth(),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.secondary
+                )
+            ) {
+                Text("Change Avatar")
+            }
         }
 
         item(key = "festivals_header") {

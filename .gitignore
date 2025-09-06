@@ -46,3 +46,5 @@ keystore.properties
 .vscode/*
 *.sql
 *.sql
+iosApp/iosApp.xcodeproj/xcuserdata/nehac.xcuserdatad/xcschemes/iosApp.xcscheme
+iosApp/iosApp.xcodeproj/xcuserdata/nehac.xcuserdatad/xcschemes/xcschememanagement.plist

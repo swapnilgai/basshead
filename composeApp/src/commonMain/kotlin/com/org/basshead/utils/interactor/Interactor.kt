@@ -1,5 +1,6 @@
 package com.org.basshead.utils.interactor
 
+import com.org.basshead.utils.cache.CacheKey
 import com.org.basshead.utils.cache.CacheOptions
 import com.org.basshead.utils.cache.LRUCache
 import kotlinx.coroutines.CoroutineDispatcher
@@ -77,4 +78,8 @@ suspend fun <T>Interactor.withInteractorContext(
             blockResult
         }
     }
+}
+
+suspend fun Interactor.invalidateCache(cacheKey: CacheKey) = withContext(InteractorDispatcherProvider.dispatcher) {
+    cache.remove(cacheKey)
 }

@@ -7,6 +7,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
 import com.org.basshead.feature.auth.components.LoginScreenRoot
+import com.org.basshead.feature.avatar.components.AvatarSelectionScreenRoot
 import com.org.basshead.feature.festivaldetail.components.FestivalDetailScreenRoot
 import com.org.basshead.feature.main.components.MainScreenRoot
 import com.org.basshead.feature.search.components.SearchScreenRoot
@@ -21,6 +22,7 @@ fun NavigationGraph(navController: NavHostController) {
             Route.Dashboard::class.simpleName to "main",
             Route.Profile::class.simpleName to "profile",
             Route.Search::class.simpleName to "search",
+            Route.AvatarSelection::class.simpleName to "avatar_selection",
             Route.FestivalDetails::class.simpleName to "festival_detail",
             Route.FestivalLeaderBoard::class.simpleName to "festival_leaderboard",
         )
@@ -51,6 +53,13 @@ fun NavigationGraph(navController: NavHostController) {
                 },
             )
         }
+        composable(routes[Route.AvatarSelection::class.simpleName]!!) {
+            AvatarSelectionScreenRoot(
+                navigate = { destination, popUpTp, inclusive ->
+                    navigate(navController, routes, destination, popUpTp, inclusive)
+                },
+            )
+        }
         composable<Route.FestivalDetails> { backStackEntry ->
             val festivalDetails = backStackEntry.toRoute<Route.FestivalDetails>()
             FestivalDetailScreenRoot(
@@ -71,6 +80,10 @@ private fun navigate(
     inclusive: Boolean?,
 ) {
     when (destination) {
+        "back" -> {
+            // Handle back navigation
+            navController.popBackStack()
+        }
         Route.Dashboard::class.simpleName -> {
             navController.navigate(routes[Route.Dashboard::class.simpleName]!!) {
                 popUpTp?.let { popUpTo ->
@@ -104,10 +117,13 @@ private fun navigate(
                     }
                 }
             } else {
-                navController.navigate(routes[destination]!!) {
-                    popUpTp?.let {
-                        this.popUpTo(routes[popUpTp]!!) {
-                            this.inclusive = inclusive ?: false
+                // Safely handle unknown destinations
+                routes[destination]?.let { route ->
+                    navController.navigate(route) {
+                        popUpTp?.let {
+                            this.popUpTo(routes[popUpTp]!!) {
+                                this.inclusive = inclusive ?: false
+                            }
                         }
                     }
                 }
