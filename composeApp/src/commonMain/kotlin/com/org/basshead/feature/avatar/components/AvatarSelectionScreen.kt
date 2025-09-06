@@ -209,16 +209,7 @@ fun AvatarSelectionScreen(
         },
         containerColor = MaterialTheme.colorScheme.surface
     ) { paddingValues ->
-        if (avatarUiState.avatars.isEmpty()) {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(paddingValues),
-                contentAlignment = Alignment.Center
-            ) {
-                CircularProgressIndicator()
-            }
-        } else {
+        if (avatarUiState.avatars.isNotEmpty()) {
             // ViewPager-style horizontal pager with zoom transformation
             HorizontalPager(
                 state = pagerState,
