@@ -274,16 +274,6 @@ fun AvatarPagerCard(
         modifier = modifier,
         contentAlignment = Alignment.Center
     ) {
-        // Background circle for selected state
-        if (isSelected) {
-            Box(
-                modifier = Modifier
-                    .size(cardSize + 8.dp)
-                    .clip(CircleShape)
-                    .background(Color(0xFFFF6B47)) // Orange background for selected
-            )
-        }
-
         // Avatar image container - ensuring perfect circle with proper clipping
         AsyncImage(
             model = avatar.url,
@@ -292,7 +282,7 @@ fun AvatarPagerCard(
                 .size(if (isSelected) cardSize else cardSize - 16.dp)
                 .clip(CircleShape)
                 .background(MaterialTheme.colorScheme.surface),
-            contentScale = ContentScale.Crop
+            contentScale = ContentScale.Fit
         )
     }
 }
