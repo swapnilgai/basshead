@@ -226,7 +226,8 @@ fun AvatarSelectionScreen(
                     .fillMaxSize()
                     .padding(paddingValues),
                 contentPadding = PaddingValues(horizontal = 64.dp),
-                pageSpacing = 16.dp
+                pageSpacing = 16.dp,
+                key = { index -> avatarUiState.avatars[index].url }
             ) { page ->
                 // Calculate page offset for zoom transformation
                 val pageOffset = (pagerState.currentPage - page) + pagerState.currentPageOffsetFraction
