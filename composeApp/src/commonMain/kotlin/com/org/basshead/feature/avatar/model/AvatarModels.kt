@@ -7,7 +7,7 @@ import kotlinx.serialization.Serializable
 @Immutable
 data class Avatar(
     val id: Long,
-    val url: String
+    val url: String,
 )
 
 @Immutable
@@ -15,5 +15,5 @@ data class AvatarSelectionUiState(
     val avatars: List<Avatar> = emptyList(),
     val currentUserAvatarUrl: String = "",
     val selectedAvatarUrl: String = "",
-    val isSaving: Boolean = false
+    val isSaving: Boolean = false,
 )

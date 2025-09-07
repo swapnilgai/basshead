@@ -2,8 +2,6 @@ package com.org.basshead.feature.avatar.presentation
 
 import com.org.basshead.feature.avatar.interactor.AvatarInteractor
 import com.org.basshead.feature.avatar.model.AvatarSelectionUiState
-import com.org.basshead.navigation.Route
-import com.org.basshead.utils.core.UiText
 import com.org.basshead.utils.ui.BaseViewModel
 import kotlinx.coroutines.launch
 
@@ -15,7 +13,7 @@ sealed interface AvatarSelectionActions {
 }
 
 class AvatarSelectionViewModel(
-    private val avatarInteractor: AvatarInteractor
+    private val avatarInteractor: AvatarInteractor,
 ) : BaseViewModel<AvatarSelectionUiState>(AvatarSelectionUiState()) {
 
     init {
@@ -44,7 +42,7 @@ class AvatarSelectionViewModel(
             val updatedState = getContent().copy(
                 avatars = avatars,
                 currentUserAvatarUrl = currentAvatarUrl,
-                selectedAvatarUrl = currentAvatarUrl // Initialize selection with current user avatar
+                selectedAvatarUrl = currentAvatarUrl, // Initialize selection with current user avatar
             )
             setContent(updatedState)
         }

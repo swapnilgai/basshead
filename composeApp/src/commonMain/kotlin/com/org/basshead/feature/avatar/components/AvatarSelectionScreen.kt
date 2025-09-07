@@ -1,14 +1,41 @@
 package com.org.basshead.feature.avatar.components
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -41,7 +68,8 @@ fun AvatarSelectionScreenRoot(
 
     // Remember callback functions to avoid recomposition - following MVI pattern
     val onAvatarSelected = remember<(String) -> Unit> {
-        { avatarUrl ->
+        {
+                avatarUrl ->
             viewModel.onAction(AvatarSelectionActions.SelectAvatar(avatarUrl))
         }
     }
@@ -155,7 +183,7 @@ fun AvatarSelectionScreen(
                         text = "Your Avatar",
                         style = MaterialTheme.typography.headlineSmall,
                         fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.onSurface
+                        color = MaterialTheme.colorScheme.onSurface,
                     )
                 },
                 navigationIcon = {
@@ -163,20 +191,20 @@ fun AvatarSelectionScreen(
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = "Back",
-                            tint = MaterialTheme.colorScheme.onSurface
+                            tint = MaterialTheme.colorScheme.onSurface,
                         )
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.surface
-                )
+                    containerColor = MaterialTheme.colorScheme.surface,
+                ),
             )
         },
         bottomBar = {
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(16.dp)
+                    .padding(16.dp),
             ) {
                 Button(
                     onClick = onSaveAvatar,
@@ -186,28 +214,28 @@ fun AvatarSelectionScreen(
                     enabled = !avatarUiState.isSaving,
                     colors = ButtonDefaults.buttonColors(
                         containerColor = Color(0xFF6B46C1),
-                        disabledContainerColor = Color(0xFF6B46C1).copy(alpha = 0.5f)
+                        disabledContainerColor = Color(0xFF6B46C1).copy(alpha = 0.5f),
                     ),
-                    shape = MaterialTheme.shapes.medium
+                    shape = MaterialTheme.shapes.medium,
                 ) {
                     if (avatarUiState.isSaving) {
                         CircularProgressIndicator(
                             modifier = Modifier.size(24.dp),
                             color = Color.White,
-                            strokeWidth = 2.dp
+                            strokeWidth = 2.dp,
                         )
                     } else {
                         Text(
                             text = "Save",
                             style = MaterialTheme.typography.titleLarge,
                             fontWeight = FontWeight.Medium,
-                            color = Color.White
+                            color = Color.White,
                         )
                     }
                 }
             }
         },
-        containerColor = MaterialTheme.colorScheme.surface
+        containerColor = MaterialTheme.colorScheme.surface,
     ) { paddingValues ->
         if (avatarUiState.avatars.isNotEmpty()) {
             // ViewPager-style horizontal pager with zoom transformation
@@ -218,7 +246,7 @@ fun AvatarSelectionScreen(
                     .padding(paddingValues),
                 contentPadding = PaddingValues(horizontal = 64.dp),
                 pageSpacing = 16.dp,
-                key = { index -> avatarUiState.avatars[index].url }
+                key = { index -> avatarUiState.avatars[index].url },
             ) { page ->
                 // Calculate page offset for zoom transformation
                 val pageOffset = (pagerState.currentPage - page) + pagerState.currentPageOffsetFraction
@@ -227,13 +255,13 @@ fun AvatarSelectionScreen(
                 val scale = lerp(
                     start = 0.8f,
                     stop = 1.0f,
-                    fraction = 1f - pageOffset.absoluteValue.coerceIn(0f, 1f)
+                    fraction = 1f - pageOffset.absoluteValue.coerceIn(0f, 1f),
                 )
 
                 val alpha = lerp(
                     start = 0.5f,
                     stop = 1.0f,
-                    fraction = 1f - pageOffset.absoluteValue.coerceIn(0f, 1f)
+                    fraction = 1f - pageOffset.absoluteValue.coerceIn(0f, 1f),
                 )
 
                 AvatarPagerCard(
@@ -245,7 +273,7 @@ fun AvatarSelectionScreen(
                             scaleX = scale
                             scaleY = scale
                             this.alpha = alpha
-                        }
+                        },
                 )
             }
         }
@@ -263,7 +291,7 @@ fun AvatarPagerCard(
 
     Box(
         modifier = modifier,
-        contentAlignment = Alignment.Center
+        contentAlignment = Alignment.Center,
     ) {
         // Avatar image container - ensuring perfect circle with proper clipping
         AsyncImage(
@@ -273,7 +301,7 @@ fun AvatarPagerCard(
                 .size(if (isSelected) cardSize else cardSize - 16.dp)
                 .clip(CircleShape)
                 .background(MaterialTheme.colorScheme.surface),
-            contentScale = ContentScale.Fit
+            contentScale = ContentScale.Fit,
         )
     }
 }
@@ -290,12 +318,12 @@ fun ErrorScreen(
             .fillMaxSize()
             .padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
+        verticalArrangement = Arrangement.Center,
     ) {
         Text(
             text = "Error",
             style = MaterialTheme.typography.headlineSmall,
-            color = MaterialTheme.colorScheme.error
+            color = MaterialTheme.colorScheme.error,
         )
 
         Spacer(modifier = Modifier.height(8.dp))
@@ -303,13 +331,13 @@ fun ErrorScreen(
         Text(
             text = errorMessage,
             style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onSurface
+            color = MaterialTheme.colorScheme.onSurface,
         )
 
         Spacer(modifier = Modifier.height(16.dp))
 
         Row(
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             OutlinedButton(onClick = onDismiss) {
                 Text("Dismiss")
