@@ -12,10 +12,10 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Set up JDK 17
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v4
         with:
           java-version: '17'
           distribution: 'temurin'
@@ -24,25 +24,80 @@ jobs:
       - name: Set up Xcode
         uses: maxim-lobanov/setup-xcode@v1
         with:
-          xcode-version: latest
+          xcode-version: 'latest-stable'
 
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
 
-      - name: Set gradle.properties from secret
-        run: echo "${{ secrets.KEYSTORE_PROPERTIES }}" | base64 --decode > keystore.properties
+      - name: Set gradle.properties from secret (if available)
+        run: |
+          if [ -n "${{ secrets.KEYSTORE_PROPERTIES }}" ]; then
+            echo "${{ secrets.KEYSTORE_PROPERTIES }}" | base64 --decode > keystore.properties
+          else
+            echo "No keystore properties secret found, continuing without it"
+          fi
+
+      - name: Cache Gradle dependencies
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
+      - name: Cache Xcode DerivedData
+        uses: actions/cache@v3
+        with:
+          path: iosApp/build/sim
+          key: ${{ runner.os }}-xcode-deriveddata-${{ hashFiles('iosApp/**') }}
+          restore-keys: |
+            ${{ runner.os }}-xcode-deriveddata-
 
       - name: Run KtLint
         run: ./gradlew ktlintCheck --info --stacktrace
 
-      - name: Build iOS app for Simulator
+      - name: Build Kotlin Multiplatform shared code
+        run: ./gradlew :composeApp:assembleDebug --stacktrace
+
+      - name: Verify Asset Catalogs
+        run: |
+          echo "Checking asset catalog structure..."
+          ls -la iosApp/iosApp/Assets.xcassets/
+          ls -la iosApp/iosApp/Assets.xcassets/*/
+          echo "Checking Preview Assets..."
+          ls -la "iosApp/iosApp/Preview Content/Preview Assets.xcassets/"
+          
+          echo "Validating asset catalog JSON files..."
+          find iosApp/iosApp -name "Contents.json" -exec echo "File: {}" \; -exec cat {} \; -exec echo "" \;
+
+      - name: Clean iOS build directory
+        run: |
+          cd iosApp
+          rm -rf build/sim
+
+      - name: Build iOS app for Simulator (verbose)
         run: |
           cd iosApp
           xcodebuild -project iosApp.xcodeproj \
             -scheme iosApp \
             -configuration Debug \
             -sdk iphonesimulator \
-            -derivedDataPath build/sim
+            -derivedDataPath build/sim \
+            clean build \
+            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGNING_REQUIRED=NO \
+            -verbose
+
+      - name: Upload build logs on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ios-build-logs
+          path: |
+            iosApp/build/sim/Logs/
+            iosApp/build/sim/Build/Intermediates.noindex/
 
       # The following steps are skipped as IPA generation requires signing configs
       # - name: Export IPA
