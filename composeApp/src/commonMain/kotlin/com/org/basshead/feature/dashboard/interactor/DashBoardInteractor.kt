@@ -32,11 +32,8 @@ data class FestivalSuggestionsPrimaryKey(val statuses: String, val location: Str
 data class FestivalSuggestionsSecondaryKey(val lastSeenId: String?) : CacheKey
 data class DailyHeadbangsPrimaryKey(val startDate: String?, val endDate: String?) : CacheKey
 data class DailyHeadbangsSecondaryKey(val limit: Int) : CacheKey
-
-// Object-based CacheKey for user profile
-object UserProfileKey : CacheKey {
-    override fun toString(): String = "UserProfileKey"
-}
+data class UserProfileKey(val name: String = "UserProfileKey") : CacheKey
+data class AvatarsKey(val name: String = "UserProfileKey") : CacheKey
 
 // Interface
 interface DashBoardInteractor : Interactor {
@@ -167,7 +164,7 @@ class DashBoardInteractorImpl(
 
     override suspend fun getUserProfile(): UserProfileState? = withInteractorContext(
         cacheOption = CacheOptions(
-            key = UserProfileKey,
+            key = UserProfileKey(),
             expirationPolicy = longCacheExpiration, // 30 minutes - changes infrequently
         ),
         retryOption = RetryOption(retryCount = 1),

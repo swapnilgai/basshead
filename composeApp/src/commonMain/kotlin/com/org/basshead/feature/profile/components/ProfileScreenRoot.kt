@@ -32,6 +32,12 @@ fun ProfileScreenRoot(
         }
     }
 
+    val onNavigateToAvatar = remember<() -> Unit> {
+        {
+            viewModel.onAction(ProfileActions.NavigateToAvatarSelection)
+        }
+    }
+
     val onFestivalClick = remember<(String) -> Unit> {
         {
                 festivalId ->
@@ -55,6 +61,7 @@ fun ProfileScreenRoot(
                 dailyHeadbangs = profileUiState.dailyHeadbangs,
                 totalHeadbangs = profileUiState.totalHeadbangs,
                 onLogout = onLogout,
+                onNavigateToAvatar = onNavigateToAvatar,
                 onFestivalClick = onFestivalClick,
                 onViewLeaderboard = onViewLeaderboard,
                 modifier = modifier,

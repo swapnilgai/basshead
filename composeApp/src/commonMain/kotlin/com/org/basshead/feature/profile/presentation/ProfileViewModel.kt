@@ -10,6 +10,7 @@ import kotlinx.coroutines.launch
 sealed interface ProfileActions {
     data object Refresh : ProfileActions
     data object Logout : ProfileActions
+    data object NavigateToAvatarSelection : ProfileActions
     data class OnFestivalClicked(val festivalId: String) : ProfileActions
     data class ViewLeaderboard(val festivalId: String) : ProfileActions
 }
@@ -26,6 +27,7 @@ class ProfileViewModel(
         when (action) {
             ProfileActions.Refresh -> refresh()
             ProfileActions.Logout -> logout()
+            ProfileActions.NavigateToAvatarSelection -> navigateToAvatarSelection()
             is ProfileActions.OnFestivalClicked -> onFestivalClicked(action.festivalId)
             is ProfileActions.ViewLeaderboard -> viewLeaderboard(action.festivalId)
         }
@@ -79,5 +81,9 @@ class ProfileViewModel(
 
     private fun viewLeaderboard(festivalId: String) {
         navigate("${Route.FestivalLeaderBoard::class.simpleName}/$festivalId")
+    }
+
+    private fun navigateToAvatarSelection() {
+        navigate(Route.AvatarSelection::class.simpleName!!)
     }
 }

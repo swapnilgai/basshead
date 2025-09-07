@@ -3,6 +3,9 @@ package com.org.basshead.di
 import com.org.basshead.feature.auth.interactor.AuthInteractor
 import com.org.basshead.feature.auth.interactor.AuthInteractorImpl
 import com.org.basshead.feature.auth.presentation.AuthViewModel
+import com.org.basshead.feature.avatar.interactor.AvatarInteractor
+import com.org.basshead.feature.avatar.interactor.AvatarInteractorImpl
+import com.org.basshead.feature.avatar.presentation.AvatarSelectionViewModel
 import com.org.basshead.feature.dashboard.interactor.DashBoardInteractor
 import com.org.basshead.feature.dashboard.interactor.DashBoardInteractorImpl
 import com.org.basshead.feature.dashboard.presentation.DashBoardViewModel
@@ -48,4 +51,9 @@ val mainModule = module {
 val searchModule = module {
     single<SearchInteractor> { SearchInteractorImpl(get()) }
     viewModel { SearchViewModel(get()) }
+}
+
+val avatarModule = module {
+    single<AvatarInteractor> { AvatarInteractorImpl(get(), get()) }
+    viewModel { AvatarSelectionViewModel(get()) }
 }
