@@ -38,7 +38,7 @@ import com.org.basshead.feature.dashboard.model.UserProfileState
 data class ProfileDisplayData(
     val userName: String,
     val totalHeadbangs: String,
-    val festivalsCount: String
+    val festivalsCount: String,
 )
 
 @Composable
@@ -58,7 +58,7 @@ fun ProfileScreen(
         ProfileDisplayData(
             userName = profile?.name ?: "Unknown User",
             totalHeadbangs = totalHeadbangs.toString(),
-            festivalsCount = userFestivals.size.toString()
+            festivalsCount = userFestivals.size.toString(),
         )
     }
 
@@ -107,14 +107,14 @@ private fun ProfileHeader() {
         style = MaterialTheme.typography.headlineMedium,
         fontWeight = FontWeight.Bold,
         color = MaterialTheme.colorScheme.onSurface,
-        modifier = Modifier.padding(vertical = 16.dp)
+        modifier = Modifier.padding(vertical = 16.dp),
     )
 }
 
 @Composable
 private fun ProfileInfoSection(
     profileDisplayData: ProfileDisplayData,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Column(modifier = modifier) {
         SectionHeader(title = "Account")
@@ -123,17 +123,17 @@ private fun ProfileInfoSection(
 
         ProfileInfoRow(
             label = "Name",
-            value = profileDisplayData.userName
+            value = profileDisplayData.userName,
         )
 
         ProfileInfoRow(
             label = "Total Headbangs",
-            value = profileDisplayData.totalHeadbangs
+            value = profileDisplayData.totalHeadbangs,
         )
 
         ProfileInfoRow(
             label = "Joined Festivals",
-            value = profileDisplayData.festivalsCount
+            value = profileDisplayData.festivalsCount,
         )
     }
 }
@@ -141,7 +141,7 @@ private fun ProfileInfoSection(
 @Composable
 private fun GeneralSection(
     onNavigateToAvatar: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Column(modifier = modifier) {
         Spacer(modifier = Modifier.height(32.dp))
@@ -150,19 +150,19 @@ private fun GeneralSection(
 
         ProfileLinkRow(
             title = "Change Avatar",
-            onClick = onNavigateToAvatar
+            onClick = onNavigateToAvatar,
         )
 
         ProfileLinkRow(
             title = "Your Festivals",
-            onClick = { /* Empty lambda for now */ }
+            onClick = { /* Empty lambda for now */ },
         )
     }
 }
 
 @Composable
 private fun LegalSection(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Column(modifier = modifier) {
         Spacer(modifier = Modifier.height(32.dp))
@@ -171,12 +171,12 @@ private fun LegalSection(
 
         ProfileLinkRow(
             title = "Privacy Policy",
-            onClick = { /* Empty lambda for now */ }
+            onClick = { /* Empty lambda for now */ },
         )
 
         ProfileLinkRow(
             title = "Terms of Service",
-            onClick = { /* Empty lambda for now */ }
+            onClick = { /* Empty lambda for now */ },
         )
     }
 }
@@ -184,7 +184,7 @@ private fun LegalSection(
 @Composable
 private fun SignOutSection(
     onLogout: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Column(modifier = modifier) {
         Spacer(modifier = Modifier.height(32.dp))
@@ -197,18 +197,18 @@ private fun SignOutSection(
                 .padding(horizontal = 4.dp),
             shape = RoundedCornerShape(8.dp),
             colors = ButtonDefaults.outlinedButtonColors(
-                contentColor = MaterialTheme.colorScheme.primary
+                contentColor = MaterialTheme.colorScheme.primary,
             ),
             border = BorderStroke(
                 width = 1.dp,
-                color = MaterialTheme.colorScheme.outline
-            )
+                color = MaterialTheme.colorScheme.outline,
+            ),
         ) {
             Text(
                 text = "Sign Out",
                 style = MaterialTheme.typography.bodyLarge,
                 fontSize = 16.sp,
-                modifier = Modifier.padding(vertical = 8.dp)
+                modifier = Modifier.padding(vertical = 8.dp),
             )
         }
     }
@@ -225,7 +225,7 @@ private fun SectionHeader(
         fontWeight = FontWeight.SemiBold,
         color = MaterialTheme.colorScheme.onSurface,
         fontSize = 18.sp,
-        modifier = modifier.padding(horizontal = 4.dp)
+        modifier = modifier.padding(horizontal = 4.dp),
     )
 }
 
@@ -240,20 +240,20 @@ private fun ProfileInfoRow(
             .fillMaxWidth()
             .padding(horizontal = 4.dp, vertical = 12.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically
+        verticalAlignment = Alignment.CenterVertically,
     ) {
         Text(
             text = label,
             style = MaterialTheme.typography.bodyLarge,
             color = MaterialTheme.colorScheme.onSurface,
-            fontSize = 16.sp
+            fontSize = 16.sp,
         )
 
         Text(
             text = value,
             style = MaterialTheme.typography.bodyLarge,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
-            fontSize = 16.sp
+            fontSize = 16.sp,
         )
     }
 }
@@ -270,20 +270,20 @@ private fun ProfileLinkRow(
             .clickable { onClick() }
             .padding(horizontal = 4.dp, vertical = 16.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically
+        verticalAlignment = Alignment.CenterVertically,
     ) {
         Text(
             text = title,
             style = MaterialTheme.typography.bodyLarge,
             color = MaterialTheme.colorScheme.primary,
-            fontSize = 16.sp
+            fontSize = 16.sp,
         )
 
         Icon(
             imageVector = Icons.Default.ArrowForward,
             contentDescription = null,
             tint = MaterialTheme.colorScheme.onSurfaceVariant,
-            modifier = Modifier.size(20.dp)
+            modifier = Modifier.size(20.dp),
         )
     }
 }
