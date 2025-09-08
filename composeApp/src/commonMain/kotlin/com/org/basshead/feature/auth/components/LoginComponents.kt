@@ -2,9 +2,11 @@ package com.org.basshead.feature.auth.components
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
@@ -12,20 +14,21 @@ import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Pets
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.semantics.contentDescription
-import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import basshead.composeapp.generated.resources.Res
 import basshead.composeapp.generated.resources.app_name
@@ -38,36 +41,32 @@ import com.org.basshead.design.atoms.BassheadBodyLarge
 import com.org.basshead.design.atoms.BassheadBodyMedium
 import com.org.basshead.design.atoms.BassheadButton
 import com.org.basshead.design.atoms.BassheadDisplaySmall
-import com.org.basshead.design.atoms.BassheadIcon
 import com.org.basshead.design.atoms.BassheadOutlinedTextField
 import com.org.basshead.design.atoms.BassheadTextButton
 import com.org.basshead.design.theme.BassheadTheme
 import org.jetbrains.compose.resources.stringResource
 
 /**
- * App Branding Header - Displays app branding (logo, name, tagline)
- * Performance optimized: Flattened structure, no nested Column
+ * Flattened App Logo - Direct composition, no Column wrapper
+ * Performance optimized: Single composable, minimal overhead
  */
 @Composable
-fun AppBrandingHeader(
+fun AppLogo(
     modifier: Modifier = Modifier
 ) {
-    // Remove the nested Column - just return the content directly
-    // The parent Column in CompleteLoginForm will handle the arrangement
-    BassheadIcon(
+    Icon(
         imageVector = Icons.Default.Pets,
         contentDescription = stringResource(Res.string.app_name) + " logo",
-        size = 100.dp,
-        tint = BassheadTheme.colors.onPrimary,
-        modifier = modifier
+        modifier = modifier.size(100.dp),
+        tint = BassheadTheme.colors.onPrimary
     )
 }
 
 /**
- * App Name Display - Separate component for better performance isolation
+ * Flattened App Name - Direct text composition
  */
 @Composable
-fun AppNameDisplay(
+fun AppName(
     modifier: Modifier = Modifier
 ) {
     BassheadDisplaySmall(
@@ -78,10 +77,10 @@ fun AppNameDisplay(
 }
 
 /**
- * App Tagline Display - Separate component for better performance isolation
+ * Flattened App Tagline - Direct text composition
  */
 @Composable
-fun AppTaglineDisplay(
+fun AppTagline(
     modifier: Modifier = Modifier
 ) {
     BassheadBodyLarge(
@@ -92,9 +91,151 @@ fun AppTaglineDisplay(
 }
 
 /**
- * Login Credentials Input - Email and password input fields
- * Performance optimized: Only recomposes when email/password changes
+ * Flattened Email Field - Direct text field, no Column wrapper
+ * Performance optimized: Stable keyboard options, minimal recomposition
  */
+@Composable
+fun EmailField(
+    email: String,
+    onEmailChange: (String) -> Unit,
+    enabled: Boolean,
+    modifier: Modifier = Modifier
+) {
+    val keyboardOptions = remember {
+        KeyboardOptions.Default.copy(
+            keyboardType = KeyboardType.Email,
+            imeAction = ImeAction.Next
+        )
+    }
+
+    BassheadOutlinedTextField(
+        value = email,
+        onValueChange = onEmailChange,
+        modifier = modifier.fillMaxWidth(),
+        enabled = enabled,
+        singleLine = true,
+        keyboardOptions = keyboardOptions,
+        label = stringResource(Res.string.email),
+        leadingIcon = Icons.Default.Email
+    )
+}
+
+/**
+ * Flattened Password Field - Direct text field with isolated visibility state
+ * Performance optimized: State scoped to this composable only
+ */
+@Composable
+fun PasswordField(
+    password: String,
+    onPasswordChange: (String) -> Unit,
+    enabled: Boolean,
+    modifier: Modifier = Modifier
+) {
+    // Use rememberSaveable to survive configuration changes
+    var passwordVisible by rememberSaveable { mutableStateOf(false) }
+
+    val keyboardOptions = remember {
+        KeyboardOptions.Default.copy(
+            keyboardType = KeyboardType.Password,
+            imeAction = ImeAction.Done
+        )
+    }
+
+    BassheadOutlinedTextField(
+        value = password,
+        onValueChange = onPasswordChange,
+        modifier = modifier.fillMaxWidth(),
+        enabled = enabled,
+        singleLine = true,
+        keyboardOptions = keyboardOptions,
+        visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
+        label = stringResource(Res.string.password),
+        leadingIcon = Icons.Default.Lock,
+        trailingIcon = if (passwordVisible) Icons.Default.VisibilityOff else Icons.Default.Visibility,
+        onTrailingIconClick = { passwordVisible = !passwordVisible }
+    )
+}
+
+/**
+ * Flattened Login Button - Direct button composition
+ */
+@Composable
+fun LoginButton(
+    onClick: () -> Unit,
+    enabled: Boolean,
+    isLoading: Boolean,
+    modifier: Modifier = Modifier
+) {
+    BassheadButton(
+        text = stringResource(Res.string.login),
+        onClick = onClick,
+        enabled = enabled && !isLoading,
+        isLoading = isLoading,
+        modifier = modifier.fillMaxWidth()
+    )
+}
+
+/**
+ * Flattened Signup Prompt - Direct text composition
+ */
+@Composable
+fun SignupPrompt(
+    modifier: Modifier = Modifier
+) {
+    BassheadBodyMedium(
+        text = "Don't have an account?",
+        color = BassheadTheme.colors.onPrimary.copy(alpha = 0.87f),
+        textAlign = TextAlign.Center,
+        modifier = modifier
+    )
+}
+
+/**
+ * Flattened Signup Button - Direct button composition
+ */
+@Composable
+fun SignupButton(
+    onClick: () -> Unit,
+    enabled: Boolean,
+    modifier: Modifier = Modifier
+) {
+    BassheadTextButton(
+        text = stringResource(Res.string.create_account),
+        onClick = onClick,
+        enabled = enabled,
+        modifier = modifier
+    )
+}
+
+// LEGACY COMPONENTS - Kept for backward compatibility but discouraged
+// These create unnecessary Column wrappers and should be replaced with flattened components above
+
+/**
+ * @deprecated Use individual flattened components (AppLogo, AppName, AppTagline) instead
+ * This creates unnecessary Column nesting and composition overhead
+ */
+@Deprecated("Use flattened components instead", ReplaceWith("Use AppLogo, AppName, AppTagline directly"))
+@Composable
+fun AppBrandingSection(
+    modifier: Modifier = Modifier
+) {
+    // Kept for compatibility but adds unnecessary Column wrapper
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(BassheadTheme.spacing.medium),
+        modifier = modifier
+    ) {
+        AppLogo()
+        AppName()
+        AppTagline()
+    }
+}
+
+/**
+ * @deprecated Use EmailField and PasswordField directly instead
+ * This creates unnecessary Column nesting and composition overhead
+ */
+@Deprecated("Use flattened components instead", ReplaceWith("Use EmailField, PasswordField directly"))
 @Composable
 fun LoginCredentialsInput(
     email: String,
@@ -104,60 +245,21 @@ fun LoginCredentialsInput(
     modifier: Modifier = Modifier,
     enabled: Boolean = true
 ) {
+    // Kept for compatibility but adds unnecessary Column wrapper
     Column(
-        modifier = modifier.semantics {
-            contentDescription = "Login form with email and password fields"
-        },
+        modifier = modifier,
         verticalArrangement = Arrangement.spacedBy(BassheadTheme.spacing.medium)
     ) {
-        // Email field - optimized with remember for keyboard options
-        val emailKeyboardOptions = remember {
-            KeyboardOptions.Default.copy(
-                keyboardType = KeyboardType.Email,
-                imeAction = ImeAction.Next
-            )
-        }
-
-        BassheadOutlinedTextField(
-            value = email,
-            onValueChange = onEmailChange,
-            label = stringResource(Res.string.email),
-            leadingIcon = Icons.Default.Email,
-            keyboardOptions = emailKeyboardOptions,
-            singleLine = true,
-            enabled = enabled,
-            modifier = Modifier.fillMaxWidth(),
-        )
-
-        // Password field with visibility toggle - state isolated to this component
-        var passwordVisible by remember { mutableStateOf(false) }
-        val passwordKeyboardOptions = remember {
-            KeyboardOptions.Default.copy(
-                keyboardType = KeyboardType.Password,
-                imeAction = ImeAction.Done
-            )
-        }
-
-        BassheadOutlinedTextField(
-            value = password,
-            onValueChange = onPasswordChange,
-            label = stringResource(Res.string.password),
-            leadingIcon = Icons.Default.Lock,
-            trailingIcon = if (passwordVisible) Icons.Default.VisibilityOff else Icons.Default.Visibility,
-            onTrailingIconClick = { passwordVisible = !passwordVisible },
-            visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
-            keyboardOptions = passwordKeyboardOptions,
-            singleLine = true,
-            enabled = enabled,
-            modifier = Modifier.fillMaxWidth(),
-        )
+        EmailField(email, onEmailChange, enabled)
+        PasswordField(password, onPasswordChange, enabled)
     }
 }
 
 /**
- * Login Actions Panel - Primary and secondary action buttons
- * Performance optimized: Only recomposes when enabled/loading state changes
+ * @deprecated Use LoginButton, SignupPrompt, SignupButton directly instead
+ * This creates unnecessary Column nesting and composition overhead
  */
+@Deprecated("Use flattened components instead", ReplaceWith("Use LoginButton, SignupPrompt, SignupButton directly"))
 @Composable
 fun LoginActionsPanel(
     onLoginClick: () -> Unit,
@@ -166,95 +268,14 @@ fun LoginActionsPanel(
     enabled: Boolean = true,
     isLoading: Boolean = false
 ) {
+    // Kept for compatibility but adds unnecessary Column wrapper
     Column(
         modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(BassheadTheme.spacing.medium)
     ) {
-        // Primary button
-        BassheadButton(
-            text = stringResource(Res.string.login),
-            onClick = onLoginClick,
-            enabled = enabled && !isLoading,
-            isLoading = isLoading,
-            modifier = Modifier.fillMaxWidth()
-        )
-
-        // Secondary action section
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(BassheadTheme.spacing.small)
-        ) {
-            BassheadBodyMedium(
-                text = "Don't have an account?",
-                color = BassheadTheme.colors.onPrimary.copy(alpha = 0.87f),
-                textAlign = androidx.compose.ui.text.style.TextAlign.Center
-            )
-
-            BassheadTextButton(
-                text = stringResource(Res.string.create_account),
-                onClick = onSignUpClick,
-                enabled = enabled && !isLoading
-            )
-        }
-    }
-}
-
-/**
- * Complete Login Form - Combines all login-related components
- * Performance optimized: Flattened structure eliminates nested Columns and overdraw
- */
-@Composable
-fun CompleteLoginForm(
-    email: String,
-    password: String,
-    onEmailChange: (String) -> Unit,
-    onPasswordChange: (String) -> Unit,
-    onLoginClick: () -> Unit,
-    onSignUpClick: () -> Unit,
-    modifier: Modifier = Modifier,
-    enabled: Boolean = true,
-    isLoading: Boolean = false
-) {
-    Column(
-        modifier = modifier.semantics {
-            contentDescription = "Complete login form with branding and authentication fields"
-        },
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(BassheadTheme.spacing.medium)
-    ) {
-        // Flattened branding components - no nested Column, better performance
-        AppBrandingHeader()
-
-        AppNameDisplay()
-
-        AppTaglineDisplay()
-
-        // Add extra spacing after branding
-        Spacer(
-            modifier = Modifier.height(BassheadTheme.spacing.large)
-        )
-
-        // Credentials input - only recomposes when email/password changes
-        LoginCredentialsInput(
-            email = email,
-            password = password,
-            onEmailChange = onEmailChange,
-            onPasswordChange = onPasswordChange,
-            enabled = enabled
-        )
-
-        // Add spacing before actions
-        Spacer(
-            modifier = Modifier.height(BassheadTheme.spacing.medium)
-        )
-
-        // Actions panel - only recomposes when enabled/loading changes
-        LoginActionsPanel(
-            onLoginClick = onLoginClick,
-            onSignUpClick = onSignUpClick,
-            enabled = enabled,
-            isLoading = isLoading
-        )
+        LoginButton(onLoginClick, enabled, isLoading)
+        SignupPrompt()
+        SignupButton(onSignUpClick, enabled)
     }
 }

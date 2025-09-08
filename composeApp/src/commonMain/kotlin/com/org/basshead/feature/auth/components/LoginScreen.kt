@@ -103,8 +103,6 @@ fun LoginScreenRoot(
                 }
             }
         }
-
-        else -> {}
     }
 }
 
@@ -120,6 +118,7 @@ fun LoginScreen(
 ) {
     val scrollState = rememberScrollState()
 
+    // Single background layer - no overdraw from multiple backgrounds
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -133,10 +132,10 @@ fun LoginScreen(
             )
             .imePadding()
             .semantics {
-                contentDescription = "Login screen"
+                contentDescription = "Login screen with authentication form"
             }
     ) {
-        // Flattened structure - single Column handles all layout
+        // FLATTENED SINGLE COLUMN - Direct component placement, no nesting
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier
@@ -145,44 +144,62 @@ fun LoginScreen(
                 .padding(horizontal = BassheadTheme.spacing.screenPadding),
             verticalArrangement = Arrangement.spacedBy(BassheadTheme.spacing.medium)
         ) {
-            // Fixed top spacing for better visual hierarchy
-            Spacer(modifier = Modifier.height(120.dp))
+            // Top spacer for visual balance
+            Spacer(modifier = Modifier.height(60.dp))
 
-            // Flattened branding components - no nested Column wrapper
-            AppBrandingHeader(
-                modifier = Modifier.padding(BassheadTheme.spacing.cardPadding)
-            )
-
-            AppNameDisplay(
+            // FLATTENED BRANDING - Direct placement, no Column wrapper
+            AppLogo(
                 modifier = Modifier.padding(horizontal = BassheadTheme.spacing.cardPadding)
             )
 
-            AppTaglineDisplay(
+            AppName(
+                modifier = Modifier.padding(horizontal = BassheadTheme.spacing.cardPadding)
+            )
+
+            AppTagline(
                 modifier = Modifier.padding(horizontal = BassheadTheme.spacing.cardPadding)
             )
 
             // Extra spacing after branding
             Spacer(modifier = Modifier.height(BassheadTheme.spacing.large))
 
-            // Credentials input - only necessary Column
-            LoginCredentialsInput(
+            // FLATTENED FORM FIELDS - Direct placement, no Column wrapper
+            EmailField(
                 email = email,
-                password = password,
                 onEmailChange = onEmailChange,
+                enabled = !isLoading,
+                modifier = Modifier.padding(horizontal = BassheadTheme.spacing.cardPadding)
+            )
+
+            PasswordField(
+                password = password,
                 onPasswordChange = onPasswordChange,
                 enabled = !isLoading,
                 modifier = Modifier.padding(horizontal = BassheadTheme.spacing.cardPadding)
             )
 
-            // Actions - only necessary Column
-            LoginActionsPanel(
-                onLoginClick = onLogInClicked,
-                onSignUpClick = onSignUpClicked,
+            // Spacing before actions
+            Spacer(modifier = Modifier.height(BassheadTheme.spacing.medium))
+
+            // FLATTENED ACTIONS - Direct placement, no Column wrapper
+            LoginButton(
+                onClick = onLogInClicked,
                 enabled = !isLoading,
                 isLoading = isLoading,
                 modifier = Modifier.padding(horizontal = BassheadTheme.spacing.cardPadding)
             )
 
+            SignupPrompt(
+                modifier = Modifier.padding(horizontal = BassheadTheme.spacing.cardPadding)
+            )
+
+            SignupButton(
+                onClick = onSignUpClicked,
+                enabled = !isLoading,
+                modifier = Modifier.padding(horizontal = BassheadTheme.spacing.cardPadding)
+            )
+
+            // Bottom spacer for visual balance
             Spacer(modifier = Modifier.height(BassheadTheme.spacing.extraLarge))
         }
     }

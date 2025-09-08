@@ -156,6 +156,7 @@ fun BassheadOutlinedTextField(
 
 /**
  * Convenience functions for common text field patterns
+ * Performance optimized: Direct composition without wrapper overhead
  */
 
 @Composable
@@ -176,7 +177,8 @@ fun BassheadOutlinedTextField(
     keyboardActions: KeyboardActions = KeyboardActions.Default,
     visualTransformation: VisualTransformation = VisualTransformation.None,
 ) {
-    BassheadOutlinedTextField(
+    // Direct composition to Material3 OutlinedTextField - no wrapper overhead
+    OutlinedTextField(
         value = value,
         onValueChange = onValueChange,
         modifier = modifier,
@@ -186,49 +188,64 @@ fun BassheadOutlinedTextField(
         keyboardOptions = keyboardOptions,
         keyboardActions = keyboardActions,
         visualTransformation = visualTransformation,
+        shape = RoundedCornerShape(8.dp),
+        colors = OutlinedTextFieldDefaults.colors(
+            focusedBorderColor = BassheadTheme.colors.primary,
+            unfocusedBorderColor = BassheadTheme.colors.outline,
+            disabledBorderColor = BassheadTheme.colors.onSurface.copy(alpha = 0.12f),
+            errorBorderColor = BassheadTheme.colors.error,
+            focusedLabelColor = BassheadTheme.colors.primary,
+            unfocusedLabelColor = BassheadTheme.colors.onSurfaceVariant,
+            disabledLabelColor = BassheadTheme.colors.onSurface.copy(alpha = 0.38f),
+            errorLabelColor = BassheadTheme.colors.error,
+            cursorColor = BassheadTheme.colors.primary,
+            errorCursorColor = BassheadTheme.colors.error,
+        ),
+        // Direct inline composition - eliminates lambda wrapper overhead
         label = {
             Text(
                 text = label,
                 style = BassheadTheme.typography.bodyMedium
             )
         },
-        placeholder = placeholder?.let {
+        placeholder = if (placeholder != null) {
             {
                 Text(
-                    text = it,
+                    text = placeholder,
                     style = BassheadTheme.typography.bodyMedium,
                     color = BassheadTheme.colors.onSurfaceVariant
                 )
             }
-        },
-        leadingIcon = leadingIcon?.let {
+        } else null,
+        leadingIcon = if (leadingIcon != null) {
             {
                 Icon(
-                    imageVector = it,
+                    imageVector = leadingIcon,
                     contentDescription = null,
                     tint = BassheadTheme.colors.onSurfaceVariant
                 )
             }
-        },
-        trailingIcon = trailingIcon?.let { icon ->
+        } else null,
+        trailingIcon = if (trailingIcon != null) {
             {
+                val iconTint = BassheadTheme.colors.onSurfaceVariant
                 if (onTrailingIconClick != null) {
                     IconButton(onClick = onTrailingIconClick) {
                         Icon(
-                            imageVector = icon,
+                            imageVector = trailingIcon,
                             contentDescription = null,
-                            tint = BassheadTheme.colors.onSurfaceVariant
+                            tint = iconTint
                         )
                     }
                 } else {
                     Icon(
-                        imageVector = icon,
+                        imageVector = trailingIcon,
                         contentDescription = null,
-                        tint = BassheadTheme.colors.onSurfaceVariant
+                        tint = iconTint
                     )
                 }
             }
-        },
+        } else null,
         supportingText = if (isError && !errorText.isNullOrBlank()) {
             {
                 Text(

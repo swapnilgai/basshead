@@ -23,7 +23,6 @@ class AuthViewModel(val supabaseClient: SupabaseClient, val authInteractor: Auth
         when (val action = authAction) {
             is AuthActions.OnLoginClicked -> onLogInClicked(email = action.email, password = action.password)
             is AuthActions.OnSignUpClicked -> onSignUpClicked(email = action.email, password = action.password)
-            else -> {}
         }
     }
 
@@ -32,8 +31,6 @@ class AuthViewModel(val supabaseClient: SupabaseClient, val authInteractor: Auth
             setLoading()
             authInteractor.logIn(email, password)
             setContent(getContent())
-//            navigate(destination = Route.Dashboard::class.simpleName!!,
-//                popUpTp = Route.Splash::class.simpleName, inclusive = true)
         }
     }
 
@@ -51,7 +48,6 @@ class AuthViewModel(val supabaseClient: SupabaseClient, val authInteractor: Auth
                 setLoading()
                 when (it) {
                     is SessionStatus.Authenticated -> {
-                        println("Initializing")
                         navigate(
                             destination = Route.Dashboard::class.simpleName!!,
                             popUpTp = Route.Splash::class.simpleName,
