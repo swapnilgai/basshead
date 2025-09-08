@@ -1,23 +1,16 @@
 package com.org.basshead.feature.auth.components
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.Button
-import androidx.compose.material.ButtonDefaults
-import androidx.compose.material.OutlinedTextField
-import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -27,31 +20,16 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import basshead.composeapp.generated.resources.Res
-import basshead.composeapp.generated.resources.app_name
-import basshead.composeapp.generated.resources.create_account
-import basshead.composeapp.generated.resources.dog
-import basshead.composeapp.generated.resources.email
-import basshead.composeapp.generated.resources.login
-import basshead.composeapp.generated.resources.password
-import basshead.composeapp.generated.resources.tagline
+import com.org.basshead.design.theme.BassheadTheme
 import com.org.basshead.feature.auth.presentation.AuthActions
 import com.org.basshead.feature.auth.presentation.AuthViewModel
 import com.org.basshead.utils.components.ErrorScreen
 import com.org.basshead.utils.components.LoadingScreen
-import com.org.basshead.utils.core.DesertWhite
-import com.org.basshead.utils.core.LightOrange
-import com.org.basshead.utils.core.PrimaryOrange
 import com.org.basshead.utils.ui.UiState
-import org.jetbrains.compose.resources.painterResource
-import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import com.org.basshead.utils.ui.Route as BaseRoute
 
@@ -66,13 +44,14 @@ fun LoginScreenRoot(
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
 
-    val onLoginClicked = remember {
+    // Performance optimization: Use stable references to prevent recomposition
+    val onLoginClicked = remember(email, password) {
         {
             viewModel.onAction(AuthActions.OnLoginClicked(email, password))
         }
     }
 
-    val onSignUpClicked = remember {
+    val onSignUpClicked = remember(email, password) {
         {
             viewModel.onAction(AuthActions.OnSignUpClicked(email, password))
         }
@@ -93,6 +72,7 @@ fun LoginScreenRoot(
                 onPasswordChange = { password = it },
                 onLogInClicked = onLoginClicked,
                 onSignUpClicked = onSignUpClicked,
+                isLoading = currentState.isLoadingUi
             )
 
             if (currentState.isLoadingUi) LoadingScreen()
@@ -106,6 +86,7 @@ fun LoginScreenRoot(
                 onPasswordChange = { password = it },
                 onLogInClicked = onLoginClicked,
                 onSignUpClicked = onSignUpClicked,
+                isLoading = false
             )
 
             if (showError) {
@@ -135,98 +116,74 @@ fun LoginScreen(
     onPasswordChange: (String) -> Unit,
     onLogInClicked: () -> Unit,
     onSignUpClicked: () -> Unit,
+    isLoading: Boolean = false,
 ) {
     val scrollState = rememberScrollState()
 
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier.fillMaxSize()
-            .verticalScroll(scrollState)
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
             .background(
                 brush = Brush.verticalGradient(
                     colors = listOf(
-                        LightOrange,
-                        PrimaryOrange,
+                        BassheadTheme.colors.primary,
+                        BassheadTheme.colors.primaryContainer,
                     ),
                 ),
-            ).imePadding(),
+            )
+            .imePadding()
+            .semantics {
+                contentDescription = "Login screen"
+            }
     ) {
-        Spacer(modifier = Modifier.height(128.dp))
-        Column(modifier = Modifier.padding(24.dp)) {
-            LoginHeader(
+        // Flattened structure - single Column handles all layout
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier
+                .fillMaxSize()
+                .verticalScroll(scrollState)
+                .padding(horizontal = BassheadTheme.spacing.screenPadding),
+            verticalArrangement = Arrangement.spacedBy(BassheadTheme.spacing.medium)
+        ) {
+            // Fixed top spacing for better visual hierarchy
+            Spacer(modifier = Modifier.height(120.dp))
+
+            // Flattened branding components - no nested Column wrapper
+            AppBrandingHeader(
+                modifier = Modifier.padding(BassheadTheme.spacing.cardPadding)
+            )
+
+            AppNameDisplay(
+                modifier = Modifier.padding(horizontal = BassheadTheme.spacing.cardPadding)
+            )
+
+            AppTaglineDisplay(
+                modifier = Modifier.padding(horizontal = BassheadTheme.spacing.cardPadding)
+            )
+
+            // Extra spacing after branding
+            Spacer(modifier = Modifier.height(BassheadTheme.spacing.large))
+
+            // Credentials input - only necessary Column
+            LoginCredentialsInput(
                 email = email,
                 password = password,
                 onEmailChange = onEmailChange,
-                onPasswordChanged = onPasswordChange,
+                onPasswordChange = onPasswordChange,
+                enabled = !isLoading,
+                modifier = Modifier.padding(horizontal = BassheadTheme.spacing.cardPadding)
             )
-            Spacer(modifier = Modifier.height(32.dp))
-            LoginFooter(onLogInClicked = onLogInClicked, onSignUpClicked = onSignUpClicked)
-        }
-    }
-}
 
-@Composable
-fun LoginHeader(email: String, password: String, onEmailChange: (String) -> Unit, onPasswordChanged: (String) -> Unit) {
-    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-        Image(
-            painter = painterResource(Res.drawable.dog),
-            contentDescription = "",
-            modifier = Modifier.size(100.dp),
-        )
-        Text(
-            text = stringResource(Res.string.app_name),
-            fontSize = 24.sp,
-            fontWeight = FontWeight.Bold,
-            color = Color.White,
-        )
-        Text(
-            text = stringResource(Res.string.tagline),
-            fontWeight = FontWeight.Light,
-            color = Color.White,
-            fontSize = 16.sp,
-        )
-        OutlinedTextField(
-            value = email,
-            onValueChange = { onEmailChange(it) },
-            label = { Text(stringResource(Res.string.email)) },
-            modifier = Modifier.fillMaxWidth(),
-            singleLine = true,
-            keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Email),
-        )
+            // Actions - only necessary Column
+            LoginActionsPanel(
+                onLoginClick = onLogInClicked,
+                onSignUpClick = onSignUpClicked,
+                enabled = !isLoading,
+                isLoading = isLoading,
+                modifier = Modifier.padding(horizontal = BassheadTheme.spacing.cardPadding)
+            )
 
-        Spacer(modifier = Modifier.height(8.dp))
-
-        OutlinedTextField(
-            value = password,
-            onValueChange = { onPasswordChanged(it) },
-            modifier = Modifier.fillMaxWidth(),
-            label = { Text(stringResource(Res.string.password)) },
-            singleLine = true,
-            visualTransformation = PasswordVisualTransformation(),
-            keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Password),
-        )
-    }
-}
-
-@Composable
-fun LoginFooter(onLogInClicked: () -> Unit, onSignUpClicked: () -> Unit) {
-    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-        Button(
-            shape = RoundedCornerShape(50),
-            modifier = Modifier.fillMaxWidth(),
-            onClick = { onLogInClicked() },
-            colors = ButtonDefaults.buttonColors(PrimaryOrange),
-        ) {
-            Text(stringResource(Res.string.login))
-        }
-        Spacer(modifier = Modifier.height(16.dp))
-        Button(
-            shape = RoundedCornerShape(50),
-            modifier = Modifier.fillMaxWidth(),
-            onClick = { onSignUpClicked() },
-            colors = ButtonDefaults.buttonColors(DesertWhite),
-        ) {
-            Text(stringResource(Res.string.create_account))
+            Spacer(modifier = Modifier.height(BassheadTheme.spacing.extraLarge))
         }
     }
 }

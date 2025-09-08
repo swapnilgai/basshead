@@ -110,7 +110,7 @@ fun BassheadOutlinedButton(
 }
 
 /**
- * Text button atom - lowest emphasis actions
+ * Text button atom - lowest emphasis actions with Material 3 styling
  */
 @Composable
 fun BassheadTextButton(
@@ -125,10 +125,13 @@ fun BassheadTextButton(
         modifier = modifier,
         enabled = enabled,
         colors = ButtonDefaults.textButtonColors(
-            contentColor = BassheadTheme.colors.primary,
+            contentColor = BassheadTheme.colors.onPrimary,
             disabledContentColor = BassheadTheme.colors.onSurface.copy(alpha = 0.38f)
         ),
-        contentPadding = PaddingValues(horizontal = BassheadTheme.spacing.small),
+        contentPadding = PaddingValues(
+            horizontal = BassheadTheme.spacing.medium,
+            vertical = BassheadTheme.spacing.small
+        ),
         interactionSource = interactionSource,
         content = content
     )
