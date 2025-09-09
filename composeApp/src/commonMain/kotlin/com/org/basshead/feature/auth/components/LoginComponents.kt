@@ -1,9 +1,6 @@
 package com.org.basshead.feature.auth.components
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import basshead.composeapp.generated.resources.Res
@@ -89,7 +86,6 @@ fun PasswordField(
     )
 }
 
-
 @Composable
 fun LoginButton(
     onClick: () -> Unit,
@@ -120,60 +116,4 @@ fun SignupSection(
         textColor = BassheadTheme.colors.onPrimary.copy(alpha = 0.87f),
         modifier = modifier
     )
-}
-
-
-@Deprecated("Use individual molecular branding components instead")
-@Composable
-fun AppBrandingSection(
-    modifier: Modifier = Modifier
-) {
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(BassheadTheme.spacing.medium),
-        modifier = modifier
-    ) {
-        AppLogo()
-        AppName()
-        AppTagline()
-    }
-}
-
-@Deprecated("Use molecular form components instead")
-@Composable
-fun LoginCredentialsInput(
-    email: String,
-    password: String,
-    onEmailChange: (String) -> Unit,
-    onPasswordChange: (String) -> Unit,
-    modifier: Modifier = Modifier,
-    enabled: Boolean = true
-) {
-    Column(
-        modifier = modifier,
-        verticalArrangement = Arrangement.spacedBy(BassheadTheme.spacing.medium)
-    ) {
-        EmailField(email, onEmailChange, enabled)
-        PasswordField(password, onPasswordChange, enabled)
-    }
-}
-
-
-@Deprecated("Use molecular button components instead")
-@Composable
-fun LoginActionsPanel(
-    onLoginClick: () -> Unit,
-    onSignUpClick: () -> Unit,
-    modifier: Modifier = Modifier,
-    enabled: Boolean = true,
-    isLoading: Boolean = false
-) {
-   Column(
-        modifier = modifier,
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(BassheadTheme.spacing.medium)
-    ) {
-        LoginButton(onLoginClick, enabled, isLoading)
-        SignupSection(onSignUpClick, enabled)
-    }
 }
