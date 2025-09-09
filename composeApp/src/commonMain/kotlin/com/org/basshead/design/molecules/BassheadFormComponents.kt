@@ -6,8 +6,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
@@ -31,14 +29,12 @@ import androidx.compose.ui.text.input.VisualTransformation
 import basshead.composeapp.generated.resources.Res
 import basshead.composeapp.generated.resources.default_email_label
 import basshead.composeapp.generated.resources.default_password_label
-import basshead.composeapp.generated.resources.hide_password
 import basshead.composeapp.generated.resources.required_field
-import basshead.composeapp.generated.resources.show_password
-import org.jetbrains.compose.resources.stringResource
 import com.org.basshead.design.atoms.BassheadBodySmall
 import com.org.basshead.design.atoms.BassheadLabelMedium
 import com.org.basshead.design.atoms.BassheadOutlinedTextField
 import com.org.basshead.design.theme.BassheadTheme
+import org.jetbrains.compose.resources.stringResource
 
 /**
  * Molecular form components
@@ -72,12 +68,12 @@ fun BassheadFormField(
         Row {
             BassheadLabelMedium(
                 text = label,
-                color = if (isError) BassheadTheme.colors.error else BassheadTheme.colors.onSurface
+                color = if (isError) BassheadTheme.colors.error else BassheadTheme.colors.onSurface,
             )
             if (isRequired) {
                 BassheadLabelMedium(
                     text = stringResource(Res.string.required_field),
-                    color = BassheadTheme.colors.error
+                    color = BassheadTheme.colors.error,
                 )
             }
         }
@@ -95,7 +91,7 @@ fun BassheadFormField(
             errorText = errorText,
             keyboardOptions = KeyboardOptions(
                 keyboardType = keyboardType,
-                imeAction = imeAction
+                imeAction = imeAction,
             ),
             keyboardActions = KeyboardActions(
                 onNext = {
@@ -103,9 +99,9 @@ fun BassheadFormField(
                 },
                 onDone = {
                     onDone?.invoke() ?: focusManager.clearFocus()
-                }
+                },
             ),
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
         )
 
         // Helper text
@@ -113,7 +109,7 @@ fun BassheadFormField(
             Spacer(modifier = Modifier.height(BassheadTheme.spacing.extraSmall))
             BassheadBodySmall(
                 text = helperText,
-                color = BassheadTheme.colors.onSurfaceVariant
+                color = BassheadTheme.colors.onSurfaceVariant,
             )
         }
     }
@@ -132,12 +128,12 @@ fun BassheadEmailField(
     isError: Boolean = false,
     errorText: String? = null,
     placeholder: String? = null,
-    label: String? = null
+    label: String? = null,
 ) {
     val keyboardOptions = remember {
         KeyboardOptions.Default.copy(
             keyboardType = KeyboardType.Email,
-            imeAction = ImeAction.Next
+            imeAction = ImeAction.Next,
         )
     }
 
@@ -152,7 +148,7 @@ fun BassheadEmailField(
         enabled = enabled,
         isError = isError,
         errorText = errorText,
-        modifier = modifier.fillMaxWidth()
+        modifier = modifier.fillMaxWidth(),
     )
 }
 
@@ -169,14 +165,14 @@ fun BassheadPasswordField(
     isError: Boolean = false,
     errorText: String? = null,
     placeholder: String? = null,
-    label: String? = null
+    label: String? = null,
 ) {
     var passwordVisible by rememberSaveable { mutableStateOf(false) }
 
     val keyboardOptions = remember {
         KeyboardOptions.Default.copy(
             keyboardType = KeyboardType.Password,
-            imeAction = ImeAction.Done
+            imeAction = ImeAction.Done,
         )
     }
 
@@ -194,7 +190,7 @@ fun BassheadPasswordField(
         enabled = enabled,
         isError = isError,
         errorText = errorText,
-        modifier = modifier.fillMaxWidth()
+        modifier = modifier.fillMaxWidth(),
     )
 }
 
@@ -206,23 +202,23 @@ fun BassheadFormSection(
     title: String,
     modifier: Modifier = Modifier,
     subtitle: String? = null,
-    content: @Composable () -> Unit
+    content: @Composable () -> Unit,
 ) {
     Column(
         modifier = modifier.fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(BassheadTheme.spacing.medium)
+        verticalArrangement = Arrangement.spacedBy(BassheadTheme.spacing.medium),
     ) {
         Column {
             BassheadLabelMedium(
                 text = title.uppercase(),
-                color = BassheadTheme.colors.primary
+                color = BassheadTheme.colors.primary,
             )
 
             subtitle?.let {
                 Spacer(modifier = Modifier.height(BassheadTheme.spacing.extraSmall))
                 BassheadBodySmall(
                     text = it,
-                    color = BassheadTheme.colors.onSurfaceVariant
+                    color = BassheadTheme.colors.onSurfaceVariant,
                 )
             }
         }

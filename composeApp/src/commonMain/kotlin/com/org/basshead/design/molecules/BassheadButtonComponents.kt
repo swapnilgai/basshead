@@ -7,14 +7,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
+import basshead.composeapp.generated.resources.Res
+import basshead.composeapp.generated.resources.default_login_button
+import basshead.composeapp.generated.resources.default_signup_button
+import basshead.composeapp.generated.resources.signup_prompt
 import com.org.basshead.design.atoms.BassheadBodyMedium
 import com.org.basshead.design.atoms.BassheadButton
 import com.org.basshead.design.atoms.BassheadTextButton
 import com.org.basshead.design.theme.BassheadTheme
-import basshead.composeapp.generated.resources.Res
-import basshead.composeapp.generated.resources.default_login_button
-import basshead.composeapp.generated.resources.signup_prompt
-import basshead.composeapp.generated.resources.default_signup_button
 import org.jetbrains.compose.resources.stringResource
 
 /**
@@ -32,14 +32,14 @@ fun BassheadLoginButton(
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
     isLoading: Boolean = false,
-    text: String? = null
+    text: String? = null,
 ) {
     BassheadButton(
         text = text ?: stringResource(Res.string.default_login_button),
         onClick = onClick,
         enabled = enabled && !isLoading,
         isLoading = isLoading,
-        modifier = modifier.fillMaxWidth()
+        modifier = modifier.fillMaxWidth(),
     )
 }
 
@@ -54,23 +54,23 @@ fun BassheadSignupPrompt(
     enabled: Boolean = true,
     promptText: String? = null,
     buttonText: String? = null,
-    textColor: androidx.compose.ui.graphics.Color = BassheadTheme.colors.onSurface.copy(alpha = 0.87f)
+    textColor: androidx.compose.ui.graphics.Color = BassheadTheme.colors.onSurface.copy(alpha = 0.87f),
 ) {
     Column(
         modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(BassheadTheme.spacing.small)
+        verticalArrangement = Arrangement.spacedBy(BassheadTheme.spacing.small),
     ) {
         BassheadBodyMedium(
             text = promptText ?: stringResource(Res.string.signup_prompt),
             color = textColor,
-            textAlign = TextAlign.Center
+            textAlign = TextAlign.Center,
         )
 
         BassheadTextButton(
             text = buttonText ?: stringResource(Res.string.default_signup_button),
             onClick = onSignupClick,
-            enabled = enabled
+            enabled = enabled,
         )
     }
 }
@@ -85,14 +85,14 @@ fun BassheadPrimaryActionButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
-    isLoading: Boolean = false
+    isLoading: Boolean = false,
 ) {
     BassheadButton(
         text = text,
         onClick = onClick,
         enabled = enabled && !isLoading,
         isLoading = isLoading,
-        modifier = modifier.fillMaxWidth()
+        modifier = modifier.fillMaxWidth(),
     )
 }
 
@@ -105,12 +105,12 @@ fun BassheadSecondaryActionButton(
     text: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
-    enabled: Boolean = true
+    enabled: Boolean = true,
 ) {
     BassheadTextButton(
         text = text,
         onClick = onClick,
         enabled = enabled,
-        modifier = modifier
+        modifier = modifier,
     )
 }

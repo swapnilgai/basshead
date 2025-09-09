@@ -23,35 +23,35 @@ import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun AppLogo(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     BassheadAppLogo(
         modifier = modifier,
         size = 100.dp,
         tint = BassheadTheme.colors.onPrimary,
-        contentDescription = stringResource(Res.string.app_name) + " logo"
+        contentDescription = stringResource(Res.string.app_name) + " logo",
     )
 }
 
 @Composable
 fun AppName(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     BassheadAppName(
         modifier = modifier,
         text = stringResource(Res.string.app_name),
-        color = BassheadTheme.colors.onPrimary
+        color = BassheadTheme.colors.onPrimary,
     )
 }
 
 @Composable
 fun AppTagline(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     BassheadAppTagline(
         modifier = modifier,
         text = stringResource(Res.string.tagline),
-        color = BassheadTheme.colors.onPrimary.copy(alpha = 0.87f)
+        color = BassheadTheme.colors.onPrimary.copy(alpha = 0.87f),
     )
 }
 
@@ -60,14 +60,14 @@ fun EmailField(
     email: String,
     onEmailChange: (String) -> Unit,
     enabled: Boolean,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     BassheadEmailField(
         email = email,
         onEmailChange = onEmailChange,
         enabled = enabled,
         label = stringResource(Res.string.email),
-        modifier = modifier
+        modifier = modifier,
     )
 }
 
@@ -76,14 +76,14 @@ fun PasswordField(
     password: String,
     onPasswordChange: (String) -> Unit,
     enabled: Boolean,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     BassheadPasswordField(
         password = password,
         onPasswordChange = onPasswordChange,
         enabled = enabled,
         label = stringResource(Res.string.password),
-        modifier = modifier
+        modifier = modifier,
     )
 }
 
@@ -92,14 +92,14 @@ fun LoginButton(
     onClick: () -> Unit,
     enabled: Boolean,
     isLoading: Boolean,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     BassheadLoginButton(
         onClick = onClick,
         enabled = enabled,
         isLoading = isLoading,
         text = stringResource(Res.string.login),
-        modifier = modifier
+        modifier = modifier,
     )
 }
 
@@ -107,7 +107,7 @@ fun LoginButton(
 fun SignupSection(
     onSignUpClick: () -> Unit,
     enabled: Boolean,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     BassheadSignupPrompt(
         onSignupClick = onSignUpClick,
@@ -115,6 +115,6 @@ fun SignupSection(
         promptText = stringResource(Res.string.signup_prompt),
         buttonText = stringResource(Res.string.create_account),
         textColor = BassheadTheme.colors.onPrimary.copy(alpha = 0.87f),
-        modifier = modifier
+        modifier = modifier,
     )
 }

@@ -58,7 +58,7 @@ fun ProvideBassheadTheme(
     typography: BassheadTypography = BassheadTypographyTokens,
     spacing: BassheadSpacing = BassheadSpacingTokens,
     elevation: BassheadElevation = BassheadElevationTokens,
-    content: @Composable () -> Unit
+    content: @Composable () -> Unit,
 ) {
     val themeValues = BassheadThemeValues(
         colors = colors,
@@ -72,7 +72,7 @@ fun ProvideBassheadTheme(
         LocalBassheadTypography provides themeValues.typography,
         LocalBassheadSpacing provides themeValues.spacing,
         LocalBassheadElevation provides themeValues.elevation,
-        content = content
+        content = content,
     )
 }
 
@@ -108,7 +108,7 @@ object BassheadTheme {
 private fun noLocalProvidedFor(name: String): Nothing {
     error(
         "CompositionLocal $name not present. " +
-        "Make sure your content is wrapped with ProvideBassheadTheme { ... } " +
-        "to enable atomic design system components."
+            "Make sure your content is wrapped with ProvideBassheadTheme { ... } " +
+            "to enable atomic design system components.",
     )
 }

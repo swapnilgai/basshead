@@ -12,7 +12,7 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 @Preview
 fun App() {
     ProvideBassheadTheme(
-        isDarkTheme = isSystemInDarkTheme()
+        isDarkTheme = isSystemInDarkTheme(),
     ) {
         MaterialTheme {
             val navController = rememberNavController()

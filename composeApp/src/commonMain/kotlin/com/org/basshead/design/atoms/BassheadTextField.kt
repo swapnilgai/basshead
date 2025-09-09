@@ -88,7 +88,7 @@ fun BassheadTextField(
             errorLabelColor = BassheadTheme.colors.error,
             cursorColor = BassheadTheme.colors.primary,
             errorCursorColor = BassheadTheme.colors.error,
-        )
+        ),
     )
 }
 
@@ -150,7 +150,7 @@ fun BassheadOutlinedTextField(
             errorLabelColor = BassheadTheme.colors.error,
             cursorColor = BassheadTheme.colors.primary,
             errorCursorColor = BassheadTheme.colors.error,
-        )
+        ),
     )
 }
 
@@ -205,7 +205,7 @@ fun BassheadOutlinedTextField(
         label = {
             Text(
                 text = label,
-                style = BassheadTheme.typography.bodyMedium
+                style = BassheadTheme.typography.bodyMedium,
             )
         },
         placeholder = if (placeholder != null) {
@@ -213,19 +213,23 @@ fun BassheadOutlinedTextField(
                 Text(
                     text = placeholder,
                     style = BassheadTheme.typography.bodyMedium,
-                    color = BassheadTheme.colors.onSurfaceVariant
+                    color = BassheadTheme.colors.onSurfaceVariant,
                 )
             }
-        } else null,
+        } else {
+            null
+        },
         leadingIcon = if (leadingIcon != null) {
             {
                 Icon(
                     imageVector = leadingIcon,
                     contentDescription = null,
-                    tint = BassheadTheme.colors.onSurfaceVariant
+                    tint = BassheadTheme.colors.onSurfaceVariant,
                 )
             }
-        } else null,
+        } else {
+            null
+        },
         trailingIcon = if (trailingIcon != null) {
             {
                 val iconTint = BassheadTheme.colors.onSurfaceVariant
@@ -234,27 +238,31 @@ fun BassheadOutlinedTextField(
                         Icon(
                             imageVector = trailingIcon,
                             contentDescription = null,
-                            tint = iconTint
+                            tint = iconTint,
                         )
                     }
                 } else {
                     Icon(
                         imageVector = trailingIcon,
                         contentDescription = null,
-                        tint = iconTint
+                        tint = iconTint,
                     )
                 }
             }
-        } else null,
+        } else {
+            null
+        },
         supportingText = if (isError && !errorText.isNullOrBlank()) {
             {
                 Text(
                     text = errorText,
                     style = BassheadTheme.typography.bodySmall,
-                    color = BassheadTheme.colors.error
+                    color = BassheadTheme.colors.error,
                 )
             }
-        } else null,
+        } else {
+            null
+        },
     )
 }
 
@@ -286,7 +294,7 @@ fun BassheadSearchTextField(
             Text(
                 text = placeholder,
                 style = BassheadTheme.typography.bodyMedium,
-                color = BassheadTheme.colors.onSurfaceVariant
+                color = BassheadTheme.colors.onSurfaceVariant,
             )
         },
         leadingIcon = leadingIcon?.let {
@@ -294,7 +302,7 @@ fun BassheadSearchTextField(
                 Icon(
                     imageVector = it,
                     contentDescription = null,
-                    tint = BassheadTheme.colors.onSurfaceVariant
+                    tint = BassheadTheme.colors.onSurfaceVariant,
                 )
             }
         },
@@ -305,14 +313,14 @@ fun BassheadSearchTextField(
                         Icon(
                             imageVector = icon,
                             contentDescription = null,
-                            tint = BassheadTheme.colors.onSurfaceVariant
+                            tint = BassheadTheme.colors.onSurfaceVariant,
                         )
                     }
                 } else {
                     Icon(
                         imageVector = icon,
                         contentDescription = null,
-                        tint = BassheadTheme.colors.onSurfaceVariant
+                        tint = BassheadTheme.colors.onSurfaceVariant,
                     )
                 }
             }

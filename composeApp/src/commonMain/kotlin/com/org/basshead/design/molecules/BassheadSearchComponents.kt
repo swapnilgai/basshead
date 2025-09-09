@@ -13,11 +13,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.ImeAction
+import basshead.composeapp.generated.resources.Res
+import basshead.composeapp.generated.resources.filter
 import com.org.basshead.design.atoms.BassheadIconButton
 import com.org.basshead.design.atoms.BassheadSearchTextField
 import com.org.basshead.design.theme.BassheadTheme
-import basshead.composeapp.generated.resources.Res
-import basshead.composeapp.generated.resources.filter
 import org.jetbrains.compose.resources.stringResource
 
 /**
@@ -55,7 +55,7 @@ fun BassheadSearchBar(
             trailingIcon = if (query.isNotEmpty()) Icons.Default.Clear else null,
             onTrailingIconClick = onClearClick ?: { onQueryChange("") },
             keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
-            keyboardActions = KeyboardActions(onSearch = { onSearchSubmit?.invoke() })
+            keyboardActions = KeyboardActions(onSearch = { onSearchSubmit?.invoke() }),
         )
 
         if (showFilter && onFilterClick != null) {
@@ -63,7 +63,7 @@ fun BassheadSearchBar(
                 onClick = onFilterClick,
                 icon = Icons.Default.FilterList,
                 contentDescription = stringResource(Res.string.filter),
-                enabled = enabled
+                enabled = enabled,
             )
         }
     }
@@ -92,6 +92,6 @@ fun BassheadSearchField(
         trailingIcon = if (query.isNotEmpty()) Icons.Default.Clear else null,
         onTrailingIconClick = onClearClick ?: { onQueryChange("") },
         keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
-        keyboardActions = KeyboardActions(onSearch = { onSearchSubmit?.invoke() })
+        keyboardActions = KeyboardActions(onSearch = { onSearchSubmit?.invoke() }),
     )
 }

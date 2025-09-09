@@ -32,9 +32,9 @@ import com.org.basshead.feature.auth.presentation.AuthViewModel
 import com.org.basshead.utils.components.ErrorScreen
 import com.org.basshead.utils.components.LoadingScreen
 import com.org.basshead.utils.ui.UiState
+import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import com.org.basshead.utils.ui.Route as BaseRoute
-import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun LoginScreenRoot(
@@ -75,7 +75,7 @@ fun LoginScreenRoot(
                 onPasswordChange = { password = it },
                 onLogInClicked = onLoginClicked,
                 onSignUpClicked = onSignUpClicked,
-                isLoading = currentState.isLoadingUi
+                isLoading = currentState.isLoadingUi,
             )
 
             if (currentState.isLoadingUi) LoadingScreen()
@@ -89,7 +89,7 @@ fun LoginScreenRoot(
                 onPasswordChange = { password = it },
                 onLogInClicked = onLoginClicked,
                 onSignUpClicked = onSignUpClicked,
-                isLoading = false
+                isLoading = false,
             )
 
             if (showError) {
@@ -139,7 +139,7 @@ fun LoginScreen(
             .imePadding()
             .semantics {
                 contentDescription = screenDescription
-            }
+            },
     ) {
         // FLATTENED SINGLE COLUMN - Direct component placement, no nesting
         Column(
@@ -148,22 +148,22 @@ fun LoginScreen(
                 .fillMaxSize()
                 .verticalScroll(scrollState)
                 .padding(horizontal = BassheadTheme.spacing.screenPadding),
-            verticalArrangement = Arrangement.spacedBy(BassheadTheme.spacing.medium)
+            verticalArrangement = Arrangement.spacedBy(BassheadTheme.spacing.medium),
         ) {
             // Top spacer for visual balance
             Spacer(modifier = Modifier.height(60.dp))
 
             // FLATTENED BRANDING - Direct placement, no Column wrapper
             AppLogo(
-                modifier = Modifier.padding(horizontal = BassheadTheme.spacing.cardPadding)
+                modifier = Modifier.padding(horizontal = BassheadTheme.spacing.cardPadding),
             )
 
             AppName(
-                modifier = Modifier.padding(horizontal = BassheadTheme.spacing.cardPadding)
+                modifier = Modifier.padding(horizontal = BassheadTheme.spacing.cardPadding),
             )
 
             AppTagline(
-                modifier = Modifier.padding(horizontal = BassheadTheme.spacing.cardPadding)
+                modifier = Modifier.padding(horizontal = BassheadTheme.spacing.cardPadding),
             )
 
             // Extra spacing after branding
@@ -173,14 +173,14 @@ fun LoginScreen(
                 email = email,
                 onEmailChange = onEmailChange,
                 enabled = !isLoading,
-                modifier = Modifier.padding(horizontal = BassheadTheme.spacing.cardPadding)
+                modifier = Modifier.padding(horizontal = BassheadTheme.spacing.cardPadding),
             )
 
             PasswordField(
                 password = password,
                 onPasswordChange = onPasswordChange,
                 enabled = !isLoading,
-                modifier = Modifier.padding(horizontal = BassheadTheme.spacing.cardPadding)
+                modifier = Modifier.padding(horizontal = BassheadTheme.spacing.cardPadding),
             )
 
             // Spacing before actions
@@ -190,13 +190,13 @@ fun LoginScreen(
                 onClick = onLogInClicked,
                 enabled = !isLoading,
                 isLoading = isLoading,
-                modifier = Modifier.padding(horizontal = BassheadTheme.spacing.cardPadding)
+                modifier = Modifier.padding(horizontal = BassheadTheme.spacing.cardPadding),
             )
 
             SignupSection(
                 onSignUpClick = onSignUpClicked,
                 enabled = !isLoading,
-                modifier = Modifier.padding(horizontal = BassheadTheme.spacing.cardPadding)
+                modifier = Modifier.padding(horizontal = BassheadTheme.spacing.cardPadding),
             )
 
             // Bottom spacer for visual balance

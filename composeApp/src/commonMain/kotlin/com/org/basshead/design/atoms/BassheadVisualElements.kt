@@ -74,7 +74,7 @@ fun BassheadSurface(
     contentColor: Color = BassheadTheme.colors.onSurface,
     tonalElevation: Dp = BassheadTheme.elevation.level1,
     shadowElevation: Dp = BassheadTheme.elevation.level1,
-    content: @Composable () -> Unit
+    content: @Composable () -> Unit,
 ) {
     Surface(
         modifier = modifier,
@@ -83,7 +83,7 @@ fun BassheadSurface(
         contentColor = contentColor,
         tonalElevation = tonalElevation,
         shadowElevation = shadowElevation,
-        content = content
+        content = content,
     )
 }
 
@@ -99,14 +99,14 @@ fun BassheadCard(
         containerColor = BassheadTheme.colors.surface,
         contentColor = BassheadTheme.colors.onSurface,
     ),
-    content: @Composable ColumnScope.() -> Unit
+    content: @Composable ColumnScope.() -> Unit,
 ) {
     Card(
         modifier = modifier,
         shape = shape,
         elevation = CardDefaults.cardElevation(defaultElevation = elevation),
         colors = colors,
-        content = content
+        content = content,
     )
 }
 
@@ -150,12 +150,12 @@ fun BassheadStatusIndicator(
 ) {
     Box(
         modifier = modifier.size(size),
-        contentAlignment = Alignment.Center
+        contentAlignment = Alignment.Center,
     ) {
         Surface(
             shape = CircleShape,
             color = if (isActive) BassheadTheme.colors.festivalActive else BassheadTheme.colors.festivalInactive,
-            modifier = Modifier.size(size)
+            modifier = Modifier.size(size),
         ) {}
     }
 }

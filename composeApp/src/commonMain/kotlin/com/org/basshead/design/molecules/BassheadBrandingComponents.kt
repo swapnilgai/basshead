@@ -1,25 +1,22 @@
 package com.org.basshead.design.molecules
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Pets
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.org.basshead.design.atoms.BassheadBodyLarge
-import com.org.basshead.design.atoms.BassheadDisplaySmall
-import com.org.basshead.design.theme.BassheadTheme
 import basshead.composeapp.generated.resources.Res
 import basshead.composeapp.generated.resources.basshead_app_logo
 import basshead.composeapp.generated.resources.default_app_name
 import basshead.composeapp.generated.resources.default_tagline
+import com.org.basshead.design.atoms.BassheadBodyLarge
+import com.org.basshead.design.atoms.BassheadDisplaySmall
+import com.org.basshead.design.theme.BassheadTheme
 import org.jetbrains.compose.resources.stringResource
 
 /**
@@ -37,13 +34,13 @@ fun BassheadAppLogo(
     size: Dp = 100.dp,
     tint: Color = BassheadTheme.colors.primary,
     icon: ImageVector = Icons.Default.Pets,
-    contentDescription: String? = null
+    contentDescription: String? = null,
 ) {
     Icon(
         imageVector = icon,
         contentDescription = contentDescription ?: stringResource(Res.string.basshead_app_logo),
         modifier = modifier.size(size),
-        tint = tint
+        tint = tint,
     )
 }
 
@@ -55,12 +52,12 @@ fun BassheadAppLogo(
 fun BassheadAppName(
     modifier: Modifier = Modifier,
     text: String? = null,
-    color: Color = BassheadTheme.colors.primary
+    color: Color = BassheadTheme.colors.primary,
 ) {
     BassheadDisplaySmall(
         text = text ?: stringResource(Res.string.default_app_name),
         color = color,
-        modifier = modifier
+        modifier = modifier,
     )
 }
 
@@ -72,11 +69,11 @@ fun BassheadAppName(
 fun BassheadAppTagline(
     modifier: Modifier = Modifier,
     text: String? = null,
-    color: Color = BassheadTheme.colors.onSurface.copy(alpha = 0.87f)
+    color: Color = BassheadTheme.colors.onSurface.copy(alpha = 0.87f),
 ) {
     BassheadBodyLarge(
         text = text ?: stringResource(Res.string.default_tagline),
         color = color,
-        modifier = modifier
+        modifier = modifier,
     )
 }

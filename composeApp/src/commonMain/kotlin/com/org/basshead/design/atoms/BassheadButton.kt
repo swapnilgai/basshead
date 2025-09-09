@@ -40,7 +40,7 @@ fun BassheadButton(
     isLoading: Boolean = false,
     shape: Shape = RoundedCornerShape(8.dp),
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
-    content: @Composable RowScope.() -> Unit
+    content: @Composable RowScope.() -> Unit,
 ) {
     Button(
         onClick = onClick,
@@ -51,7 +51,7 @@ fun BassheadButton(
             containerColor = BassheadTheme.colors.primary,
             contentColor = BassheadTheme.colors.onPrimary,
             disabledContainerColor = BassheadTheme.colors.onSurface.copy(alpha = 0.12f),
-            disabledContentColor = BassheadTheme.colors.onSurface.copy(alpha = 0.38f)
+            disabledContentColor = BassheadTheme.colors.onSurface.copy(alpha = 0.38f),
         ),
         contentPadding = PaddingValues(horizontal = BassheadTheme.spacing.medium),
         interactionSource = interactionSource,
@@ -60,7 +60,7 @@ fun BassheadButton(
             CircularProgressIndicator(
                 modifier = Modifier.size(16.dp),
                 color = BassheadTheme.colors.onPrimary,
-                strokeWidth = 2.dp
+                strokeWidth = 2.dp,
             )
         } else {
             content()
@@ -79,7 +79,7 @@ fun BassheadOutlinedButton(
     isLoading: Boolean = false,
     shape: Shape = RoundedCornerShape(8.dp),
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
-    content: @Composable RowScope.() -> Unit
+    content: @Composable RowScope.() -> Unit,
 ) {
     OutlinedButton(
         onClick = onClick,
@@ -88,11 +88,11 @@ fun BassheadOutlinedButton(
         shape = shape,
         colors = ButtonDefaults.outlinedButtonColors(
             contentColor = BassheadTheme.colors.primary,
-            disabledContentColor = BassheadTheme.colors.onSurface.copy(alpha = 0.38f)
+            disabledContentColor = BassheadTheme.colors.onSurface.copy(alpha = 0.38f),
         ),
         border = BorderStroke(
             width = 1.dp,
-            color = if (enabled) BassheadTheme.colors.outline else BassheadTheme.colors.onSurface.copy(alpha = 0.12f)
+            color = if (enabled) BassheadTheme.colors.outline else BassheadTheme.colors.onSurface.copy(alpha = 0.12f),
         ),
         contentPadding = PaddingValues(horizontal = BassheadTheme.spacing.medium),
         interactionSource = interactionSource,
@@ -101,7 +101,7 @@ fun BassheadOutlinedButton(
             CircularProgressIndicator(
                 modifier = Modifier.size(16.dp),
                 color = BassheadTheme.colors.primary,
-                strokeWidth = 2.dp
+                strokeWidth = 2.dp,
             )
         } else {
             content()
@@ -118,7 +118,7 @@ fun BassheadTextButton(
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
-    content: @Composable RowScope.() -> Unit
+    content: @Composable RowScope.() -> Unit,
 ) {
     TextButton(
         onClick = onClick,
@@ -126,14 +126,14 @@ fun BassheadTextButton(
         enabled = enabled,
         colors = ButtonDefaults.textButtonColors(
             contentColor = BassheadTheme.colors.onPrimary,
-            disabledContentColor = BassheadTheme.colors.onSurface.copy(alpha = 0.38f)
+            disabledContentColor = BassheadTheme.colors.onSurface.copy(alpha = 0.38f),
         ),
         contentPadding = PaddingValues(
             horizontal = BassheadTheme.spacing.medium,
-            vertical = BassheadTheme.spacing.small
+            vertical = BassheadTheme.spacing.small,
         ),
         interactionSource = interactionSource,
-        content = content
+        content = content,
     )
 }
 
@@ -147,7 +147,7 @@ fun BassheadIconButton(
     contentDescription: String?,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
-    interactionSource: MutableInteractionSource = remember { MutableInteractionSource() }
+    interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
 ) {
     IconButton(
         onClick = onClick,
@@ -155,14 +155,14 @@ fun BassheadIconButton(
         enabled = enabled,
         colors = IconButtonDefaults.iconButtonColors(
             contentColor = BassheadTheme.colors.onSurfaceVariant,
-            disabledContentColor = BassheadTheme.colors.onSurface.copy(alpha = 0.38f)
+            disabledContentColor = BassheadTheme.colors.onSurface.copy(alpha = 0.38f),
         ),
-        interactionSource = interactionSource
+        interactionSource = interactionSource,
     ) {
         Icon(
             imageVector = icon,
             contentDescription = contentDescription,
-            modifier = Modifier.size(24.dp)
+            modifier = Modifier.size(24.dp),
         )
     }
 }
@@ -185,26 +185,26 @@ fun BassheadButton(
         onClick = onClick,
         modifier = modifier,
         enabled = enabled,
-        isLoading = isLoading
+        isLoading = isLoading,
     ) {
         leadingIcon?.let { icon ->
             Icon(
                 imageVector = icon,
                 contentDescription = null,
-                modifier = Modifier.size(18.dp)
+                modifier = Modifier.size(18.dp),
             )
         }
 
         Text(
             text = text,
-            style = BassheadTheme.typography.labelLarge
+            style = BassheadTheme.typography.labelLarge,
         )
 
         trailingIcon?.let { icon ->
             Icon(
                 imageVector = icon,
                 contentDescription = null,
-                modifier = Modifier.size(18.dp)
+                modifier = Modifier.size(18.dp),
             )
         }
     }
@@ -224,26 +224,26 @@ fun BassheadOutlinedButton(
         onClick = onClick,
         modifier = modifier,
         enabled = enabled,
-        isLoading = isLoading
+        isLoading = isLoading,
     ) {
         leadingIcon?.let { icon ->
             Icon(
                 imageVector = icon,
                 contentDescription = null,
-                modifier = Modifier.size(18.dp)
+                modifier = Modifier.size(18.dp),
             )
         }
 
         Text(
             text = text,
-            style = BassheadTheme.typography.labelLarge
+            style = BassheadTheme.typography.labelLarge,
         )
 
         trailingIcon?.let { icon ->
             Icon(
                 imageVector = icon,
                 contentDescription = null,
-                modifier = Modifier.size(18.dp)
+                modifier = Modifier.size(18.dp),
             )
         }
     }
@@ -259,11 +259,11 @@ fun BassheadTextButton(
     BassheadTextButton(
         onClick = onClick,
         modifier = modifier,
-        enabled = enabled
+        enabled = enabled,
     ) {
         Text(
             text = text,
-            style = BassheadTheme.typography.labelLarge
+            style = BassheadTheme.typography.labelLarge,
         )
     }
 }
