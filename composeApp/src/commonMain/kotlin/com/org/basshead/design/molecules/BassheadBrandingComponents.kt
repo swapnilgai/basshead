@@ -16,6 +16,11 @@ import androidx.compose.ui.unit.dp
 import com.org.basshead.design.atoms.BassheadBodyLarge
 import com.org.basshead.design.atoms.BassheadDisplaySmall
 import com.org.basshead.design.theme.BassheadTheme
+import basshead.composeapp.generated.resources.Res
+import basshead.composeapp.generated.resources.basshead_app_logo
+import basshead.composeapp.generated.resources.default_app_name
+import basshead.composeapp.generated.resources.default_tagline
+import org.jetbrains.compose.resources.stringResource
 
 /**
  * Molecular branding components
@@ -32,11 +37,11 @@ fun BassheadAppLogo(
     size: Dp = 100.dp,
     tint: Color = BassheadTheme.colors.primary,
     icon: ImageVector = Icons.Default.Pets,
-    contentDescription: String = "Basshead app logo"
+    contentDescription: String? = null
 ) {
     Icon(
         imageVector = icon,
-        contentDescription = contentDescription,
+        contentDescription = contentDescription ?: stringResource(Res.string.basshead_app_logo),
         modifier = modifier.size(size),
         tint = tint
     )
@@ -49,11 +54,11 @@ fun BassheadAppLogo(
 @Composable
 fun BassheadAppName(
     modifier: Modifier = Modifier,
-    text: String = "Basshead",
+    text: String? = null,
     color: Color = BassheadTheme.colors.primary
 ) {
     BassheadDisplaySmall(
-        text = text,
+        text = text ?: stringResource(Res.string.default_app_name),
         color = color,
         modifier = modifier
     )
@@ -66,11 +71,11 @@ fun BassheadAppName(
 @Composable
 fun BassheadAppTagline(
     modifier: Modifier = Modifier,
-    text: String = "Feel the Bass, Join the Beat",
+    text: String? = null,
     color: Color = BassheadTheme.colors.onSurface.copy(alpha = 0.87f)
 ) {
     BassheadBodyLarge(
-        text = text,
+        text = text ?: stringResource(Res.string.default_tagline),
         color = color,
         modifier = modifier
     )

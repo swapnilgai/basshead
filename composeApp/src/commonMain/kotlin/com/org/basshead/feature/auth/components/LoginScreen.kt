@@ -24,6 +24,8 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import basshead.composeapp.generated.resources.Res
+import basshead.composeapp.generated.resources.login_screen_description
 import com.org.basshead.design.theme.BassheadTheme
 import com.org.basshead.feature.auth.presentation.AuthActions
 import com.org.basshead.feature.auth.presentation.AuthViewModel
@@ -32,6 +34,7 @@ import com.org.basshead.utils.components.LoadingScreen
 import com.org.basshead.utils.ui.UiState
 import org.koin.compose.viewmodel.koinViewModel
 import com.org.basshead.utils.ui.Route as BaseRoute
+import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun LoginScreenRoot(
@@ -118,6 +121,9 @@ fun LoginScreen(
 ) {
     val scrollState = rememberScrollState()
 
+    // Get string resource in composable context
+    val screenDescription = stringResource(Res.string.login_screen_description)
+
     // Single background layer - no overdraw from multiple backgrounds
     Box(
         modifier = Modifier
@@ -132,7 +138,7 @@ fun LoginScreen(
             )
             .imePadding()
             .semantics {
-                contentDescription = "Login screen with authentication form"
+                contentDescription = screenDescription
             }
     ) {
         // FLATTENED SINGLE COLUMN - Direct component placement, no nesting
@@ -163,7 +169,6 @@ fun LoginScreen(
             // Extra spacing after branding
             Spacer(modifier = Modifier.height(BassheadTheme.spacing.large))
 
-            // FLATTENED FORM FIELDS - Direct placement, no Column wrapper
             EmailField(
                 email = email,
                 onEmailChange = onEmailChange,
@@ -181,7 +186,6 @@ fun LoginScreen(
             // Spacing before actions
             Spacer(modifier = Modifier.height(BassheadTheme.spacing.medium))
 
-            // FLATTENED ACTIONS - Direct placement, no Column wrapper
             LoginButton(
                 onClick = onLogInClicked,
                 enabled = !isLoading,

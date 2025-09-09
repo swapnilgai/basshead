@@ -9,6 +9,7 @@ import basshead.composeapp.generated.resources.create_account
 import basshead.composeapp.generated.resources.email
 import basshead.composeapp.generated.resources.login
 import basshead.composeapp.generated.resources.password
+import basshead.composeapp.generated.resources.signup_prompt
 import basshead.composeapp.generated.resources.tagline
 import com.org.basshead.design.molecules.BassheadAppLogo
 import com.org.basshead.design.molecules.BassheadAppName
@@ -111,7 +112,7 @@ fun SignupSection(
     BassheadSignupPrompt(
         onSignupClick = onSignUpClick,
         enabled = enabled,
-        promptText = "Don't have an account?",
+        promptText = stringResource(Res.string.signup_prompt),
         buttonText = stringResource(Res.string.create_account),
         textColor = BassheadTheme.colors.onPrimary.copy(alpha = 0.87f),
         modifier = modifier

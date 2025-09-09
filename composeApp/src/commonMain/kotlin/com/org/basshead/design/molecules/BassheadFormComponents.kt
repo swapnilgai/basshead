@@ -28,6 +28,13 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
+import basshead.composeapp.generated.resources.Res
+import basshead.composeapp.generated.resources.default_email_label
+import basshead.composeapp.generated.resources.default_password_label
+import basshead.composeapp.generated.resources.hide_password
+import basshead.composeapp.generated.resources.required_field
+import basshead.composeapp.generated.resources.show_password
+import org.jetbrains.compose.resources.stringResource
 import com.org.basshead.design.atoms.BassheadBodySmall
 import com.org.basshead.design.atoms.BassheadLabelMedium
 import com.org.basshead.design.atoms.BassheadOutlinedTextField
@@ -69,7 +76,7 @@ fun BassheadFormField(
             )
             if (isRequired) {
                 BassheadLabelMedium(
-                    text = " *",
+                    text = stringResource(Res.string.required_field),
                     color = BassheadTheme.colors.error
                 )
             }
@@ -125,7 +132,7 @@ fun BassheadEmailField(
     isError: Boolean = false,
     errorText: String? = null,
     placeholder: String? = null,
-    label: String = "Email"
+    label: String? = null
 ) {
     val keyboardOptions = remember {
         KeyboardOptions.Default.copy(
@@ -137,7 +144,7 @@ fun BassheadEmailField(
     BassheadOutlinedTextField(
         value = email,
         onValueChange = onEmailChange,
-        label = label,
+        label = label ?: stringResource(Res.string.default_email_label),
         placeholder = placeholder,
         leadingIcon = Icons.Default.Email,
         keyboardOptions = keyboardOptions,
@@ -162,7 +169,7 @@ fun BassheadPasswordField(
     isError: Boolean = false,
     errorText: String? = null,
     placeholder: String? = null,
-    label: String = "Password"
+    label: String? = null
 ) {
     var passwordVisible by rememberSaveable { mutableStateOf(false) }
 
@@ -176,7 +183,7 @@ fun BassheadPasswordField(
     BassheadOutlinedTextField(
         value = password,
         onValueChange = onPasswordChange,
-        label = label,
+        label = label ?: stringResource(Res.string.default_password_label),
         placeholder = placeholder,
         leadingIcon = Icons.Default.Lock,
         trailingIcon = if (passwordVisible) Icons.Default.VisibilityOff else Icons.Default.Visibility,

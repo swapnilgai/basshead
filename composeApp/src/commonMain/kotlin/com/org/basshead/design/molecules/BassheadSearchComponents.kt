@@ -3,7 +3,6 @@ package com.org.basshead.design.molecules
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
@@ -17,6 +16,9 @@ import androidx.compose.ui.text.input.ImeAction
 import com.org.basshead.design.atoms.BassheadIconButton
 import com.org.basshead.design.atoms.BassheadSearchTextField
 import com.org.basshead.design.theme.BassheadTheme
+import basshead.composeapp.generated.resources.Res
+import basshead.composeapp.generated.resources.filter
+import org.jetbrains.compose.resources.stringResource
 
 /**
  * Molecular search components
@@ -51,31 +53,27 @@ fun BassheadSearchBar(
             enabled = enabled,
             leadingIcon = Icons.Default.Search,
             trailingIcon = if (query.isNotEmpty()) Icons.Default.Clear else null,
-            onTrailingIconClick = if (query.isNotEmpty()) {
-                onClearClick ?: { onQueryChange("") }
-            } else null,
+            onTrailingIconClick = onClearClick ?: { onQueryChange("") },
             keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
-            keyboardActions = KeyboardActions(
-                onSearch = { onSearchSubmit?.invoke() }
-            ),
+            keyboardActions = KeyboardActions(onSearch = { onSearchSubmit?.invoke() })
         )
 
-        if (showFilter) {
+        if (showFilter && onFilterClick != null) {
             BassheadIconButton(
-                onClick = { onFilterClick?.invoke() },
+                onClick = onFilterClick,
                 icon = Icons.Default.FilterList,
-                contentDescription = "Filter",
-                enabled = enabled,
+                contentDescription = stringResource(Res.string.filter),
+                enabled = enabled
             )
         }
     }
 }
 
 /**
- * Simple search field molecule - just the search input without filter
+ * Search field molecule - standalone search text field with clear functionality
  */
 @Composable
-fun BassheadSimpleSearchField(
+fun BassheadSearchField(
     query: String,
     onQueryChange: (String) -> Unit,
     placeholder: String,
@@ -92,12 +90,8 @@ fun BassheadSimpleSearchField(
         enabled = enabled,
         leadingIcon = Icons.Default.Search,
         trailingIcon = if (query.isNotEmpty()) Icons.Default.Clear else null,
-        onTrailingIconClick = if (query.isNotEmpty()) {
-            onClearClick ?: { onQueryChange("") }
-        } else null,
+        onTrailingIconClick = onClearClick ?: { onQueryChange("") },
         keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
-        keyboardActions = KeyboardActions(
-            onSearch = { onSearchSubmit?.invoke() }
-        ),
+        keyboardActions = KeyboardActions(onSearch = { onSearchSubmit?.invoke() })
     )
 }

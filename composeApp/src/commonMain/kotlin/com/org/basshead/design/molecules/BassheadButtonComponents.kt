@@ -3,8 +3,6 @@ package com.org.basshead.design.molecules
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Login
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -13,6 +11,11 @@ import com.org.basshead.design.atoms.BassheadBodyMedium
 import com.org.basshead.design.atoms.BassheadButton
 import com.org.basshead.design.atoms.BassheadTextButton
 import com.org.basshead.design.theme.BassheadTheme
+import basshead.composeapp.generated.resources.Res
+import basshead.composeapp.generated.resources.default_login_button
+import basshead.composeapp.generated.resources.signup_prompt
+import basshead.composeapp.generated.resources.default_signup_button
+import org.jetbrains.compose.resources.stringResource
 
 /**
  * Molecular button components
@@ -29,10 +32,10 @@ fun BassheadLoginButton(
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
     isLoading: Boolean = false,
-    text: String = "Log In"
+    text: String? = null
 ) {
     BassheadButton(
-        text = text,
+        text = text ?: stringResource(Res.string.default_login_button),
         onClick = onClick,
         enabled = enabled && !isLoading,
         isLoading = isLoading,
@@ -49,8 +52,8 @@ fun BassheadSignupPrompt(
     onSignupClick: () -> Unit,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
-    promptText: String = "Don't have an account?",
-    buttonText: String = "Sign Up",
+    promptText: String? = null,
+    buttonText: String? = null,
     textColor: androidx.compose.ui.graphics.Color = BassheadTheme.colors.onSurface.copy(alpha = 0.87f)
 ) {
     Column(
@@ -59,13 +62,13 @@ fun BassheadSignupPrompt(
         verticalArrangement = Arrangement.spacedBy(BassheadTheme.spacing.small)
     ) {
         BassheadBodyMedium(
-            text = promptText,
+            text = promptText ?: stringResource(Res.string.signup_prompt),
             color = textColor,
             textAlign = TextAlign.Center
         )
 
         BassheadTextButton(
-            text = buttonText,
+            text = buttonText ?: stringResource(Res.string.default_signup_button),
             onClick = onSignupClick,
             enabled = enabled
         )

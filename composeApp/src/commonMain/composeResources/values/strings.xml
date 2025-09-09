@@ -92,4 +92,19 @@
     <string name="device_status_connected">Connected</string>
     <string name="device_status_not_connected">Not Connected</string>
 
+    <!-- Design System Strings -->
+    <string name="filter">Filter</string>
+    <string name="required_field">*</string>
+    <string name="default_email_label">Email</string>
+    <string name="default_password_label">Password</string>
+    <string name="basshead_app_logo">Basshead app logo</string>
+    <string name="default_app_name">Basshead</string>
+    <string name="default_tagline">Feel the Bass, Join the Beat</string>
+    <string name="default_login_button">Log In</string>
+    <string name="signup_prompt">Don't have an account?</string>
+    <string name="default_signup_button">Sign Up</string>
+    <string name="hide_password">Hide password</string>
+    <string name="show_password">Show password</string>
+    <string name="login_screen_description">Login screen with authentication form</string>
+
 </resources>
