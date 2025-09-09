@@ -2,33 +2,9 @@ package com.org.basshead.feature.auth.components
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Email
-import androidx.compose.material.icons.filled.Lock
-import androidx.compose.material.icons.filled.Pets
-import androidx.compose.material.icons.filled.Visibility
-import androidx.compose.material.icons.filled.VisibilityOff
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.text.input.VisualTransformation
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import basshead.composeapp.generated.resources.Res
 import basshead.composeapp.generated.resources.app_name
@@ -37,63 +13,50 @@ import basshead.composeapp.generated.resources.email
 import basshead.composeapp.generated.resources.login
 import basshead.composeapp.generated.resources.password
 import basshead.composeapp.generated.resources.tagline
-import com.org.basshead.design.atoms.BassheadBodyLarge
-import com.org.basshead.design.atoms.BassheadBodyMedium
-import com.org.basshead.design.atoms.BassheadButton
-import com.org.basshead.design.atoms.BassheadDisplaySmall
-import com.org.basshead.design.atoms.BassheadOutlinedTextField
-import com.org.basshead.design.atoms.BassheadTextButton
+import com.org.basshead.design.molecules.BassheadAppLogo
+import com.org.basshead.design.molecules.BassheadAppName
+import com.org.basshead.design.molecules.BassheadAppTagline
+import com.org.basshead.design.molecules.BassheadEmailField
+import com.org.basshead.design.molecules.BassheadLoginButton
+import com.org.basshead.design.molecules.BassheadPasswordField
+import com.org.basshead.design.molecules.BassheadSignupPrompt
 import com.org.basshead.design.theme.BassheadTheme
 import org.jetbrains.compose.resources.stringResource
 
-/**
- * Flattened App Logo - Direct composition, no Column wrapper
- * Performance optimized: Single composable, minimal overhead
- */
 @Composable
 fun AppLogo(
     modifier: Modifier = Modifier
 ) {
-    Icon(
-        imageVector = Icons.Default.Pets,
-        contentDescription = stringResource(Res.string.app_name) + " logo",
-        modifier = modifier.size(100.dp),
-        tint = BassheadTheme.colors.onPrimary
+    BassheadAppLogo(
+        modifier = modifier,
+        size = 100.dp,
+        tint = BassheadTheme.colors.onPrimary,
+        contentDescription = stringResource(Res.string.app_name) + " logo"
     )
 }
 
-/**
- * Flattened App Name - Direct text composition
- */
 @Composable
 fun AppName(
     modifier: Modifier = Modifier
 ) {
-    BassheadDisplaySmall(
+    BassheadAppName(
+        modifier = modifier,
         text = stringResource(Res.string.app_name),
-        color = BassheadTheme.colors.onPrimary,
-        modifier = modifier
+        color = BassheadTheme.colors.onPrimary
     )
 }
 
-/**
- * Flattened App Tagline - Direct text composition
- */
 @Composable
 fun AppTagline(
     modifier: Modifier = Modifier
 ) {
-    BassheadBodyLarge(
+    BassheadAppTagline(
+        modifier = modifier,
         text = stringResource(Res.string.tagline),
-        color = BassheadTheme.colors.onPrimary.copy(alpha = 0.87f),
-        modifier = modifier
+        color = BassheadTheme.colors.onPrimary.copy(alpha = 0.87f)
     )
 }
 
-/**
- * Flattened Email Field - Direct text field, no Column wrapper
- * Performance optimized: Stable keyboard options, minimal recomposition
- */
 @Composable
 fun EmailField(
     email: String,
@@ -101,29 +64,15 @@ fun EmailField(
     enabled: Boolean,
     modifier: Modifier = Modifier
 ) {
-    val keyboardOptions = remember {
-        KeyboardOptions.Default.copy(
-            keyboardType = KeyboardType.Email,
-            imeAction = ImeAction.Next
-        )
-    }
-
-    BassheadOutlinedTextField(
-        value = email,
-        onValueChange = onEmailChange,
-        modifier = modifier.fillMaxWidth(),
+    BassheadEmailField(
+        email = email,
+        onEmailChange = onEmailChange,
         enabled = enabled,
-        singleLine = true,
-        keyboardOptions = keyboardOptions,
         label = stringResource(Res.string.email),
-        leadingIcon = Icons.Default.Email
+        modifier = modifier
     )
 }
 
-/**
- * Flattened Password Field - Direct text field with isolated visibility state
- * Performance optimized: State scoped to this composable only
- */
 @Composable
 fun PasswordField(
     password: String,
@@ -131,34 +80,16 @@ fun PasswordField(
     enabled: Boolean,
     modifier: Modifier = Modifier
 ) {
-    // Use rememberSaveable to survive configuration changes
-    var passwordVisible by rememberSaveable { mutableStateOf(false) }
-
-    val keyboardOptions = remember {
-        KeyboardOptions.Default.copy(
-            keyboardType = KeyboardType.Password,
-            imeAction = ImeAction.Done
-        )
-    }
-
-    BassheadOutlinedTextField(
-        value = password,
-        onValueChange = onPasswordChange,
-        modifier = modifier.fillMaxWidth(),
+    BassheadPasswordField(
+        password = password,
+        onPasswordChange = onPasswordChange,
         enabled = enabled,
-        singleLine = true,
-        keyboardOptions = keyboardOptions,
-        visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
         label = stringResource(Res.string.password),
-        leadingIcon = Icons.Default.Lock,
-        trailingIcon = if (passwordVisible) Icons.Default.VisibilityOff else Icons.Default.Visibility,
-        onTrailingIconClick = { passwordVisible = !passwordVisible }
+        modifier = modifier
     )
 }
 
-/**
- * Flattened Login Button - Direct button composition
- */
+
 @Composable
 fun LoginButton(
     onClick: () -> Unit,
@@ -166,60 +97,37 @@ fun LoginButton(
     isLoading: Boolean,
     modifier: Modifier = Modifier
 ) {
-    BassheadButton(
-        text = stringResource(Res.string.login),
+    BassheadLoginButton(
         onClick = onClick,
-        enabled = enabled && !isLoading,
+        enabled = enabled,
         isLoading = isLoading,
-        modifier = modifier.fillMaxWidth()
-    )
-}
-
-/**
- * Flattened Signup Prompt - Direct text composition
- */
-@Composable
-fun SignupPrompt(
-    modifier: Modifier = Modifier
-) {
-    BassheadBodyMedium(
-        text = "Don't have an account?",
-        color = BassheadTheme.colors.onPrimary.copy(alpha = 0.87f),
-        textAlign = TextAlign.Center,
+        text = stringResource(Res.string.login),
         modifier = modifier
     )
 }
 
-/**
- * Flattened Signup Button - Direct button composition
- */
 @Composable
-fun SignupButton(
-    onClick: () -> Unit,
+fun SignupSection(
+    onSignUpClick: () -> Unit,
     enabled: Boolean,
     modifier: Modifier = Modifier
 ) {
-    BassheadTextButton(
-        text = stringResource(Res.string.create_account),
-        onClick = onClick,
+    BassheadSignupPrompt(
+        onSignupClick = onSignUpClick,
         enabled = enabled,
+        promptText = "Don't have an account?",
+        buttonText = stringResource(Res.string.create_account),
+        textColor = BassheadTheme.colors.onPrimary.copy(alpha = 0.87f),
         modifier = modifier
     )
 }
 
-// LEGACY COMPONENTS - Kept for backward compatibility but discouraged
-// These create unnecessary Column wrappers and should be replaced with flattened components above
 
-/**
- * @deprecated Use individual flattened components (AppLogo, AppName, AppTagline) instead
- * This creates unnecessary Column nesting and composition overhead
- */
-@Deprecated("Use flattened components instead", ReplaceWith("Use AppLogo, AppName, AppTagline directly"))
+@Deprecated("Use individual molecular branding components instead")
 @Composable
 fun AppBrandingSection(
     modifier: Modifier = Modifier
 ) {
-    // Kept for compatibility but adds unnecessary Column wrapper
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(BassheadTheme.spacing.medium),
@@ -231,11 +139,7 @@ fun AppBrandingSection(
     }
 }
 
-/**
- * @deprecated Use EmailField and PasswordField directly instead
- * This creates unnecessary Column nesting and composition overhead
- */
-@Deprecated("Use flattened components instead", ReplaceWith("Use EmailField, PasswordField directly"))
+@Deprecated("Use molecular form components instead")
 @Composable
 fun LoginCredentialsInput(
     email: String,
@@ -245,7 +149,6 @@ fun LoginCredentialsInput(
     modifier: Modifier = Modifier,
     enabled: Boolean = true
 ) {
-    // Kept for compatibility but adds unnecessary Column wrapper
     Column(
         modifier = modifier,
         verticalArrangement = Arrangement.spacedBy(BassheadTheme.spacing.medium)
@@ -255,11 +158,8 @@ fun LoginCredentialsInput(
     }
 }
 
-/**
- * @deprecated Use LoginButton, SignupPrompt, SignupButton directly instead
- * This creates unnecessary Column nesting and composition overhead
- */
-@Deprecated("Use flattened components instead", ReplaceWith("Use LoginButton, SignupPrompt, SignupButton directly"))
+
+@Deprecated("Use molecular button components instead")
 @Composable
 fun LoginActionsPanel(
     onLoginClick: () -> Unit,
@@ -268,14 +168,12 @@ fun LoginActionsPanel(
     enabled: Boolean = true,
     isLoading: Boolean = false
 ) {
-    // Kept for compatibility but adds unnecessary Column wrapper
-    Column(
+   Column(
         modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(BassheadTheme.spacing.medium)
     ) {
         LoginButton(onLoginClick, enabled, isLoading)
-        SignupPrompt()
-        SignupButton(onSignUpClick, enabled)
+        SignupSection(onSignUpClick, enabled)
     }
 }

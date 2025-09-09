@@ -189,12 +189,8 @@ fun LoginScreen(
                 modifier = Modifier.padding(horizontal = BassheadTheme.spacing.cardPadding)
             )
 
-            SignupPrompt(
-                modifier = Modifier.padding(horizontal = BassheadTheme.spacing.cardPadding)
-            )
-
-            SignupButton(
-                onClick = onSignUpClicked,
+            SignupSection(
+                onSignUpClick = onSignUpClicked,
                 enabled = !isLoading,
                 modifier = Modifier.padding(horizontal = BassheadTheme.spacing.cardPadding)
             )

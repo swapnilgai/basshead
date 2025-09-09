@@ -11,12 +11,15 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Email
+import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
@@ -110,80 +113,82 @@ fun BassheadFormField(
 }
 
 /**
- * Password field molecule - includes visibility toggle
+ * Email field molecule - specialized text field for email input
+ * Performance optimized: Stable keyboard options, email validation ready
+ */
+@Composable
+fun BassheadEmailField(
+    email: String,
+    onEmailChange: (String) -> Unit,
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true,
+    isError: Boolean = false,
+    errorText: String? = null,
+    placeholder: String? = null,
+    label: String = "Email"
+) {
+    val keyboardOptions = remember {
+        KeyboardOptions.Default.copy(
+            keyboardType = KeyboardType.Email,
+            imeAction = ImeAction.Next
+        )
+    }
+
+    BassheadOutlinedTextField(
+        value = email,
+        onValueChange = onEmailChange,
+        label = label,
+        placeholder = placeholder,
+        leadingIcon = Icons.Default.Email,
+        keyboardOptions = keyboardOptions,
+        singleLine = true,
+        enabled = enabled,
+        isError = isError,
+        errorText = errorText,
+        modifier = modifier.fillMaxWidth()
+    )
+}
+
+/**
+ * Password field molecule - specialized text field with visibility toggle
+ * Performance optimized: Isolated visibility state, configuration change survival
  */
 @Composable
 fun BassheadPasswordField(
-    value: String,
-    onValueChange: (String) -> Unit,
-    label: String,
+    password: String,
+    onPasswordChange: (String) -> Unit,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
-    isRequired: Boolean = false,
     isError: Boolean = false,
     errorText: String? = null,
-    helperText: String? = null,
     placeholder: String? = null,
-    imeAction: ImeAction = ImeAction.Done,
-    onNext: (() -> Unit)? = null,
-    onDone: (() -> Unit)? = null,
+    label: String = "Password"
 ) {
-    var passwordVisible by remember { mutableStateOf(false) }
-    val focusManager = LocalFocusManager.current
+    var passwordVisible by rememberSaveable { mutableStateOf(false) }
 
-    Column(modifier = modifier) {
-        // Label with required indicator
-        Row {
-            BassheadLabelMedium(
-                text = label,
-                color = if (isError) BassheadTheme.colors.error else BassheadTheme.colors.onSurface
-            )
-            if (isRequired) {
-                BassheadLabelMedium(
-                    text = " *",
-                    color = BassheadTheme.colors.error
-                )
-            }
-        }
-
-        Spacer(modifier = Modifier.height(BassheadTheme.spacing.extraSmall))
-
-        // Password field with visibility toggle
-        BassheadOutlinedTextField(
-            value = value,
-            onValueChange = onValueChange,
-            label = label,
-            placeholder = placeholder,
-            enabled = enabled,
-            isError = isError,
-            errorText = errorText,
-            trailingIcon = if (passwordVisible) Icons.Default.VisibilityOff else Icons.Default.Visibility,
-            onTrailingIconClick = { passwordVisible = !passwordVisible },
-            visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
-            keyboardOptions = KeyboardOptions(
-                keyboardType = KeyboardType.Password,
-                imeAction = imeAction
-            ),
-            keyboardActions = KeyboardActions(
-                onNext = {
-                    onNext?.invoke() ?: focusManager.moveFocus(FocusDirection.Down)
-                },
-                onDone = {
-                    onDone?.invoke() ?: focusManager.clearFocus()
-                }
-            ),
-            modifier = Modifier.fillMaxWidth()
+    val keyboardOptions = remember {
+        KeyboardOptions.Default.copy(
+            keyboardType = KeyboardType.Password,
+            imeAction = ImeAction.Done
         )
-
-        // Helper text
-        if (!isError && !helperText.isNullOrBlank()) {
-            Spacer(modifier = Modifier.height(BassheadTheme.spacing.extraSmall))
-            BassheadBodySmall(
-                text = helperText,
-                color = BassheadTheme.colors.onSurfaceVariant
-            )
-        }
     }
+
+    BassheadOutlinedTextField(
+        value = password,
+        onValueChange = onPasswordChange,
+        label = label,
+        placeholder = placeholder,
+        leadingIcon = Icons.Default.Lock,
+        trailingIcon = if (passwordVisible) Icons.Default.VisibilityOff else Icons.Default.Visibility,
+        onTrailingIconClick = { passwordVisible = !passwordVisible },
+        visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
+        keyboardOptions = keyboardOptions,
+        singleLine = true,
+        enabled = enabled,
+        isError = isError,
+        errorText = errorText,
+        modifier = modifier.fillMaxWidth()
+    )
 }
 
 /**
