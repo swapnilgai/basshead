@@ -44,21 +44,28 @@ class AuthViewModel(val supabaseClient: SupabaseClient, val authInteractor: Auth
 
     private fun checkAuthAndLoadData() {
         baseViewModelScope.launch {
-            supabaseClient.auth.sessionStatus.collect {
-                setLoading()
-                when (it) {
+            supabaseClient.auth.sessionStatus.collect { sessionStatus ->
+                when (sessionStatus) {
                     is SessionStatus.Authenticated -> {
+                        // Stop further processing and navigate immediately
                         navigate(
                             destination = Route.Dashboard::class.simpleName!!,
-                            popUpTp = Route.Splash::class.simpleName,
+                            popUpTp = Route.Auth::class.simpleName,
                             inclusive = true,
                         )
+                        return@collect // Exit the collection to prevent further state updates
                     }
-                    SessionStatus.Initializing -> println("Initializing")
-                    is SessionStatus.RefreshFailure -> println("Refresh failure ${it.cause}") // Either a network error or a internal server error
+                    SessionStatus.Initializing -> {
+                        setLoading()
+                        println("Initializing")
+                    }
+                    is SessionStatus.RefreshFailure -> {
+                        println("Refresh failure ${sessionStatus.cause}")
+                        setContent(getContent()) // Set content state for refresh failures
+                    }
                     is SessionStatus.NotAuthenticated -> {
                         setContent(getContent())
-                        if (it.isSignOut) {
+                        if (sessionStatus.isSignOut) {
                             println("User signed out")
                         } else {
                             println("User not signed in")
