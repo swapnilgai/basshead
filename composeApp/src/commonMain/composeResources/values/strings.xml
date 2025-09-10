@@ -107,4 +107,8 @@
     <string name="show_password">Show password</string>
     <string name="login_screen_description">Login screen with authentication form</string>
 
+    <!-- Splash Screen -->
+    <string name="splash_logo_description">Headbanging Dog</string>
+    <string name="splash_loading">Loading...</string>
+
 </resources>

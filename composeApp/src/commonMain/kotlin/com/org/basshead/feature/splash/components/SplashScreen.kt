@@ -1,23 +1,14 @@
 package com.org.basshead.feature.splash.components
 
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import basshead.composeapp.generated.resources.Res
-import basshead.composeapp.generated.resources.dog
+import basshead.composeapp.generated.resources.splash_loading
+import basshead.composeapp.generated.resources.splash_logo_description
+import com.org.basshead.design.organisms.BassheadSplashScreenLayout
 import com.org.basshead.feature.splash.presentation.SplashViewModel
-import com.org.basshead.utils.core.LightOrange
-import com.org.basshead.utils.core.PrimaryOrange
 import com.org.basshead.utils.ui.UiState
-import org.jetbrains.compose.resources.painterResource
 import org.koin.compose.viewmodel.koinViewModel
 import com.org.basshead.utils.ui.Route as BaseRoute
 
@@ -29,7 +20,9 @@ fun SplashScreenRoot(
     val state = viewModel.state.collectAsStateWithLifecycle()
 
     when (val currentState = state.value) {
-        is UiState.Content -> { SplashScreen() }
+        is UiState.Content -> {
+            SplashScreen()
+        }
         is UiState.Navigate -> {
             when (currentState.route) {
                 is BaseRoute.InternalDirection -> {
@@ -39,30 +32,21 @@ fun SplashScreenRoot(
                 }
             }
         }
-        else -> { }
+        else -> {
+            SplashScreen() //TODO handel loading and error states if needed
+        }
     }
 }
 
 @Composable
-fun SplashScreen() {
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(
-                brush = Brush.verticalGradient(
-                    colors = listOf(
-                        LightOrange,
-                        PrimaryOrange,
-                    ),
-                ),
-            ),
-        contentAlignment = Alignment.Center,
-    ) {
-        Image(
-            painter = painterResource(Res.drawable.dog),
-            contentDescription = "Headbanging Dog",
-            modifier = Modifier
-                .size(200.dp),
-        )
-    }
+fun SplashScreen(
+    modifier: Modifier = Modifier,
+    isLoading: Boolean = false,
+) {
+    BassheadSplashScreenLayout(
+        logoContentDescription = Res.string.splash_logo_description,
+        loadingText = if (isLoading) Res.string.splash_loading else null,
+        isLoading = isLoading,
+        modifier = modifier,
+    )
 }
