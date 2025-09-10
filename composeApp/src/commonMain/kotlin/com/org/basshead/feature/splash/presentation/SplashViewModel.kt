@@ -20,7 +20,9 @@ class SplashViewModel(val supabaseClient: SupabaseClient) : BaseViewModel<Unit>(
                 setLoading()
                 when (it) {
                     is SessionStatus.Authenticated -> {
-                        navigate(destination = Route.Dashboard::class.simpleName!!, popUpTp = Route.Splash::class.simpleName, inclusive = true)
+                        navigate(destination = Route.Dashboard::class.simpleName!!,
+                            popUpTp = Route.Splash::class.simpleName,
+                            inclusive = true)
                     }
                     SessionStatus.Initializing -> println("Initializing")
                     is SessionStatus.RefreshFailure -> println("Refresh failure ${it.cause}") // Either a network error or a internal server error
@@ -28,6 +30,8 @@ class SplashViewModel(val supabaseClient: SupabaseClient) : BaseViewModel<Unit>(
                         delay(3000)
                         navigate(
                             destination = Route.Auth::class.simpleName!!,
+                            inclusive = true,
+                            popUpTp = Route.Splash::class.simpleName,
                         )
                         if (it.isSignOut) {
                             println("User signed out")
