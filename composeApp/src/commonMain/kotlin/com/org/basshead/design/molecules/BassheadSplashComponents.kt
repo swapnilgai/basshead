@@ -62,7 +62,7 @@ fun BassheadSplashContent(
 
             if (isLoading) {
                 BassheadLoadingIndicator(
-                    color = BassheadTheme.colors.onPrimary,
+                    color = BassheadTheme.colors.primary, // Changed from onPrimary for better contrast
                 )
             }
 
@@ -71,7 +71,7 @@ fun BassheadSplashContent(
                 Text(
                     text = stringResource(text),
                     style = BassheadTheme.typography.bodyMedium,
-                    color = BassheadTheme.colors.onPrimary,
+                    color = BassheadTheme.colors.onBackground, // Changed from onPrimary for proper contrast
                 )
             }
         }

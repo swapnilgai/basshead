@@ -111,4 +111,20 @@
     <string name="splash_logo_description">Headbanging Dog</string>
     <string name="splash_loading">Loading...</string>
 
+    <!-- Profile Screen -->
+    <string name="profile_title">Profile</string>
+    <string name="profile_account_section">Account</string>
+    <string name="profile_general_section">General</string>
+    <string name="profile_legal_section">Legal</string>
+    <string name="profile_name_label">Name</string>
+    <string name="profile_total_headbangs_label">Total Headbangs</string>
+    <string name="profile_joined_festivals_label">Joined Festivals</string>
+    <string name="profile_change_avatar">Change Avatar</string>
+    <string name="profile_your_festivals">Your Festivals</string>
+    <string name="profile_privacy_policy">Privacy Policy</string>
+    <string name="profile_terms_of_service">Terms of Service</string>
+    <string name="profile_sign_out">Sign Out</string>
+    <string name="profile_navigate_forward">Navigate forward</string>
+    <string name="profile_screen_description">Profile screen with user information and settings</string>
+
 </resources>
