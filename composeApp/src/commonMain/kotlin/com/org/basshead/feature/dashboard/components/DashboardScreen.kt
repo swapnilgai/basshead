@@ -25,6 +25,7 @@ import basshead.composeapp.generated.resources.your_current_festival
 import com.org.basshead.feature.dashboard.model.DashBoardUiState
 import com.org.basshead.feature.dashboard.presentation.DashBoardActions
 import com.org.basshead.feature.dashboard.presentation.DashBoardViewModel
+import com.org.basshead.utils.components.ErrorScreen
 import com.org.basshead.utils.components.LoadingScreen
 import com.org.basshead.utils.ui.Route
 import com.org.basshead.utils.ui.UiState

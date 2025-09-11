@@ -92,4 +92,39 @@
     <string name="device_status_connected">Connected</string>
     <string name="device_status_not_connected">Not Connected</string>
 
+    <!-- Design System Strings -->
+    <string name="filter">Filter</string>
+    <string name="required_field">*</string>
+    <string name="default_email_label">Email</string>
+    <string name="default_password_label">Password</string>
+    <string name="basshead_app_logo">Basshead app logo</string>
+    <string name="default_app_name">Basshead</string>
+    <string name="default_tagline">Feel the Bass, Join the Beat</string>
+    <string name="default_login_button">Log In</string>
+    <string name="signup_prompt">Don't have an account?</string>
+    <string name="default_signup_button">Sign Up</string>
+    <string name="hide_password">Hide password</string>
+    <string name="show_password">Show password</string>
+    <string name="login_screen_description">Login screen with authentication form</string>
+
+    <!-- Splash Screen -->
+    <string name="splash_logo_description">Headbanging Dog</string>
+    <string name="splash_loading">Loading...</string>
+
+    <!-- Profile Screen -->
+    <string name="profile_title">Profile</string>
+    <string name="profile_account_section">Account</string>
+    <string name="profile_general_section">General</string>
+    <string name="profile_legal_section">Legal</string>
+    <string name="profile_name_label">Name</string>
+    <string name="profile_total_headbangs_label">Total Headbangs</string>
+    <string name="profile_joined_festivals_label">Joined Festivals</string>
+    <string name="profile_change_avatar">Change Avatar</string>
+    <string name="profile_your_festivals">Your Festivals</string>
+    <string name="profile_privacy_policy">Privacy Policy</string>
+    <string name="profile_terms_of_service">Terms of Service</string>
+    <string name="profile_sign_out">Sign Out</string>
+    <string name="profile_navigate_forward">Navigate forward</string>
+    <string name="profile_screen_description">Profile screen with user information and settings</string>
+
 </resources>
