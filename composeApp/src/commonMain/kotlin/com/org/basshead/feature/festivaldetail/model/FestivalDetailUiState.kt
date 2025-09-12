@@ -1,9 +1,9 @@
 package com.org.basshead.feature.festivaldetail.model
 
-import androidx.compose.runtime.Immutable
+import androidx.compose.runtime.Stable
 import com.org.basshead.feature.dashboard.model.FestivalItemState
 
-@Immutable
+@Stable
 data class FestivalDetailUiState(
     val festival: FestivalItemState? = null,
     val isJoining: Boolean = false,

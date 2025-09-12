@@ -51,7 +51,7 @@
     <string name="leaderboard">Leaderboard</string>
     <string name="festival_participants">Participants</string>
     <string name="your_rank">Your Rank</string>
-    
+
     <!-- Search -->
     <string name="search_festivals">Find Events</string>
     <string name="search_festivals_hint">EDC, Ultra...</string>
@@ -69,7 +69,7 @@
     <string name="location_hint">City, state, or venue name...</string>
     <string name="location_examples">e.g. Miami, FL or Red Rocks</string>
     <string name="refresh">Refresh</string>
-    
+
     <!-- Profile -->
     <string name="profile">Profile</string>
     <string name="user_label">User: %1$s</string>
@@ -77,10 +77,10 @@
     <string name="joined_festivals">Joined Festivals: %1$d</string>
     <string name="your_festivals">Your Festivals</string>
     <string name="logout">Logout</string>
-    
+
     <!-- Error Actions -->
     <string name="retry">Retry</string>
-    
+
     <!-- Device Sync -->
     <string name="sync_device">Sync Device</string>
     <string name="sync_now">Sync</string>
@@ -126,5 +126,28 @@
     <string name="profile_sign_out">Sign Out</string>
     <string name="profile_navigate_forward">Navigate forward</string>
     <string name="profile_screen_description">Profile screen with user information and settings</string>
+
+    <!-- Festival Detail Screen -->
+    <string name="festival_participants_label">Participants</string>
+    <string name="festival_status_label">Status</string>
+    <string name="festival_your_rank_label">Your Rank</string>
+    <string name="festival_event_schedule">Event Schedule</string>
+    <string name="festival_all_day_event">All Day Event</string>
+    <string name="festival_about_title">About</string>
+    <string name="festival_your_stats_title">Your Festival Stats</string>
+    <string name="festival_actions_title">Actions</string>
+    <string name="festival_error_not_found">Festival not found</string>
+    <string name="festival_error_oops">Oops!</string>
+    <string name="festival_error_go_back">Go Back</string>
+    <string name="festival_error_retry">Retry</string>
+    <string name="festival_join_description">Join %1$s</string>
+    <string name="festival_leaderboard_description">View leaderboard for %1$s</string>
+    <string name="festival_date_icon_desc">Date</string>
+    <string name="festival_time_icon_desc">Time</string>
+    <string name="festival_stats_icon_desc">Stats</string>
+    <string name="festival_check_event_details">Check event details for exact timing</string>
+    <string name="festival_total_headbangs_label">Total Headbangs</string>
+    <string name="festival_join_button">Join Festival</string>
+    <string name="festival_view_leaderboard_button">View Leaderboard</string>
 
 </resources>

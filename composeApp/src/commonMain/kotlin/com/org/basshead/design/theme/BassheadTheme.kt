@@ -1,5 +1,8 @@
 package com.org.basshead.design.theme
 
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.darkColorScheme
+import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.Immutable
@@ -36,47 +39,6 @@ val LocalBassheadElevation = staticCompositionLocalOf<BassheadElevation> {
 }
 
 /**
- * Immutable theme configuration for atomic design system
- * Ensures consistency across all atomic components
- */
-@Immutable
-data class BassheadThemeValues(
-    val colors: BassheadColors,
-    val typography: BassheadTypography,
-    val spacing: BassheadSpacing,
-    val elevation: BassheadElevation,
-)
-
-/**
- * Theme provider for atomic design system
- * Wraps the entire app to provide design tokens to all atomic components
- */
-@Composable
-fun ProvideBassheadTheme(
-    isDarkTheme: Boolean = false,
-    colors: BassheadColors = if (isDarkTheme) BassheadDarkColors else BassheadLightColors,
-    typography: BassheadTypography = BassheadTypographyTokens,
-    spacing: BassheadSpacing = BassheadSpacingTokens,
-    elevation: BassheadElevation = BassheadElevationTokens,
-    content: @Composable () -> Unit,
-) {
-    val themeValues = BassheadThemeValues(
-        colors = colors,
-        typography = typography,
-        spacing = spacing,
-        elevation = elevation,
-    )
-
-    CompositionLocalProvider(
-        LocalBassheadColors provides themeValues.colors,
-        LocalBassheadTypography provides themeValues.typography,
-        LocalBassheadSpacing provides themeValues.spacing,
-        LocalBassheadElevation provides themeValues.elevation,
-        content = content,
-    )
-}
-
-/**
  * Main theme object for atomic design system
  * Provides access to all design tokens for atomic components
  */
@@ -100,6 +62,112 @@ object BassheadTheme {
         @Composable
         @ReadOnlyComposable
         get() = LocalBassheadElevation.current
+}
+
+/**
+ * Theme provider for atomic design system that integrates with Material Theme
+ * Wraps the entire app to provide design tokens to all atomic components
+ */
+@Composable
+fun ProvideBassheadTheme(
+    isDarkTheme: Boolean = false,
+    colors: BassheadColors = if (isDarkTheme) BassheadDarkColors else BassheadLightColors,
+    typography: BassheadTypography = BassheadTypographyTokens,
+    spacing: BassheadSpacing = BassheadSpacingTokens,
+    elevation: BassheadElevation = BassheadElevationTokens,
+    content: @Composable () -> Unit,
+) {
+    // Create Material 3 ColorScheme from our BassheadColors
+    val materialColorScheme = if (isDarkTheme) {
+        darkColorScheme(
+            primary = colors.primary,
+            onPrimary = colors.onPrimary,
+            primaryContainer = colors.primaryContainer,
+            onPrimaryContainer = colors.onPrimaryContainer,
+            secondary = colors.secondary,
+            onSecondary = colors.onSecondary,
+            secondaryContainer = colors.secondaryContainer,
+            onSecondaryContainer = colors.onSecondaryContainer,
+            tertiary = colors.tertiary,
+            onTertiary = colors.onTertiary,
+            tertiaryContainer = colors.tertiaryContainer,
+            onTertiaryContainer = colors.onTertiaryContainer,
+            error = colors.error,
+            onError = colors.onError,
+            errorContainer = colors.errorContainer,
+            onErrorContainer = colors.onErrorContainer,
+            background = colors.background,
+            onBackground = colors.onBackground,
+            surface = colors.surface,
+            onSurface = colors.onSurface,
+            surfaceVariant = colors.surfaceVariant,
+            onSurfaceVariant = colors.onSurfaceVariant,
+            outline = colors.outline,
+            outlineVariant = colors.outlineVariant,
+            scrim = colors.scrim,
+            inverseSurface = colors.inverseSurface,
+            inverseOnSurface = colors.inverseOnSurface,
+            inversePrimary = colors.inversePrimary,
+            surfaceDim = colors.surfaceDim,
+            surfaceBright = colors.surfaceBright,
+            surfaceContainerLowest = colors.surfaceContainerLowest,
+            surfaceContainerLow = colors.surfaceContainerLow,
+            surfaceContainer = colors.surfaceContainer,
+            surfaceContainerHigh = colors.surfaceContainerHigh,
+            surfaceContainerHighest = colors.surfaceContainerHighest,
+        )
+    } else {
+        lightColorScheme(
+            primary = colors.primary,
+            onPrimary = colors.onPrimary,
+            primaryContainer = colors.primaryContainer,
+            onPrimaryContainer = colors.onPrimaryContainer,
+            secondary = colors.secondary,
+            onSecondary = colors.onSecondary,
+            secondaryContainer = colors.secondaryContainer,
+            onSecondaryContainer = colors.onSecondaryContainer,
+            tertiary = colors.tertiary,
+            onTertiary = colors.onTertiary,
+            tertiaryContainer = colors.tertiaryContainer,
+            onTertiaryContainer = colors.onTertiaryContainer,
+            error = colors.error,
+            onError = colors.onError,
+            errorContainer = colors.errorContainer,
+            onErrorContainer = colors.onErrorContainer,
+            background = colors.background,
+            onBackground = colors.onBackground,
+            surface = colors.surface,
+            onSurface = colors.onSurface,
+            surfaceVariant = colors.surfaceVariant,
+            onSurfaceVariant = colors.onSurfaceVariant,
+            outline = colors.outline,
+            outlineVariant = colors.outlineVariant,
+            scrim = colors.scrim,
+            inverseSurface = colors.inverseSurface,
+            inverseOnSurface = colors.inverseOnSurface,
+            inversePrimary = colors.inversePrimary,
+            surfaceDim = colors.surfaceDim,
+            surfaceBright = colors.surfaceBright,
+            surfaceContainerLowest = colors.surfaceContainerLowest,
+            surfaceContainerLow = colors.surfaceContainerLow,
+            surfaceContainer = colors.surfaceContainer,
+            surfaceContainerHigh = colors.surfaceContainerHigh,
+            surfaceContainerHighest = colors.surfaceContainerHighest,
+        )
+    }
+
+    // Provide both our custom design tokens AND Material Theme integration
+    CompositionLocalProvider(
+        LocalBassheadColors provides colors,
+        LocalBassheadTypography provides typography,
+        LocalBassheadSpacing provides spacing,
+        LocalBassheadElevation provides elevation,
+    ) {
+        MaterialTheme(
+            colorScheme = materialColorScheme,
+            content = content,
+        )
+    }
 }
 
 /**
