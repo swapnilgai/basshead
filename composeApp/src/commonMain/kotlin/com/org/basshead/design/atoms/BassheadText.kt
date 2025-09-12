@@ -12,6 +12,7 @@ import com.org.basshead.design.theme.BassheadTheme
 /**
  * Atomic typography components following the type scale
  * Base text atoms for consistent typography across the app
+ * Fixed to use proper theme-aware colors for light/dark theme compatibility
  */
 
 /**
@@ -21,7 +22,7 @@ import com.org.basshead.design.theme.BassheadTheme
 fun BassheadDisplayLarge(
     text: String,
     modifier: Modifier = Modifier,
-    color: Color = BassheadTheme.colors.onPrimary,
+    color: Color = BassheadTheme.colors.onSurface, // Changed from onPrimary to onSurface for theme awareness
     textAlign: TextAlign? = null,
     textDecoration: TextDecoration? = null,
     overflow: TextOverflow = TextOverflow.Clip,
@@ -43,7 +44,7 @@ fun BassheadDisplayLarge(
 fun BassheadDisplayMedium(
     text: String,
     modifier: Modifier = Modifier,
-    color: Color = BassheadTheme.colors.onPrimary,
+    color: Color = BassheadTheme.colors.onSurface, // Changed from onPrimary to onSurface for theme awareness
     textAlign: TextAlign? = null,
     textDecoration: TextDecoration? = null,
     overflow: TextOverflow = TextOverflow.Clip,
@@ -65,7 +66,7 @@ fun BassheadDisplayMedium(
 fun BassheadDisplaySmall(
     text: String,
     modifier: Modifier = Modifier,
-    color: Color = BassheadTheme.colors.onPrimary,
+    color: Color = BassheadTheme.colors.onSurface, // Changed from onPrimary to onSurface for theme awareness
     textAlign: TextAlign? = null,
     textDecoration: TextDecoration? = null,
     overflow: TextOverflow = TextOverflow.Clip,
@@ -90,7 +91,7 @@ fun BassheadDisplaySmall(
 fun BassheadHeadlineLarge(
     text: String,
     modifier: Modifier = Modifier,
-    color: Color = BassheadTheme.colors.onPrimary,
+    color: Color = BassheadTheme.colors.onSurface, // Changed from onPrimary to onSurface for theme awareness
     textAlign: TextAlign? = null,
     textDecoration: TextDecoration? = null,
     overflow: TextOverflow = TextOverflow.Clip,
@@ -112,7 +113,7 @@ fun BassheadHeadlineLarge(
 fun BassheadHeadlineMedium(
     text: String,
     modifier: Modifier = Modifier,
-    color: Color = BassheadTheme.colors.onPrimary,
+    color: Color = BassheadTheme.colors.onSurface, // Changed from onPrimary to onSurface for theme awareness
     textAlign: TextAlign? = null,
     textDecoration: TextDecoration? = null,
     overflow: TextOverflow = TextOverflow.Clip,
@@ -134,7 +135,7 @@ fun BassheadHeadlineMedium(
 fun BassheadHeadlineSmall(
     text: String,
     modifier: Modifier = Modifier,
-    color: Color = BassheadTheme.colors.onPrimary,
+    color: Color = BassheadTheme.colors.onSurface, // Changed from onPrimary to onSurface for theme awareness
     textAlign: TextAlign? = null,
     textDecoration: TextDecoration? = null,
     overflow: TextOverflow = TextOverflow.Clip,
@@ -160,7 +161,7 @@ fun BassheadHeadlineSmall(
 fun BassheadTitleLarge(
     text: String,
     modifier: Modifier = Modifier,
-    color: Color = BassheadTheme.colors.onPrimary, // Theme-aware color
+    color: Color = BassheadTheme.colors.onSurface, // Changed from onPrimary to onSurface for theme awareness
     textAlign: TextAlign? = null,
     textDecoration: TextDecoration? = null,
     overflow: TextOverflow = TextOverflow.Clip,
@@ -182,7 +183,7 @@ fun BassheadTitleLarge(
 fun BassheadTitleMedium(
     text: String,
     modifier: Modifier = Modifier,
-    color: Color = BassheadTheme.colors.onPrimary, // Theme-aware color
+    color: Color = BassheadTheme.colors.onSurface, // Changed from onPrimary to onSurface for theme awareness
     textAlign: TextAlign? = null,
     textDecoration: TextDecoration? = null,
     overflow: TextOverflow = TextOverflow.Clip,
@@ -204,7 +205,7 @@ fun BassheadTitleMedium(
 fun BassheadTitleSmall(
     text: String,
     modifier: Modifier = Modifier,
-    color: Color = BassheadTheme.colors.onPrimary, // Theme-aware color
+    color: Color = BassheadTheme.colors.onSurface, // Changed from onPrimary to onSurface for theme awareness
     textAlign: TextAlign? = null,
     textDecoration: TextDecoration? = null,
     overflow: TextOverflow = TextOverflow.Clip,
@@ -229,7 +230,7 @@ fun BassheadTitleSmall(
 fun BassheadBodyLarge(
     text: String,
     modifier: Modifier = Modifier,
-    color: Color = BassheadTheme.colors.onPrimary, // Theme-aware color
+    color: Color = BassheadTheme.colors.onSurface, // Changed from onPrimary to onSurface for theme awareness
     textAlign: TextAlign? = null,
     textDecoration: TextDecoration? = null,
     overflow: TextOverflow = TextOverflow.Clip,
@@ -251,7 +252,7 @@ fun BassheadBodyLarge(
 fun BassheadBodyMedium(
     text: String,
     modifier: Modifier = Modifier,
-    color: Color = BassheadTheme.colors.onPrimary, // Theme-aware color
+    color: Color = BassheadTheme.colors.onSurface, // Changed from onPrimary to onSurface for theme awareness
     textAlign: TextAlign? = null,
     textDecoration: TextDecoration? = null,
     overflow: TextOverflow = TextOverflow.Clip,
@@ -273,7 +274,7 @@ fun BassheadBodyMedium(
 fun BassheadBodySmall(
     text: String,
     modifier: Modifier = Modifier,
-    color: Color = BassheadTheme.colors.onSurface, // Theme-aware secondary color
+    color: Color = BassheadTheme.colors.onSurfaceVariant, // Using onSurfaceVariant for secondary text
     textAlign: TextAlign? = null,
     textDecoration: TextDecoration? = null,
     overflow: TextOverflow = TextOverflow.Clip,
@@ -298,7 +299,7 @@ fun BassheadBodySmall(
 fun BassheadLabelLarge(
     text: String,
     modifier: Modifier = Modifier,
-    color: Color = BassheadTheme.colors.onPrimary, // Changed from onSurface
+    color: Color = BassheadTheme.colors.onSurface, // Changed from onPrimary to onSurface for theme awareness
     textAlign: TextAlign? = null,
     textDecoration: TextDecoration? = null,
     overflow: TextOverflow = TextOverflow.Clip,
@@ -320,7 +321,7 @@ fun BassheadLabelLarge(
 fun BassheadLabelMedium(
     text: String,
     modifier: Modifier = Modifier,
-    color: Color = BassheadTheme.colors.onPrimary.copy(alpha = 0.7f), // Changed from onSurfaceVariant
+    color: Color = BassheadTheme.colors.onSurfaceVariant, // Changed to onSurfaceVariant for proper secondary text
     textAlign: TextAlign? = null,
     textDecoration: TextDecoration? = null,
     overflow: TextOverflow = TextOverflow.Clip,
@@ -342,7 +343,7 @@ fun BassheadLabelMedium(
 fun BassheadLabelSmall(
     text: String,
     modifier: Modifier = Modifier,
-    color: Color = BassheadTheme.colors.onPrimary.copy(alpha = 0.7f), // Changed from onSurfaceVariant
+    color: Color = BassheadTheme.colors.onSurfaceVariant, // Changed to onSurfaceVariant for proper secondary text
     textAlign: TextAlign? = null,
     textDecoration: TextDecoration? = null,
     overflow: TextOverflow = TextOverflow.Clip,

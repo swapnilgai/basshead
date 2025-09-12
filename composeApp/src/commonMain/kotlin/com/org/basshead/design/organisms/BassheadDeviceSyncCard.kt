@@ -19,6 +19,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
+import basshead.composeapp.generated.resources.Res
+import basshead.composeapp.generated.resources.connect_device_button
+import basshead.composeapp.generated.resources.device_connected_status
+import basshead.composeapp.generated.resources.device_not_connected_status
+import basshead.composeapp.generated.resources.device_settings_description
+import basshead.composeapp.generated.resources.device_status_description
+import basshead.composeapp.generated.resources.device_sync_card_description
+import basshead.composeapp.generated.resources.device_sync_title
+import basshead.composeapp.generated.resources.device_syncing_status
+import basshead.composeapp.generated.resources.sync_now_button
+import basshead.composeapp.generated.resources.syncing_label
+import basshead.composeapp.generated.resources.total_headbangs_uppercase
 import com.org.basshead.design.atoms.BassheadBodyMedium
 import com.org.basshead.design.atoms.BassheadButton
 import com.org.basshead.design.atoms.BassheadCard
@@ -29,6 +41,7 @@ import com.org.basshead.design.atoms.BassheadLoadingIndicator
 import com.org.basshead.design.atoms.BassheadStatusIndicator
 import com.org.basshead.design.atoms.BassheadTitleMedium
 import com.org.basshead.design.theme.BassheadTheme
+import org.jetbrains.compose.resources.stringResource
 
 /**
  * Device Sync Card Organism - Complex component for device connection status and syncing
@@ -57,16 +70,19 @@ fun BassheadDeviceSyncCard(
     }
 
     val deviceStatusText = when {
-        isSyncing -> "Syncing..."
-        isDeviceConnected -> "Device Connected"
-        else -> "Device Not Connected"
+        isSyncing -> stringResource(Res.string.device_syncing_status)
+        isDeviceConnected -> stringResource(Res.string.device_connected_status)
+        else -> stringResource(Res.string.device_not_connected_status)
     }
+
+    // Prepare accessibility description outside of semantics block
+    val cardDescription = stringResource(Res.string.device_sync_card_description, totalHeadbangs, deviceStatusText)
 
     BassheadCard(
         modifier = modifier
             .fillMaxWidth()
             .semantics {
-                contentDescription = "Device sync card showing $totalHeadbangs headbangs, status: $deviceStatusText"
+                contentDescription = cardDescription
             },
         shape = RoundedCornerShape(BassheadTheme.spacing.medium),
         elevation = BassheadTheme.elevation.card,
@@ -93,14 +109,14 @@ fun BassheadDeviceSyncCard(
                     ) {
                         BassheadIcon(
                             imageVector = Icons.Default.Headphones,
-                            contentDescription = "Device status",
+                            contentDescription = stringResource(Res.string.device_status_description),
                             tint = deviceStatusColor,
                             modifier = Modifier.padding(BassheadTheme.spacing.extraSmall),
                         )
                     }
 
                     BassheadTitleMedium(
-                        text = "Device Sync",
+                        text = stringResource(Res.string.device_sync_title),
                         color = BassheadTheme.colors.onSurface,
                     )
                 }
@@ -108,7 +124,7 @@ fun BassheadDeviceSyncCard(
                 BassheadIconButton(
                     onClick = onSettingsClick,
                     icon = Icons.Default.Settings,
-                    contentDescription = "Open device settings",
+                    contentDescription = stringResource(Res.string.device_settings_description),
                 )
             }
 
@@ -117,7 +133,7 @@ fun BassheadDeviceSyncCard(
                 verticalArrangement = Arrangement.spacedBy(BassheadTheme.spacing.extraSmall),
             ) {
                 BassheadLabelMedium(
-                    text = "TOTAL HEADBANGS",
+                    text = stringResource(Res.string.total_headbangs_uppercase),
                     color = BassheadTheme.colors.onSurfaceVariant,
                 )
 
@@ -159,13 +175,13 @@ fun BassheadDeviceSyncCard(
                             color = BassheadTheme.colors.warning,
                         )
                         BassheadLabelMedium(
-                            text = "Syncing",
+                            text = stringResource(Res.string.syncing_label),
                             color = BassheadTheme.colors.warning,
                         )
                     }
                 } else {
                     BassheadButton(
-                        text = if (isDeviceConnected) "Sync Now" else "Connect Device",
+                        text = if (isDeviceConnected) stringResource(Res.string.sync_now_button) else stringResource(Res.string.connect_device_button),
                         onClick = onSyncClick,
                         enabled = true,
                         leadingIcon = Icons.Default.Sync,

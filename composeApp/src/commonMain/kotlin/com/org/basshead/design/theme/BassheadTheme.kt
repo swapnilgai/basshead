@@ -1,12 +1,10 @@
 package com.org.basshead.design.theme
 
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.darkColorScheme
-import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.ReadOnlyComposable
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.staticCompositionLocalOf
 import com.org.basshead.design.tokens.BassheadColors
 import com.org.basshead.design.tokens.BassheadDarkColors
@@ -17,6 +15,7 @@ import com.org.basshead.design.tokens.BassheadSpacing
 import com.org.basshead.design.tokens.BassheadSpacingTokens
 import com.org.basshead.design.tokens.BassheadTypography
 import com.org.basshead.design.tokens.BassheadTypographyTokens
+import com.org.basshead.design.tokens.toColorScheme
 
 /**
  * CompositionLocal providers for design tokens
@@ -66,99 +65,39 @@ object BassheadTheme {
 
 /**
  * Theme provider for atomic design system that integrates with Material Theme
- * Wraps the entire app to provide design tokens to all atomic components
+ *
+ * Why MaterialTheme integration:
+ * 1. Ensures compatibility with Material 3 components (TextField, Button, etc.)
+ * 2. Provides seamless theme inheritance for third-party components
+ * 3. Maintains accessibility standards across the app
+ * 4. Enables proper theme animations and transitions
+ *
+ * @param colors Custom colors override
+ * @param typography Custom typography override
+ * @param spacing Custom spacing override
+ * @param elevation Custom elevation override
+ * @param content Content to be themed
  */
 @Composable
 fun ProvideBassheadTheme(
     isDarkTheme: Boolean = false,
-    colors: BassheadColors = if (isDarkTheme) BassheadDarkColors else BassheadLightColors,
     typography: BassheadTypography = BassheadTypographyTokens,
     spacing: BassheadSpacing = BassheadSpacingTokens,
     elevation: BassheadElevation = BassheadElevationTokens,
     content: @Composable () -> Unit,
 ) {
-    // Create Material 3 ColorScheme from our BassheadColors
-    val materialColorScheme = if (isDarkTheme) {
-        darkColorScheme(
-            primary = colors.primary,
-            onPrimary = colors.onPrimary,
-            primaryContainer = colors.primaryContainer,
-            onPrimaryContainer = colors.onPrimaryContainer,
-            secondary = colors.secondary,
-            onSecondary = colors.onSecondary,
-            secondaryContainer = colors.secondaryContainer,
-            onSecondaryContainer = colors.onSecondaryContainer,
-            tertiary = colors.tertiary,
-            onTertiary = colors.onTertiary,
-            tertiaryContainer = colors.tertiaryContainer,
-            onTertiaryContainer = colors.onTertiaryContainer,
-            error = colors.error,
-            onError = colors.onError,
-            errorContainer = colors.errorContainer,
-            onErrorContainer = colors.onErrorContainer,
-            background = colors.background,
-            onBackground = colors.onBackground,
-            surface = colors.surface,
-            onSurface = colors.onSurface,
-            surfaceVariant = colors.surfaceVariant,
-            onSurfaceVariant = colors.onSurfaceVariant,
-            outline = colors.outline,
-            outlineVariant = colors.outlineVariant,
-            scrim = colors.scrim,
-            inverseSurface = colors.inverseSurface,
-            inverseOnSurface = colors.inverseOnSurface,
-            inversePrimary = colors.inversePrimary,
-            surfaceDim = colors.surfaceDim,
-            surfaceBright = colors.surfaceBright,
-            surfaceContainerLowest = colors.surfaceContainerLowest,
-            surfaceContainerLow = colors.surfaceContainerLow,
-            surfaceContainer = colors.surfaceContainer,
-            surfaceContainerHigh = colors.surfaceContainerHigh,
-            surfaceContainerHighest = colors.surfaceContainerHighest,
-        )
-    } else {
-        lightColorScheme(
-            primary = colors.primary,
-            onPrimary = colors.onPrimary,
-            primaryContainer = colors.primaryContainer,
-            onPrimaryContainer = colors.onPrimaryContainer,
-            secondary = colors.secondary,
-            onSecondary = colors.onSecondary,
-            secondaryContainer = colors.secondaryContainer,
-            onSecondaryContainer = colors.onSecondaryContainer,
-            tertiary = colors.tertiary,
-            onTertiary = colors.onTertiary,
-            tertiaryContainer = colors.tertiaryContainer,
-            onTertiaryContainer = colors.onTertiaryContainer,
-            error = colors.error,
-            onError = colors.onError,
-            errorContainer = colors.errorContainer,
-            onErrorContainer = colors.onErrorContainer,
-            background = colors.background,
-            onBackground = colors.onBackground,
-            surface = colors.surface,
-            onSurface = colors.onSurface,
-            surfaceVariant = colors.surfaceVariant,
-            onSurfaceVariant = colors.onSurfaceVariant,
-            outline = colors.outline,
-            outlineVariant = colors.outlineVariant,
-            scrim = colors.scrim,
-            inverseSurface = colors.inverseSurface,
-            inverseOnSurface = colors.inverseOnSurface,
-            inversePrimary = colors.inversePrimary,
-            surfaceDim = colors.surfaceDim,
-            surfaceBright = colors.surfaceBright,
-            surfaceContainerLowest = colors.surfaceContainerLowest,
-            surfaceContainerLow = colors.surfaceContainerLow,
-            surfaceContainer = colors.surfaceContainer,
-            surfaceContainerHigh = colors.surfaceContainerHigh,
-            surfaceContainerHighest = colors.surfaceContainerHighest,
-        )
+    // Use light theme by default, dark theme logic will be added later
+    val themeColors = if(isDarkTheme) BassheadDarkColors else BassheadLightColors
+
+    // Create Material 3 ColorScheme using our BassheadColors factory methods
+    val materialColorScheme = remember(themeColors, isDarkTheme) {
+        themeColors.toColorScheme(isDark = isDarkTheme)
     }
 
     // Provide both our custom design tokens AND Material Theme integration
+    // This approach ensures full reactivity to theme changes
     CompositionLocalProvider(
-        LocalBassheadColors provides colors,
+        LocalBassheadColors provides themeColors,
         LocalBassheadTypography provides typography,
         LocalBassheadSpacing provides spacing,
         LocalBassheadElevation provides elevation,

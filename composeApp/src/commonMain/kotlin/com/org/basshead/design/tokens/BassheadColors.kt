@@ -1,5 +1,8 @@
 package com.org.basshead.design.tokens
 
+import androidx.compose.material3.ColorScheme
+import androidx.compose.material3.darkColorScheme
+import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Immutable
 import androidx.compose.ui.graphics.Color
 
@@ -79,6 +82,23 @@ data class BassheadColors(
     val infoContainer: Color,
     val onInfoContainer: Color,
 
+    // Device connectivity states
+    val deviceConnected: Color,
+    val onDeviceConnected: Color,
+    val deviceConnectedContainer: Color,
+    val onDeviceConnectedContainer: Color,
+
+    val deviceDisconnected: Color,
+    val onDeviceDisconnected: Color,
+    val deviceDisconnectedContainer: Color,
+    val onDeviceDisconnectedContainer: Color,
+
+    // Bass/Music intensity colors
+    val bassIntense: Color,
+    val onBassIntense: Color,
+    val bassIntenseContainer: Color,
+    val onBassIntenseContainer: Color,
+
     // Festival lifecycle states with enhanced semantics
     val festivalActive: Color,
     val festivalActiveContainer: Color,
@@ -99,45 +119,113 @@ data class BassheadColors(
     val festivalPastContainer: Color,
     val onFestivalPast: Color,
     val onFestivalPastContainer: Color,
+) {
+    /**
+     * Converts BassheadColors to Material 3 ColorScheme for seamless integration
+     * This enables compatibility with Material 3 components while maintaining brand colors
+     */
+    fun toMaterialColorScheme(): ColorScheme = lightColorScheme(
+        primary = primary,
+        onPrimary = onPrimary,
+        primaryContainer = primaryContainer,
+        onPrimaryContainer = onPrimaryContainer,
+        secondary = secondary,
+        onSecondary = onSecondary,
+        secondaryContainer = secondaryContainer,
+        onSecondaryContainer = onSecondaryContainer,
+        tertiary = tertiary,
+        onTertiary = onTertiary,
+        tertiaryContainer = tertiaryContainer,
+        onTertiaryContainer = onTertiaryContainer,
+        error = error,
+        onError = onError,
+        errorContainer = errorContainer,
+        onErrorContainer = onErrorContainer,
+        background = background,
+        onBackground = onBackground,
+        surface = surface,
+        onSurface = onSurface,
+        surfaceVariant = surfaceVariant,
+        onSurfaceVariant = onSurfaceVariant,
+        outline = outline,
+        outlineVariant = outlineVariant,
+        scrim = scrim,
+        inverseSurface = inverseSurface,
+        inverseOnSurface = inverseOnSurface,
+        inversePrimary = inversePrimary,
+        surfaceDim = surfaceDim,
+        surfaceBright = surfaceBright,
+        surfaceContainerLowest = surfaceContainerLowest,
+        surfaceContainerLow = surfaceContainerLow,
+        surfaceContainer = surfaceContainer,
+        surfaceContainerHigh = surfaceContainerHigh,
+        surfaceContainerHighest = surfaceContainerHighest,
+    )
 
-    // Music-specific semantic colors
-    val bassIntense: Color,
-    val bassIntenseContainer: Color,
-    val onBassIntense: Color,
-    val onBassIntenseContainer: Color,
-
-    val deviceConnected: Color,
-    val deviceConnectedContainer: Color,
-    val onDeviceConnected: Color,
-    val onDeviceConnectedContainer: Color,
-
-    val deviceDisconnected: Color,
-    val deviceDisconnectedContainer: Color,
-    val onDeviceDisconnected: Color,
-    val onDeviceDisconnectedContainer: Color,
-)
+    /**
+     * Converts BassheadColors to Material 3 Dark ColorScheme for seamless integration
+     */
+    fun toMaterialDarkColorScheme(): ColorScheme = darkColorScheme(
+        primary = primary,
+        onPrimary = onPrimary,
+        primaryContainer = primaryContainer,
+        onPrimaryContainer = onPrimaryContainer,
+        secondary = secondary,
+        onSecondary = onSecondary,
+        secondaryContainer = secondaryContainer,
+        onSecondaryContainer = onSecondaryContainer,
+        tertiary = tertiary,
+        onTertiary = onTertiary,
+        tertiaryContainer = tertiaryContainer,
+        onTertiaryContainer = onTertiaryContainer,
+        error = error,
+        onError = onError,
+        errorContainer = errorContainer,
+        onErrorContainer = onErrorContainer,
+        background = background,
+        onBackground = onBackground,
+        surface = surface,
+        onSurface = onSurface,
+        surfaceVariant = surfaceVariant,
+        onSurfaceVariant = onSurfaceVariant,
+        outline = outline,
+        outlineVariant = outlineVariant,
+        scrim = scrim,
+        inverseSurface = inverseSurface,
+        inverseOnSurface = inverseOnSurface,
+        inversePrimary = inversePrimary,
+        surfaceDim = surfaceDim,
+        surfaceBright = surfaceBright,
+        surfaceContainerLowest = surfaceContainerLowest,
+        surfaceContainerLow = surfaceContainerLow,
+        surfaceContainer = surfaceContainer,
+        surfaceContainerHigh = surfaceContainerHigh,
+        surfaceContainerHighest = surfaceContainerHighest,
+    )
+}
 
 /**
- * Enhanced light theme colors with comprehensive Material Design 3 surface system
+ * Material Design 3 Light Theme Colors for Basshead
+ * Following Google's color guidelines for accessibility and brand consistency
  */
 val BassheadLightColors = BassheadColors(
-    // Primary - Deep purple brand identity
-    primary = Color(0xFF6750A4),
+    // Primary colors - Bass/Music theme with high contrast
+    primary = Color(0xFF6B4EFF), // Deep purple for bass vibes
     onPrimary = Color(0xFFFFFFFF),
-    primaryContainer = Color(0xFFEADDFF),
-    onPrimaryContainer = Color(0xFF21005D),
+    primaryContainer = Color(0xFFE4DFFF),
+    onPrimaryContainer = Color(0xFF21005E),
 
-    // Secondary - Complementary teal
+    // Secondary colors - Electric/Energy theme
     secondary = Color(0xFF625B71),
     onSecondary = Color(0xFFFFFFFF),
     secondaryContainer = Color(0xFFE8DEF8),
-    onSecondaryContainer = Color(0xFF1D192B),
+    onSecondaryContainer = Color(0xFF1E192B),
 
-    // Tertiary - Warm accent
+    // Tertiary colors - Beat/Rhythm theme
     tertiary = Color(0xFF7D5260),
     onTertiary = Color(0xFFFFFFFF),
     tertiaryContainer = Color(0xFFFFD8E4),
-    onTertiaryContainer = Color(0xFF31111D),
+    onTertiaryContainer = Color(0xFF370B1E),
 
     // Error system
     error = Color(0xFFBA1A1A),
@@ -145,32 +233,32 @@ val BassheadLightColors = BassheadColors(
     errorContainer = Color(0xFFFFDAD6),
     onErrorContainer = Color(0xFF410002),
 
-    // Enhanced surface system
-    surface = Color(0xFFFEF7FF),
+    // Surface system - Light theme surfaces
+    surface = Color(0xFFFFFBFF),
     onSurface = Color(0xFF1C1B1F),
     surfaceVariant = Color(0xFFE7E0EC),
     onSurfaceVariant = Color(0xFF49454F),
-    surfaceTint = Color(0xFF6750A4),
-    surfaceDim = Color(0xFFDED8E1),
-    surfaceBright = Color(0xFFFEF7FF),
+    surfaceTint = Color(0xFF6B4EFF),
+    surfaceDim = Color(0xFFDDD8E1),
+    surfaceBright = Color(0xFFFFFBFF),
     surfaceContainerLowest = Color(0xFFFFFFFF),
     surfaceContainerLow = Color(0xFFF7F2FA),
     surfaceContainer = Color(0xFFF1ECF4),
-    surfaceContainerHigh = Color(0xFFECE6F0),
+    surfaceContainerHigh = Color(0xFFEBE6EE),
     surfaceContainerHighest = Color(0xFFE6E0E9),
 
     // Background
-    background = Color(0xFFFEF7FF),
+    background = Color(0xFFFFFBFF),
     onBackground = Color(0xFF1C1B1F),
 
-    // Outline
+    // Outline system
     outline = Color(0xFF79747E),
     outlineVariant = Color(0xFFCAC4D0),
 
-    // Inverse
+    // Inverse colors
     inverseSurface = Color(0xFF313033),
     inverseOnSurface = Color(0xFFF4EFF4),
-    inversePrimary = Color(0xFFD0BCFF),
+    inversePrimary = Color(0xFFC5BFFF),
 
     // Scrim
     scrim = Color(0xFF000000),
@@ -178,77 +266,79 @@ val BassheadLightColors = BassheadColors(
     // Enhanced semantic colors
     success = Color(0xFF146C2E),
     onSuccess = Color(0xFFFFFFFF),
-    successContainer = Color(0xFFA6F2AA),
-    onSuccessContainer = Color(0xFF002204),
+    successContainer = Color(0xFFA6F3A6),
+    onSuccessContainer = Color(0xFF002110),
 
     warning = Color(0xFF8C5000),
     onWarning = Color(0xFFFFFFFF),
-    warningContainer = Color(0xFFFFDDB3),
-    onWarningContainer = Color(0xFF2D1600),
+    warningContainer = Color(0xFFFFDDB4),
+    onWarningContainer = Color(0xFF2E1500),
 
-    info = Color(0xFF0061A4),
+    info = Color(0xFF0061A6),
     onInfo = Color(0xFFFFFFFF),
-    infoContainer = Color(0xFFD1E4FF),
-    onInfoContainer = Color(0xFF001D36),
+    infoContainer = Color(0xFFD3E4FF),
+    onInfoContainer = Color(0xFF001C38),
 
-    // Festival states with container support
-    festivalActive = Color(0xFF146C2E),
-    festivalActiveContainer = Color(0xFFA6F2AA),
-    onFestivalActive = Color(0xFFFFFFFF),
-    onFestivalActiveContainer = Color(0xFF002204),
-
-    festivalInactive = Color(0xFF5F5F5F),
-    festivalInactiveContainer = Color(0xFFE3E3E3),
-    onFestivalInactive = Color(0xFFFFFFFF),
-    onFestivalInactiveContainer = Color(0xFF1C1C1C),
-
-    festivalUpcoming = Color(0xFF0061A4),
-    festivalUpcomingContainer = Color(0xFFD1E4FF),
-    onFestivalUpcoming = Color(0xFFFFFFFF),
-    onFestivalUpcomingContainer = Color(0xFF001D36),
-
-    festivalPast = Color(0xFF6F6F6F),
-    festivalPastContainer = Color(0xFFF5F5F5),
-    onFestivalPast = Color(0xFFFFFFFF),
-    onFestivalPastContainer = Color(0xFF262626),
-
-    // Music-specific colors
-    bassIntense = Color(0xFF8B0000),
-    bassIntenseContainer = Color(0xFFFFD6D6),
-    onBassIntense = Color(0xFFFFFFFF),
-    onBassIntenseContainer = Color(0xFF370000),
-
-    deviceConnected = Color(0xFF146C2E),
-    deviceConnectedContainer = Color(0xFFA6F2AA),
+    // Device connectivity colors
+    deviceConnected = Color(0xFF00C853),
     onDeviceConnected = Color(0xFFFFFFFF),
-    onDeviceConnectedContainer = Color(0xFF002204),
+    deviceConnectedContainer = Color(0xFFB2FBC2),
+    onDeviceConnectedContainer = Color(0xFF00391A),
 
-    deviceDisconnected = Color(0xFF8C1538),
-    deviceDisconnectedContainer = Color(0xFFFFD9E2),
-    onDeviceDisconnected = Color(0xFFFFFFFF),
-    onDeviceDisconnectedContainer = Color(0xFF3E0A16),
+    deviceDisconnected = Color(0xFFB0BEC5),
+    onDeviceDisconnected = Color(0xFF1C1B1F),
+    deviceDisconnectedContainer = Color(0xFFE1F5FE),
+    onDeviceDisconnectedContainer = Color(0xFF102027),
+
+    // Bass/Music intensity colors
+    bassIntense = Color(0xFFFF5722),
+    onBassIntense = Color(0xFFFFFFFF),
+    bassIntenseContainer = Color(0xFFFFCCBC),
+    onBassIntenseContainer = Color(0xFF3E2723),
+
+    // Festival states - Light theme
+    festivalActive = Color(0xFF00C853), // Bright green for active festivals
+    festivalActiveContainer = Color(0xFFB8F5C8),
+    onFestivalActive = Color(0xFFFFFFFF),
+    onFestivalActiveContainer = Color(0xFF002111),
+
+    festivalInactive = Color(0xFF78909C), // Gray for inactive
+    festivalInactiveContainer = Color(0xFFE1F5FE),
+    onFestivalInactive = Color(0xFFFFFFFF),
+    onFestivalInactiveContainer = Color(0xFF102027),
+
+    festivalUpcoming = Color(0xFFFF9800), // Orange for upcoming
+    festivalUpcomingContainer = Color(0xFFFFE0B2),
+    onFestivalUpcoming = Color(0xFFFFFFFF),
+    onFestivalUpcomingContainer = Color(0xFF2E1500),
+
+    festivalPast = Color(0xFF9C27B0), // Purple for past events
+    festivalPastContainer = Color(0xFFE1BEE7),
+    onFestivalPast = Color(0xFFFFFFFF),
+    onFestivalPastContainer = Color(0xFF4A148C),
 )
 
 /**
- * Enhanced dark theme colors optimized for low-light festival environments
+ * Material Design 3 Dark Theme Colors for Basshead
+ * Optimized for low-light environments and festival/club settings
  */
 val BassheadDarkColors = BassheadColors(
-    // Primary system for dark theme
-    primary = Color(0xFFD0BCFF),
-    onPrimary = Color(0xFF381E72),
-    primaryContainer = Color(0xFF4F378B),
-    onPrimaryContainer = Color(0xFFEADDFF),
+    // Primary colors - Bass/Music theme with high contrast for dark
+    primary = Color(0xFFC5BFFF), // Lighter purple for dark theme
+    onPrimary = Color(0xFF37006F),
+    primaryContainer = Color(0xFF512D8B),
+    onPrimaryContainer = Color(0xFFE4DFFF),
 
-    // Secondary system
+    // Secondary colors - Electric/Energy theme
     secondary = Color(0xFFCCC2DC),
     onSecondary = Color(0xFF332D41),
     secondaryContainer = Color(0xFF4A4458),
     onSecondaryContainer = Color(0xFFE8DEF8),
 
-    // Tertiary system
+    // Tertiary colors - Beat/Rhythm theme
     tertiary = Color(0xFFEFB8C8),
-    onTertiary = Color(0xFF492532),
-    tertiaryContainer = Color(0xFF633B48),
+    onTertiary = Color(0xFF4D2532),
+    tertiaryContainer = Color(0xFF663B48),
     onTertiaryContainer = Color(0xFFFFD8E4),
 
     // Error system
@@ -257,86 +347,112 @@ val BassheadDarkColors = BassheadColors(
     errorContainer = Color(0xFF93000A),
     onErrorContainer = Color(0xFFFFDAD6),
 
-    // Dark surface system
-    surface = Color(0xFF10121B),
-    onSurface = Color(0xFFE6E1E5),
+    // Surface system - Dark theme surfaces
+    surface = Color(0xFF101014), // Very dark for festival/club feel
+    onSurface = Color(0xFFE6E0E9),
     surfaceVariant = Color(0xFF49454F),
     onSurfaceVariant = Color(0xFFCAC4D0),
-    surfaceTint = Color(0xFFD0BCFF),
-    surfaceDim = Color(0xFF10121B),
-    surfaceBright = Color(0xFF362F42),
-    surfaceContainerLowest = Color(0xFF0B0E14),
-    surfaceContainerLow = Color(0xFF1D1B20),
-    surfaceContainer = Color(0xFF211F26),
-    surfaceContainerHigh = Color(0xFF2B2930),
-    surfaceContainerHighest = Color(0xFF36343B),
+    surfaceTint = Color(0xFFC5BFFF),
+    surfaceDim = Color(0xFF101014),
+    surfaceBright = Color(0xFF37343A),
+    surfaceContainerLowest = Color(0xFF0B0B0F),
+    surfaceContainerLow = Color(0xFF1C1B1F),
+    surfaceContainer = Color(0xFF201F23),
+    surfaceContainerHigh = Color(0xFF2B292D),
+    surfaceContainerHighest = Color(0xFF363438),
 
     // Background
-    background = Color(0xFF10121B),
-    onBackground = Color(0xFFE6E1E5),
+    background = Color(0xFF101014),
+    onBackground = Color(0xFFE6E0E9),
 
-    // Outline
+    // Outline system
     outline = Color(0xFF938F99),
     outlineVariant = Color(0xFF49454F),
 
-    // Inverse
-    inverseSurface = Color(0xFFE6E1E5),
+    // Inverse colors
+    inverseSurface = Color(0xFFE6E0E9),
     inverseOnSurface = Color(0xFF313033),
-    inversePrimary = Color(0xFF6750A4),
+    inversePrimary = Color(0xFF6B4EFF),
 
     // Scrim
     scrim = Color(0xFF000000),
 
-    // Enhanced semantic colors for dark theme
-    success = Color(0xFF8BDA8F),
-    onSuccess = Color(0xFF003909),
-    successContainer = Color(0xFF00531C),
-    onSuccessContainer = Color(0xFFA6F2AA),
+    // Enhanced semantic colors - Dark theme variants
+    success = Color(0xFF8BDB8B),
+    onSuccess = Color(0xFF003919),
+    successContainer = Color(0xFF005321),
+    onSuccessContainer = Color(0xFFA6F3A6),
 
-    warning = Color(0xFFFFB951),
+    warning = Color(0xFFFFB877),
     onWarning = Color(0xFF4A2800),
-    warningContainer = Color(0xFF6B3C00),
-    onWarningContainer = Color(0xFFFFDDB3),
+    warningContainer = Color(0xFF6A3C00),
+    onWarningContainer = Color(0xFFFFDDB4),
 
-    info = Color(0xFF9ECAFF),
-    onInfo = Color(0xFF003258),
-    infoContainer = Color(0xFF00497D),
-    onInfoContainer = Color(0xFFD1E4FF),
+    info = Color(0xFFA2C9FF),
+    onInfo = Color(0xFF003062),
+    infoContainer = Color(0xFF004B87),
+    onInfoContainer = Color(0xFFD3E4FF),
 
-    // Festival states optimized for dark theme
-    festivalActive = Color(0xFF8BDA8F),
-    festivalActiveContainer = Color(0xFF00531C),
-    onFestivalActive = Color(0xFF003909),
-    onFestivalActiveContainer = Color(0xFFA6F2AA),
+    // Device connectivity colors
+    deviceConnected = Color(0xFF69F285), // Bright neon green for dark
+    onDeviceConnected = Color(0xFF003919),
+    deviceConnectedContainer = Color(0xFF005321),
+    onDeviceConnectedContainer = Color(0xFF8BDB8B),
 
-    festivalInactive = Color(0xFF8E8E8E),
-    festivalInactiveContainer = Color(0xFF404040),
-    onFestivalInactive = Color(0xFF1C1C1C),
-    onFestivalInactiveContainer = Color(0xFFE3E3E3),
+    deviceDisconnected = Color(0xFFB0BEC5), // Lighter gray for dark
+    onDeviceDisconnected = Color(0xFF263238),
+    deviceDisconnectedContainer = Color(0xFF37474F),
+    onDeviceDisconnectedContainer = Color(0xFFCFD8DC),
 
-    festivalUpcoming = Color(0xFF9ECAFF),
-    festivalUpcomingContainer = Color(0xFF00497D),
-    onFestivalUpcoming = Color(0xFF003258),
-    onFestivalUpcomingContainer = Color(0xFFD1E4FF),
+    // Bass/Music intensity colors
+    bassIntense = Color(0xFFFF8A65), // Lighter shade for dark theme
+    onBassIntense = Color(0xFF3E2723),
+    bassIntenseContainer = Color(0xFFBF360C),
+    onBassIntenseContainer = Color(0xFFFFCCBC),
 
-    festivalPast = Color(0xFF999999),
-    festivalPastContainer = Color(0xFF2F2F2F),
-    onFestivalPast = Color(0xFF262626),
-    onFestivalPastContainer = Color(0xFFF5F5F5),
+    // Festival states - Dark theme optimized
+    festivalActive = Color(0xFF69F285), // Bright neon green for dark
+    festivalActiveContainer = Color(0xFF005321),
+    onFestivalActive = Color(0xFF003919),
+    onFestivalActiveContainer = Color(0xFF8BDB8B),
 
-    // Music-specific colors for dark theme
-    bassIntense = Color(0xFFFF6B6B),
-    bassIntenseContainer = Color(0xFF5F0000),
-    onBassIntense = Color(0xFF370000),
-    onBassIntenseContainer = Color(0xFFFFD6D6),
+    festivalInactive = Color(0xFFB0BEC5), // Lighter gray for dark
+    festivalInactiveContainer = Color(0xFF37474F),
+    onFestivalInactive = Color(0xFF263238),
+    onFestivalInactiveContainer = Color(0xFFCFD8DC),
 
-    deviceConnected = Color(0xFF8BDA8F),
-    deviceConnectedContainer = Color(0xFF00531C),
-    onDeviceConnected = Color(0xFF003909),
-    onDeviceConnectedContainer = Color(0xFFA6F2AA),
+    festivalUpcoming = Color(0xFFFFCC80), // Softer orange for dark
+    festivalUpcomingContainer = Color(0xFF6A3C00),
+    onFestivalUpcoming = Color(0xFF4A2800),
+    onFestivalUpcomingContainer = Color(0xFFFFDDB4),
 
-    deviceDisconnected = Color(0xFFFFB2C5),
-    deviceDisconnectedContainer = Color(0xFF633244),
-    onDeviceDisconnected = Color(0xFF3E0A16),
-    onDeviceDisconnectedContainer = Color(0xFFFFD9E2),
+    festivalPast = Color(0xFFCE93D8), // Softer purple for dark
+    festivalPastContainer = Color(0xFF7B1FA2),
+    onFestivalPast = Color(0xFF4A148C),
+    onFestivalPastContainer = Color(0xFFE1BEE7),
 )
+
+/**
+ * Creates a Material 3 ColorScheme from BassheadColors
+ * Following Material Design 3 guidelines for theme consistency
+ */
+fun BassheadColors.toColorScheme(isDark: Boolean = false): ColorScheme {
+    return if (isDark) toMaterialDarkColorScheme() else toMaterialColorScheme()
+}
+
+/**
+ * Factory function to create light ColorScheme from BassheadLightColors
+ */
+fun bassheadLightColorScheme(): ColorScheme = BassheadLightColors.toMaterialColorScheme()
+
+/**
+ * Factory function to create dark ColorScheme from BassheadDarkColors
+ */
+fun bassheadDarkColorScheme(): ColorScheme = BassheadDarkColors.toMaterialDarkColorScheme()
+
+/**
+ * Reactive factory function that returns appropriate ColorScheme based on theme
+ */
+fun bassheadColorScheme(isDark: Boolean = false): ColorScheme {
+    return if (isDark) bassheadDarkColorScheme() else bassheadLightColorScheme()
+}

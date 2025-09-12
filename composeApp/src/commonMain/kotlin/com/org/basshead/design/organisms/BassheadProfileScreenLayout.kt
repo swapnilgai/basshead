@@ -2,7 +2,6 @@ package com.org.basshead.design.organisms
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -187,12 +186,12 @@ private fun ProfileInfoRowDirect(
     ) {
         BassheadBodyLarge(
             text = label,
-            color = BassheadTheme.colors.outline,
+            color = BassheadTheme.colors.onSurfaceVariant, // Changed from outline to onSurfaceVariant for better contrast
         )
 
         BassheadBodyLarge(
             text = value,
-            color = BassheadTheme.colors.outline,
+            color = BassheadTheme.colors.onSurface, // Changed from outline to onSurface for high contrast text
         )
     }
 }
@@ -216,13 +215,13 @@ private fun ProfileLinkRowDirect(
     ) {
         BassheadBodyLarge(
             text = title,
-            color = BassheadTheme.colors.outline,
+            color = BassheadTheme.colors.onSurface, // Changed from outline to onSurface for proper contrast
         )
 
         Icon(
             imageVector = Icons.AutoMirrored.Filled.ArrowForward,
             contentDescription = stringResource(Res.string.profile_navigate_forward),
-            tint = BassheadTheme.colors.outline,
+            tint = BassheadTheme.colors.onSurfaceVariant, // Changed from outline to onSurfaceVariant
             modifier = Modifier.size(20.dp),
         )
     }

@@ -82,6 +82,17 @@
     <string name="retry">Retry</string>
 
     <!-- Device Sync -->
+    <string name="device_sync_title">Device Sync</string>
+    <string name="device_sync_card_description">Device sync card showing %1$d headbangs, status: %2$s</string>
+    <string name="device_settings_description">Open device settings</string>
+    <string name="device_status_description">Device status</string>
+    <string name="device_syncing_status">Syncing...</string>
+    <string name="device_connected_status">Device Connected</string>
+    <string name="device_not_connected_status">Device Not Connected</string>
+    <string name="total_headbangs_uppercase">TOTAL HEADBANGS</string>
+    <string name="sync_now_button">Sync Now</string>
+    <string name="connect_device_button">Connect Device</string>
+    <string name="syncing_label">Syncing</string>
     <string name="sync_device">Sync Device</string>
     <string name="sync_now">Sync</string>
     <string name="settings">Settings</string>
