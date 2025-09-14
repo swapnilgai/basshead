@@ -43,7 +43,8 @@ fun AvatarSelectionScreenRoot(
 
     // Remember callback functions to avoid recomposition - following MVI pattern
     val onAvatarSelected = remember<(String) -> Unit> {
-        { avatarUrl ->
+        {
+                avatarUrl ->
             viewModel.onAction(AvatarSelectionActions.SelectAvatar(avatarUrl))
         }
     }

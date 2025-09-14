@@ -87,7 +87,7 @@ fun ProvideBassheadTheme(
     content: @Composable () -> Unit,
 ) {
     // Use light theme by default, dark theme logic will be added later
-    val themeColors = if(isDarkTheme) BassheadDarkColors else BassheadLightColors
+    val themeColors = if (isDarkTheme) BassheadDarkColors else BassheadLightColors
 
     // Create Material 3 ColorScheme using our BassheadColors factory methods
     val materialColorScheme = remember(themeColors, isDarkTheme) {

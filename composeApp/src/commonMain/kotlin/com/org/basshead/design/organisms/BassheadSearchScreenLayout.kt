@@ -32,10 +32,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
@@ -62,9 +59,9 @@ import com.org.basshead.design.atoms.BassheadBodyMedium
 import com.org.basshead.design.atoms.BassheadBodySmall
 import com.org.basshead.design.atoms.BassheadButton
 import com.org.basshead.design.atoms.BassheadHeadlineSmall
+import com.org.basshead.design.atoms.BassheadTextButton
 import com.org.basshead.design.atoms.BassheadTextField
 import com.org.basshead.design.atoms.BassheadTitleMedium
-import com.org.basshead.design.atoms.BassheadTextButton
 import com.org.basshead.design.theme.BassheadTheme
 import com.org.basshead.feature.dashboard.components.FestivalItem
 import com.org.basshead.feature.dashboard.model.FestivalItemState
@@ -94,7 +91,7 @@ fun BassheadSearchScreenLayout(
         modifier = modifier.fillMaxSize(),
         contentPadding = PaddingValues(
             horizontal = BassheadTheme.spacing.medium,
-            vertical = BassheadTheme.spacing.large
+            vertical = BassheadTheme.spacing.large,
         ),
         verticalArrangement = Arrangement.spacedBy(BassheadTheme.spacing.medium),
         state = listState,
@@ -150,7 +147,7 @@ fun BassheadSearchScreenLayout(
 
                 items(
                     items = uiState.recentSearches,
-                    key = { "recent_$it" }
+                    key = { "recent_$it" },
                 ) { query ->
                     RecentSearchItemDirect(
                         query = query,

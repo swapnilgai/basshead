@@ -67,12 +67,12 @@ fun BassheadProfileInfoRow(
     ) {
         BassheadBodyLarge(
             text = stringResource(label),
-            color = BassheadTheme.colors.outline
+            color = BassheadTheme.colors.outline,
         )
 
         BassheadBodyLarge(
             text = value,
-            color = BassheadTheme.colors.outline
+            color = BassheadTheme.colors.outline,
         )
     }
 }
@@ -99,7 +99,7 @@ fun BassheadProfileLinkRow(
     ) {
         BassheadBodyLarge(
             text = stringResource(title),
-            color = BassheadTheme.colors.outline
+            color = BassheadTheme.colors.outline,
         )
 
         Icon(

@@ -30,9 +30,6 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.pullrefresh.PullRefreshIndicator
-import androidx.compose.material.pullrefresh.pullRefresh
-import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.FavoriteBorder
@@ -40,6 +37,9 @@ import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.MusicNote
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.pullrefresh.PullRefreshIndicator
+import androidx.compose.material.pullrefresh.pullRefresh
+import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.Icon
@@ -52,7 +52,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
@@ -62,7 +61,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import coil3.compose.AsyncImage
 import com.org.basshead.design.atoms.BassheadBodyLarge
-import com.org.basshead.design.atoms.BassheadBodyMedium
 import com.org.basshead.design.atoms.BassheadDisplayLarge
 import com.org.basshead.design.atoms.BassheadHeadlineLarge
 import com.org.basshead.design.atoms.BassheadStatusBadgeAtom
@@ -118,7 +116,7 @@ fun BassheadFestivalDetailScreenLayout(
     val headerAlpha by animateFloatAsState(
         targetValue = if (scrollState.firstVisibleItemScrollOffset > 200) 1f else 0f,
         animationSpec = tween(300, easing = FastOutSlowInEasing),
-        label = "headerAlpha"
+        label = "headerAlpha",
     )
 
     // FAB visibility based on scroll
@@ -201,11 +199,11 @@ fun BassheadFestivalDetailScreenLayout(
                 visible = fabVisible,
                 enter = slideInVertically(
                     initialOffsetY = { it },
-                    animationSpec = tween(400, easing = FastOutSlowInEasing)
+                    animationSpec = tween(400, easing = FastOutSlowInEasing),
                 ) + fadeIn(),
                 exit = slideOutVertically(
                     targetOffsetY = { it },
-                    animationSpec = tween(300)
+                    animationSpec = tween(300),
                 ) + fadeOut(),
                 modifier = Modifier
                     .align(Alignment.BottomEnd)

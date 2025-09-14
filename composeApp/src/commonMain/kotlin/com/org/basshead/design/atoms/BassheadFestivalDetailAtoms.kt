@@ -1,6 +1,5 @@
 package com.org.basshead.design.atoms
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -101,7 +100,7 @@ fun BassheadStatusBadgeAtom(
             color = textColor,
             modifier = Modifier.padding(
                 horizontal = BassheadTheme.spacing.medium,
-                vertical = BassheadTheme.spacing.small
+                vertical = BassheadTheme.spacing.small,
             ),
         )
     }

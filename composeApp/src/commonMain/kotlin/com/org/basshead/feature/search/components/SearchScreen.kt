@@ -46,13 +46,13 @@ fun SearchScreen(
             when {
                 uiState.shouldShowSearchResults && uiState.hasMoreResults -> {
                     !uiState.isLoadingMore &&
-                            totalItemsNumber > 0 &&
-                            lastVisibleItemIndex >= (totalItemsNumber - 3)
+                        totalItemsNumber > 0 &&
+                        lastVisibleItemIndex >= (totalItemsNumber - 3)
                 }
                 uiState.shouldShowSuggestions && uiState.hasMoreSuggestions -> {
                     !uiState.isLoadingMore &&
-                            totalItemsNumber > 0 &&
-                            lastVisibleItemIndex >= (totalItemsNumber - 3)
+                        totalItemsNumber > 0 &&
+                        lastVisibleItemIndex >= (totalItemsNumber - 3)
                 }
                 else -> false
             }

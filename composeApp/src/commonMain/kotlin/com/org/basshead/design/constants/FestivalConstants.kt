@@ -53,7 +53,7 @@ object FestivalConstants {
     fun getStatusColors(status: String): Pair<Color, Color> {
         return Pair(
             getStatusColor(status),
-            getStatusTextColor(status)
+            getStatusTextColor(status),
         )
     }
 }

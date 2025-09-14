@@ -33,7 +33,7 @@ fun SplashScreenRoot(
             }
         }
         else -> {
-            SplashScreen() //TODO handel loading and error states if needed
+            SplashScreen() // TODO handel loading and error states if needed
         }
     }
 }

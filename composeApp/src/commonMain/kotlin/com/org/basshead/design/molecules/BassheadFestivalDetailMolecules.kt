@@ -25,14 +25,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import basshead.composeapp.generated.resources.Res
 import basshead.composeapp.generated.resources.festival_about_title
-import basshead.composeapp.generated.resources.festival_check_event_details
-import basshead.composeapp.generated.resources.festival_date_icon_desc
-import basshead.composeapp.generated.resources.festival_event_schedule
 import basshead.composeapp.generated.resources.festival_join_button
 import basshead.composeapp.generated.resources.festival_participants_label
 import basshead.composeapp.generated.resources.festival_stats_icon_desc
 import basshead.composeapp.generated.resources.festival_status_label
-import basshead.composeapp.generated.resources.festival_time_icon_desc
 import basshead.composeapp.generated.resources.festival_total_headbangs_label
 import basshead.composeapp.generated.resources.festival_view_leaderboard_button
 import basshead.composeapp.generated.resources.festival_your_rank_label
