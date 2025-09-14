@@ -29,12 +29,16 @@ fun SearchScreenRoot(
     // Hoist the LazyListState here so it survives navigation
     val listState = rememberLazyListState()
 
+    val onAction = remember(viewModel) {
+        viewModel::onAction
+    }
+
     when (val currentState = state.value) {
         is UiState.Content -> {
             val searchUiState = currentState.data as SearchUiState
             SearchScreen(
                 uiState = searchUiState,
-                onAction = viewModel::onAction,
+                onAction = onAction,
                 listState = listState,
                 modifier = modifier,
             )
