@@ -4,6 +4,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.ReadOnlyComposable
+import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.staticCompositionLocalOf
 import com.org.basshead.design.tokens.BassheadColors
@@ -25,7 +26,7 @@ val LocalBassheadColors = staticCompositionLocalOf<BassheadColors> {
     noLocalProvidedFor("LocalBassheadColors")
 }
 
-val LocalBassheadTypography = staticCompositionLocalOf<BassheadTypography> {
+val LocalBassheadTypography = compositionLocalOf<BassheadTypography> {
     noLocalProvidedFor("LocalBassheadTypography")
 }
 

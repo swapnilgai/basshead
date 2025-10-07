@@ -31,7 +31,7 @@ import basshead.composeapp.generated.resources.join
 import basshead.composeapp.generated.resources.leaderboard
 import basshead.composeapp.generated.resources.retry
 import coil3.compose.AsyncImage
-import com.org.basshead.feature.dashboard.model.FestivalItemState
+import com.org.basshead.design.atoms.BassheadTitleMedium
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
@@ -106,7 +106,7 @@ fun FestivalItem(
                 text = festival.name,
                 style = MaterialTheme.typography.subtitle1,
                 fontWeight = FontWeight.Bold,
-            )
+            BassheadTitleMedium(
 
             Spacer(modifier = Modifier.height(4.dp))
 

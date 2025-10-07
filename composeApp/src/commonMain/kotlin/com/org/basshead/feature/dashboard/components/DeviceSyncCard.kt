@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Headphones
@@ -20,20 +21,19 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import basshead.composeapp.generated.resources.Res
 import basshead.composeapp.generated.resources.device_status_connected
 import basshead.composeapp.generated.resources.device_status_not_connected
 import basshead.composeapp.generated.resources.settings
 import basshead.composeapp.generated.resources.sync_now
+import com.org.basshead.design.atoms.BassheadBodyMedium
+import com.org.basshead.design.atoms.BassheadDisplayLarge
+import com.org.basshead.design.theme.BassheadTheme
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
@@ -49,7 +49,7 @@ fun DeviceSyncCard(
         modifier = modifier.fillMaxWidth(),
         shape = RoundedCornerShape(20.dp),
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surface,
+            containerColor = BassheadTheme.colors.surface,
         ),
         elevation = CardDefaults.cardElevation(
             defaultElevation = 8.dp,
@@ -73,7 +73,7 @@ fun DeviceSyncCard(
                 Icon(
                     imageVector = Icons.Default.Headphones,
                     contentDescription = "Device",
-                    tint = MaterialTheme.colorScheme.primary,
+                    tint = BassheadTheme.colors.primary,
                     modifier = Modifier.size(28.dp),
                 )
             }
@@ -85,19 +85,16 @@ fun DeviceSyncCard(
                 modifier = Modifier.weight(1f),
                 horizontalAlignment = Alignment.Start,
             ) {
-                // Headbangs count - just the number
-                Text(
+                // Headbangs count using atomic design typography
+                BassheadDisplayLarge(
                     text = totalHeadbangs.toString(),
-                    style = MaterialTheme.typography.headlineLarge,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onSurface,
-                    fontSize = 32.sp,
+                    color = BassheadTheme.colors.onSurface,
                     maxLines = 1,
                 )
 
                 Spacer(modifier = Modifier.width(8.dp))
 
-                // Device status with improved design
+                // Device status with improved design using atomic components
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier.padding(top = 4.dp),
@@ -108,20 +105,17 @@ fun DeviceSyncCard(
                             .size(8.dp)
                             .background(
                                 color = if (isDeviceConnected) Color(0xFF4CAF50) else Color(0xFFFF9800),
-                                shape = androidx.compose.foundation.shape.CircleShape,
+                                shape = CircleShape,
                             ),
                     )
                     Spacer(modifier = Modifier.width(6.dp))
-                    Text(
+                    BassheadBodyMedium(
                         text = if (isDeviceConnected) {
                             stringResource(Res.string.device_status_connected)
                         } else {
                             stringResource(Res.string.device_status_not_connected)
                         },
-                        style = MaterialTheme.typography.bodyMedium,
-                        fontWeight = FontWeight.Medium,
                         color = if (isDeviceConnected) Color(0xFF2E7D32) else Color(0xFFE65100),
-                        fontSize = 13.sp,
                         maxLines = 1,
                     )
                 }
@@ -141,11 +135,11 @@ fun DeviceSyncCard(
                         .size(44.dp)
                         .background(
                             color = if (isDeviceConnected && !isSyncing) {
-                                MaterialTheme.colorScheme.primary.copy(alpha = 0.1f)
+                                BassheadTheme.colors.primary.copy(alpha = 0.1f)
                             } else {
-                                MaterialTheme.colorScheme.onSurface.copy(alpha = 0.05f)
+                                BassheadTheme.colors.onSurface.copy(alpha = 0.05f)
                             },
-                            shape = androidx.compose.foundation.shape.CircleShape,
+                            shape = CircleShape,
                         ),
                 ) {
                     IconButton(
@@ -157,16 +151,16 @@ fun DeviceSyncCard(
                             CircularProgressIndicator(
                                 modifier = Modifier.size(20.dp),
                                 strokeWidth = 2.dp,
-                                color = MaterialTheme.colorScheme.primary,
+                                color = BassheadTheme.colors.primary,
                             )
                         } else {
                             Icon(
                                 imageVector = Icons.Default.Sync,
                                 contentDescription = stringResource(Res.string.sync_now),
                                 tint = if (isDeviceConnected) {
-                                    MaterialTheme.colorScheme.primary
+                                    BassheadTheme.colors.primary
                                 } else {
-                                    MaterialTheme.colorScheme.onSurface.copy(alpha = 0.4f)
+                                    BassheadTheme.colors.onSurface.copy(alpha = 0.4f)
                                 },
                                 modifier = Modifier.size(20.dp),
                             )
@@ -180,8 +174,8 @@ fun DeviceSyncCard(
                     modifier = Modifier
                         .size(44.dp)
                         .background(
-                            color = MaterialTheme.colorScheme.secondary.copy(alpha = 0.1f),
-                            shape = androidx.compose.foundation.shape.CircleShape,
+                            color = BassheadTheme.colors.secondary.copy(alpha = 0.1f),
+                            shape = CircleShape,
                         ),
                 ) {
                     IconButton(
@@ -191,7 +185,7 @@ fun DeviceSyncCard(
                         Icon(
                             imageVector = Icons.Default.Settings,
                             contentDescription = stringResource(Res.string.settings),
-                            tint = MaterialTheme.colorScheme.secondary,
+                            tint = BassheadTheme.colors.secondary,
                             modifier = Modifier.size(20.dp),
                         )
                     }
