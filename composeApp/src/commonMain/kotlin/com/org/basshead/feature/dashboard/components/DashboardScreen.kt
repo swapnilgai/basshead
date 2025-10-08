@@ -27,19 +27,22 @@ fun DashboardScreenRoot(
 
     // Remember callback functions to avoid recomposition - following MVI pattern
     val onFestivalClick = remember<(String) -> Unit> {
-        { festivalId ->
+        {
+                festivalId ->
             viewModel.onAction(DashBoardActions.OnFestivalClicked(festivalId))
         }
     }
 
     val onJoinFestival = remember<(String) -> Unit> {
-        { festivalId ->
+        {
+                festivalId ->
             viewModel.onAction(DashBoardActions.JoinFestival(festivalId))
         }
     }
 
     val onViewLeaderboard = remember<(String) -> Unit> {
-        { festivalId ->
+        {
+                festivalId ->
             viewModel.onAction(DashBoardActions.ViewLeaderboard(festivalId))
         }
     }

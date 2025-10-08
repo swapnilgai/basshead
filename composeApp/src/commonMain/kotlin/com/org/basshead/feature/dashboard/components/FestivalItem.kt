@@ -10,17 +10,13 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Button
-import androidx.compose.material.Card
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.material3.Card
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -31,7 +27,13 @@ import basshead.composeapp.generated.resources.join
 import basshead.composeapp.generated.resources.leaderboard
 import basshead.composeapp.generated.resources.retry
 import coil3.compose.AsyncImage
+import com.org.basshead.design.atoms.BassheadBodySmall
+import com.org.basshead.design.atoms.BassheadButton
+import com.org.basshead.design.atoms.BassheadHeadlineMedium
+import com.org.basshead.design.atoms.BassheadLabelLarge
 import com.org.basshead.design.atoms.BassheadTitleMedium
+import com.org.basshead.design.theme.BassheadTheme
+import com.org.basshead.feature.dashboard.model.FestivalItemState
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
@@ -84,7 +86,6 @@ fun FestivalItem(
             .fillMaxWidth()
             .padding(vertical = 4.dp)
             .clickable { onFestivalClickHandler() },
-        elevation = 4.dp,
     ) {
         Column {
             // Festival Image
@@ -101,31 +102,27 @@ fun FestivalItem(
             Spacer(modifier = Modifier.height(8.dp))
 
             // Festival Name
-            Text(
+            BassheadTitleMedium(
                 modifier = Modifier.padding(horizontal = 12.dp),
                 text = festival.name,
-                style = MaterialTheme.typography.subtitle1,
-                fontWeight = FontWeight.Bold,
-            BassheadTitleMedium(
+            )
 
             Spacer(modifier = Modifier.height(4.dp))
 
             // Location
-            Text(
+            BassheadBodySmall(
                 modifier = Modifier.padding(horizontal = 12.dp),
                 text = festival.location,
-                style = MaterialTheme.typography.body2,
-                color = MaterialTheme.colors.onSurface.copy(alpha = 0.7f),
+                color = BassheadTheme.colors.onSurfaceVariant,
             )
 
             Spacer(modifier = Modifier.height(4.dp))
 
             // Date - single line with ellipsis if too long
-            Text(
+            BassheadBodySmall(
                 modifier = Modifier.padding(horizontal = 12.dp),
                 text = dateText,
-                style = MaterialTheme.typography.body2,
-                color = MaterialTheme.colors.onSurface.copy(alpha = 0.7f),
+                color = BassheadTheme.colors.onSurfaceVariant,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
             )
@@ -141,19 +138,19 @@ fun FestivalItem(
             ) {
                 if (festival.userJoined) {
                     // User has joined - show leaderboard button
-                    Button(
+                    BassheadButton(
                         onClick = onLeaderboardClick,
                         modifier = Modifier.fillMaxWidth(),
                     ) {
-                        Text(stringResource(Res.string.leaderboard))
+                        BassheadLabelLarge(stringResource(Res.string.leaderboard))
                     }
                 } else {
                     // User hasn't joined - show join button
-                    Button(
+                    BassheadButton(
                         onClick = onJoinClick,
                         modifier = Modifier.fillMaxWidth(),
                     ) {
-                        Text(stringResource(Res.string.join))
+                        BassheadLabelLarge(stringResource(Res.string.join))
                     }
                 }
             }
@@ -174,17 +171,15 @@ fun ErrorScreen(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
     ) {
-        Text(
+        BassheadHeadlineMedium(
             text = stringResource(Res.string.error_unknown),
-            style = MaterialTheme.typography.h3,
-            color = MaterialTheme.colors.error,
+            color = BassheadTheme.colors.error,
         )
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        Text(
+        BassheadBodySmall(
             text = errorMessage,
-            style = MaterialTheme.typography.body2,
             textAlign = TextAlign.Center,
         )
 
@@ -193,13 +188,13 @@ fun ErrorScreen(
         Row(
             horizontalArrangement = Arrangement.spacedBy(8.dp),
         ) {
-            Button(onClick = onDismiss) {
-                Text(stringResource(Res.string.dismiss))
+            BassheadButton(onClick = onDismiss) {
+                BassheadLabelLarge(stringResource(Res.string.dismiss))
             }
 
             onRetry?.let { retry ->
-                Button(onClick = retry) {
-                    Text(stringResource(Res.string.retry))
+                BassheadButton(onClick = retry) {
+                    BassheadLabelLarge(stringResource(Res.string.retry))
                 }
             }
         }
