@@ -1,34 +1,13 @@
 package com.org.basshead.feature.avatar.components
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
@@ -38,16 +17,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.util.lerp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import coil3.compose.AsyncImage
-import com.org.basshead.feature.avatar.model.Avatar
+import com.org.basshead.design.atoms.BassheadBodyMedium
+import com.org.basshead.design.atoms.BassheadButton
+import com.org.basshead.design.atoms.BassheadHeadlineSmall
+import com.org.basshead.design.atoms.BassheadOutlinedButton
+import com.org.basshead.design.organisms.BassheadAvatarSelectionScreenLayout
+import com.org.basshead.design.theme.BassheadTheme
 import com.org.basshead.feature.avatar.model.AvatarSelectionUiState
 import com.org.basshead.feature.avatar.presentation.AvatarSelectionActions
 import com.org.basshead.feature.avatar.presentation.AvatarSelectionViewModel
@@ -55,7 +31,6 @@ import com.org.basshead.utils.components.LoadingScreen
 import com.org.basshead.utils.ui.Route
 import com.org.basshead.utils.ui.UiState
 import org.koin.compose.viewmodel.koinViewModel
-import kotlin.math.absoluteValue
 
 @Composable
 fun AvatarSelectionScreenRoot(
@@ -104,7 +79,7 @@ fun AvatarSelectionScreenRoot(
 
         is UiState.Error -> {
             if (showError) {
-                ErrorScreen(
+                BassheadErrorScreen(
                     errorMessage = currentState.message.asString(),
                     onDismiss = { showError = false },
                     onRetry = {
@@ -133,7 +108,6 @@ fun AvatarSelectionScreenRoot(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AvatarSelectionScreen(
     avatarUiState: AvatarSelectionUiState,
@@ -174,140 +148,23 @@ fun AvatarSelectionScreen(
         }
     }
 
-    Scaffold(
-        modifier = modifier.fillMaxSize(),
-        topBar = {
-            TopAppBar(
-                title = {
-                    Text(
-                        text = "Your Avatar",
-                        style = MaterialTheme.typography.headlineSmall,
-                        fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.onSurface,
-                    )
-                },
-                navigationIcon = {
-                    IconButton(onClick = onNavigateBack) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Back",
-                            tint = MaterialTheme.colorScheme.onSurface,
-                        )
-                    }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.surface,
-                ),
-            )
-        },
-        bottomBar = {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp),
-            ) {
-                Button(
-                    onClick = onSaveAvatar,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(56.dp),
-                    enabled = !avatarUiState.isSaving,
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = Color(0xFF6B46C1),
-                        disabledContainerColor = Color(0xFF6B46C1).copy(alpha = 0.5f),
-                    ),
-                    shape = MaterialTheme.shapes.medium,
-                ) {
-                    if (avatarUiState.isSaving) {
-                        CircularProgressIndicator(
-                            modifier = Modifier.size(24.dp),
-                            color = Color.White,
-                            strokeWidth = 2.dp,
-                        )
-                    } else {
-                        Text(
-                            text = "Save",
-                            style = MaterialTheme.typography.titleLarge,
-                            fontWeight = FontWeight.Medium,
-                            color = Color.White,
-                        )
-                    }
-                }
-            }
-        },
-        containerColor = MaterialTheme.colorScheme.surface,
-    ) { paddingValues ->
-        if (avatarUiState.avatars.isNotEmpty()) {
-            // ViewPager-style horizontal pager with zoom transformation
-            HorizontalPager(
-                state = pagerState,
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(paddingValues),
-                contentPadding = PaddingValues(horizontal = 64.dp),
-                pageSpacing = 16.dp,
-                key = { index -> avatarUiState.avatars[index].url },
-            ) { page ->
-                // Calculate page offset for zoom transformation
-                val pageOffset = (pagerState.currentPage - page) + pagerState.currentPageOffsetFraction
-
-                // Apply zoom-in transformation similar to ViewPager2 PageTransformer
-                val scale = lerp(
-                    start = 0.8f,
-                    stop = 1.0f,
-                    fraction = 1f - pageOffset.absoluteValue.coerceIn(0f, 1f),
-                )
-
-                val alpha = lerp(
-                    start = 0.5f,
-                    stop = 1.0f,
-                    fraction = 1f - pageOffset.absoluteValue.coerceIn(0f, 1f),
-                )
-
-                AvatarPagerCard(
-                    avatar = avatarUiState.avatars[page],
-                    isSelected = page == pagerState.currentPage,
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .graphicsLayer {
-                            scaleX = scale
-                            scaleY = scale
-                            this.alpha = alpha
-                        },
-                )
-            }
-        }
-    }
-}
-
-@Composable
-fun AvatarPagerCard(
-    avatar: Avatar,
-    isSelected: Boolean,
-    modifier: Modifier = Modifier,
-) {
-    // Large card size for ViewPager display
-    val cardSize = 320.dp
-
-    Box(
+    // Use the atomic design organism layout
+    BassheadAvatarSelectionScreenLayout(
+        avatars = avatarUiState.avatars,
+        pagerState = pagerState,
+        isLoading = avatarUiState.isSaving,
+        onSaveAvatar = onSaveAvatar,
+        onNavigateBack = onNavigateBack,
         modifier = modifier,
-        contentAlignment = Alignment.Center,
-    ) {
-        // Avatar image container - ensuring perfect circle with proper clipping
-        AsyncImage(
-            model = avatar.url,
-            contentDescription = "Avatar",
-            modifier = Modifier
-                .size(if (isSelected) cardSize else cardSize - 16.dp)
-                .clip(CircleShape)
-                .background(MaterialTheme.colorScheme.surface),
-            contentScale = ContentScale.Fit,
-        )
-    }
+    )
 }
 
+/**
+ * Error screen using atomic design components
+ * Following the same patterns as profile package
+ */
 @Composable
-fun ErrorScreen(
+fun BassheadErrorScreen(
     errorMessage: String,
     onDismiss: () -> Unit,
     onRetry: () -> Unit,
@@ -316,35 +173,33 @@ fun ErrorScreen(
     Column(
         modifier = modifier
             .fillMaxSize()
-            .padding(16.dp),
+            .padding(BassheadTheme.spacing.large),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
     ) {
-        Text(
+        BassheadHeadlineSmall(
             text = "Error",
-            style = MaterialTheme.typography.headlineSmall,
-            color = MaterialTheme.colorScheme.error,
+            color = BassheadTheme.colors.error,
         )
 
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(BassheadTheme.spacing.small))
 
-        Text(
+        BassheadBodyMedium(
             text = errorMessage,
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onSurface,
+            color = BassheadTheme.colors.onSurface,
         )
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(BassheadTheme.spacing.large))
 
         Row(
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            horizontalArrangement = Arrangement.spacedBy(BassheadTheme.spacing.small),
         ) {
-            OutlinedButton(onClick = onDismiss) {
-                Text("Dismiss")
+            BassheadOutlinedButton(onClick = onDismiss) {
+                BassheadBodyMedium(text = "Dismiss")
             }
 
-            Button(onClick = onRetry) {
-                Text("Retry")
+            BassheadButton(onClick = onRetry) {
+                BassheadBodyMedium(text = "Retry")
             }
         }
     }

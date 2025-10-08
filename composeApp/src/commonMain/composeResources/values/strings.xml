@@ -51,7 +51,7 @@
     <string name="leaderboard">Leaderboard</string>
     <string name="festival_participants">Participants</string>
     <string name="your_rank">Your Rank</string>
-    
+
     <!-- Search -->
     <string name="search_festivals">Find Events</string>
     <string name="search_festivals_hint">EDC, Ultra...</string>
@@ -69,7 +69,7 @@
     <string name="location_hint">City, state, or venue name...</string>
     <string name="location_examples">e.g. Miami, FL or Red Rocks</string>
     <string name="refresh">Refresh</string>
-    
+
     <!-- Profile -->
     <string name="profile">Profile</string>
     <string name="user_label">User: %1$s</string>
@@ -77,11 +77,22 @@
     <string name="joined_festivals">Joined Festivals: %1$d</string>
     <string name="your_festivals">Your Festivals</string>
     <string name="logout">Logout</string>
-    
+
     <!-- Error Actions -->
     <string name="retry">Retry</string>
-    
+
     <!-- Device Sync -->
+    <string name="device_sync_title">Device Sync</string>
+    <string name="device_sync_card_description">Device sync card showing %1$d headbangs, status: %2$s</string>
+    <string name="device_settings_description">Open device settings</string>
+    <string name="device_status_description">Device status</string>
+    <string name="device_syncing_status">Syncing...</string>
+    <string name="device_connected_status">Device Connected</string>
+    <string name="device_not_connected_status">Device Not Connected</string>
+    <string name="total_headbangs_uppercase">TOTAL HEADBANGS</string>
+    <string name="sync_now_button">Sync Now</string>
+    <string name="connect_device_button">Connect Device</string>
+    <string name="syncing_label">Syncing</string>
     <string name="sync_device">Sync Device</string>
     <string name="sync_now">Sync</string>
     <string name="settings">Settings</string>
@@ -91,5 +102,63 @@
     <string name="headbangs_label">Headbangs</string>
     <string name="device_status_connected">Connected</string>
     <string name="device_status_not_connected">Not Connected</string>
+
+    <!-- Design System Strings -->
+    <string name="filter">Filter</string>
+    <string name="required_field">*</string>
+    <string name="default_email_label">Email</string>
+    <string name="default_password_label">Password</string>
+    <string name="basshead_app_logo">Basshead app logo</string>
+    <string name="default_app_name">Basshead</string>
+    <string name="default_tagline">Feel the Bass, Join the Beat</string>
+    <string name="default_login_button">Log In</string>
+    <string name="signup_prompt">Don't have an account?</string>
+    <string name="default_signup_button">Sign Up</string>
+    <string name="hide_password">Hide password</string>
+    <string name="show_password">Show password</string>
+    <string name="login_screen_description">Login screen with authentication form</string>
+
+    <!-- Splash Screen -->
+    <string name="splash_logo_description">Headbanging Dog</string>
+    <string name="splash_loading">Loading...</string>
+
+    <!-- Profile Screen -->
+    <string name="profile_title">Profile</string>
+    <string name="profile_account_section">Account</string>
+    <string name="profile_general_section">General</string>
+    <string name="profile_legal_section">Legal</string>
+    <string name="profile_name_label">Name</string>
+    <string name="profile_total_headbangs_label">Total Headbangs</string>
+    <string name="profile_joined_festivals_label">Joined Festivals</string>
+    <string name="profile_change_avatar">Change Avatar</string>
+    <string name="profile_your_festivals">Your Festivals</string>
+    <string name="profile_privacy_policy">Privacy Policy</string>
+    <string name="profile_terms_of_service">Terms of Service</string>
+    <string name="profile_sign_out">Sign Out</string>
+    <string name="profile_navigate_forward">Navigate forward</string>
+    <string name="profile_screen_description">Profile screen with user information and settings</string>
+
+    <!-- Festival Detail Screen -->
+    <string name="festival_participants_label">Participants</string>
+    <string name="festival_status_label">Status</string>
+    <string name="festival_your_rank_label">Your Rank</string>
+    <string name="festival_event_schedule">Event Schedule</string>
+    <string name="festival_all_day_event">All Day Event</string>
+    <string name="festival_about_title">About</string>
+    <string name="festival_your_stats_title">Your Festival Stats</string>
+    <string name="festival_actions_title">Actions</string>
+    <string name="festival_error_not_found">Festival not found</string>
+    <string name="festival_error_oops">Oops!</string>
+    <string name="festival_error_go_back">Go Back</string>
+    <string name="festival_error_retry">Retry</string>
+    <string name="festival_join_description">Join %1$s</string>
+    <string name="festival_leaderboard_description">View leaderboard for %1$s</string>
+    <string name="festival_date_icon_desc">Date</string>
+    <string name="festival_time_icon_desc">Time</string>
+    <string name="festival_stats_icon_desc">Stats</string>
+    <string name="festival_check_event_details">Check event details for exact timing</string>
+    <string name="festival_total_headbangs_label">Total Headbangs</string>
+    <string name="festival_join_button">Join Festival</string>
+    <string name="festival_view_leaderboard_button">View Leaderboard</string>
 
 </resources>

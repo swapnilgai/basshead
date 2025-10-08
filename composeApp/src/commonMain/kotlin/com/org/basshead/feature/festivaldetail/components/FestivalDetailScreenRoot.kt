@@ -25,15 +25,18 @@ fun FestivalDetailScreenRoot(
     navigate: (destination: String, popUpTp: String?, inclusive: Boolean?) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val state = viewModel.state.collectAsStateWithLifecycle()
+    val state by viewModel.state.collectAsStateWithLifecycle()
     var showError by remember { mutableStateOf(true) }
 
-    when (val currentState = state.value) {
+    // Remember the onAction lambda to prevent child recompositions
+    val onAction = remember(viewModel) { viewModel::onAction }
+
+    when (val currentState = state) {
         is UiState.Content -> {
             val festivalDetailUiState = currentState.data as FestivalDetailUiState
             FestivalDetailScreen(
                 uiState = festivalDetailUiState,
-                onAction = viewModel::onAction,
+                onAction = onAction,
                 modifier = modifier,
             )
 
@@ -48,7 +51,7 @@ fun FestivalDetailScreenRoot(
                     errorMessage = currentState.message.asString(),
                     onDismiss = {
                         showError = false
-                        viewModel.onAction(FestivalDetailActions.Refresh)
+                        onAction(FestivalDetailActions.Refresh)
                     },
                 )
             }
@@ -57,7 +60,6 @@ fun FestivalDetailScreenRoot(
         is UiState.Navigate -> {
             when (val route = currentState.route) {
                 is Route.Back -> {
-                    // Handle back navigation
                     navigate(NavRoute.Dashboard::class.simpleName!!, null, false)
                 }
                 is Route.InternalDirection -> {

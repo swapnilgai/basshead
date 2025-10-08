@@ -1,0 +1,79 @@
+package com.org.basshead.design.molecules
+
+import androidx.compose.foundation.layout.size
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Pets
+import androidx.compose.material3.Icon
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
+import basshead.composeapp.generated.resources.Res
+import basshead.composeapp.generated.resources.basshead_app_logo
+import basshead.composeapp.generated.resources.default_app_name
+import basshead.composeapp.generated.resources.default_tagline
+import com.org.basshead.design.atoms.BassheadBodyLarge
+import com.org.basshead.design.atoms.BassheadDisplaySmall
+import com.org.basshead.design.theme.BassheadTheme
+import org.jetbrains.compose.resources.stringResource
+
+/**
+ * Molecular branding components
+ * App branding combinations for consistent brand presentation
+ */
+
+/**
+ * App logo molecule - reusable app logo with consistent sizing
+ * Performance optimized: Direct icon composition, configurable size
+ */
+@Composable
+fun BassheadAppLogo(
+    modifier: Modifier = Modifier,
+    size: Dp = 100.dp,
+    tint: Color = BassheadTheme.colors.primary,
+    icon: ImageVector = Icons.Default.Pets,
+    contentDescription: String? = null,
+) {
+    Icon(
+        imageVector = icon,
+        contentDescription = contentDescription ?: stringResource(Res.string.basshead_app_logo),
+        modifier = modifier.size(size),
+        tint = tint,
+    )
+}
+
+/**
+ * App name molecule - consistent app name styling
+ * Performance optimized: Themeable text component
+ */
+@Composable
+fun BassheadAppName(
+    modifier: Modifier = Modifier,
+    text: String? = null,
+    color: Color = BassheadTheme.colors.primary,
+) {
+    BassheadDisplaySmall(
+        text = text ?: stringResource(Res.string.default_app_name),
+        color = color,
+        modifier = modifier,
+    )
+}
+
+/**
+ * App tagline molecule - consistent tagline styling
+ * Performance optimized: Themeable text component with alpha
+ */
+@Composable
+fun BassheadAppTagline(
+    modifier: Modifier = Modifier,
+    text: String? = null,
+    color: Color = BassheadTheme.colors.onSurface.copy(alpha = 0.87f),
+) {
+    BassheadBodyLarge(
+        text = text ?: stringResource(Res.string.default_tagline),
+        color = color,
+        modifier = modifier,
+    )
+}
